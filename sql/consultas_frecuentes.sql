@@ -1,0 +1,23 @@
+USE aerolinea;
+
+SELECT * FROM estados_ventas;
+SELECT * FROM documentos;
+SELECT * FROM tipos_documento;
+SELECT * FROM tarjetas_embarque;
+SELECT * FROM ventas;
+SELECT * FROM roles;
+SELECT * FROM estados_tarjetas_embarque;
+SELECT * FROM vuelos;
+SELECT * FROM asignaciones_vuelos;
+SELECT * FROM rutas;
+SELECT * FROM aviones;
+SELECT * FROM estados_vuelos;
+SELECT * FROM certificaciones_staff;
+SELECT * FROM estados_aviones;
+SELECT * FROM estados_staff;
+SELECT * FROM cargos;
+SELECT * FROM staff;
+SELECT * FROM pasajeros;
+SELECT * FROM historial_cambios;
+
+select * from pasajeros where id =100;

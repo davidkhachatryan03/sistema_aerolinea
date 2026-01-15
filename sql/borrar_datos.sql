@@ -1,0 +1,23 @@
+USE aerolinea;
+
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE estados_ventas;
+TRUNCATE TABLE documentos;
+TRUNCATE TABLE tipos_documento;
+TRUNCATE TABLE tarjetas_embarque;
+TRUNCATE TABLE ventas;
+TRUNCATE TABLE pasajeros;
+TRUNCATE TABLE roles;
+TRUNCATE TABLE estados_tarjetas_embarque;
+TRUNCATE TABLE vuelos;
+TRUNCATE TABLE asignaciones_vuelos;
+TRUNCATE TABLE rutas;
+TRUNCATE TABLE aviones;
+TRUNCATE TABLE estados_vuelos;
+TRUNCATE TABLE staff;
+TRUNCATE TABLE certificaciones_staff;
+TRUNCATE TABLE estados_aviones;
+TRUNCATE TABLE estados_staff;
+TRUNCATE TABLE cargos;
+TRUNCATE TABLE historial_cambios;
+SET FOREIGN_KEY_CHECKS = 1;
