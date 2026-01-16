@@ -53,7 +53,12 @@ class VentasManager(TablaManager):
     def _obtener_precio_pagado_usd(self, id_vuelo: int) -> float:
         query = "SELECT precio_venta_usd FROM vuelos WHERE id = %s"
 
-        precio_venta_usd: float = self.db_manager.consultar(query, (id_vuelo,))[0][0]
+        consulta: list[tuple] = self.db_manager.consultar(query, (id_vuelo,))[0][0]
+
+        if consulta:
+            precio_venta_usd: float = consulta[0][0]
+        else:
+            raise Exception("Error: no se encontró ningún resultado al consultar.")
 
         return precio_venta_usd
     
@@ -80,4 +85,3 @@ class VentasManager(TablaManager):
         venta = Venta(*consulta_venta)
 
         return venta
-    

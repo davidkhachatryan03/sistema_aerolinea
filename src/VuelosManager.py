@@ -159,10 +159,20 @@ class VuelosManager(TablaManager):
 
     def _calcular_costo_operativo_usd(self, id_ruta: int, id_avion: int) -> float:
         query: str = "SELECT duracion_min FROM rutas WHERE id = %s"
-        duracion_min: int = self.db_manager.consultar(query, (id_ruta,))[0][0]
+        consulta: list[tuple] = self.db_manager.consultar(query, (id_ruta,))
+        
+        if consulta:
+            duracion_min: int = consulta[0][0]
+        else:
+            raise Exception("Error: no se encontró ningún resultado al consultar.")
 
         query = "SELECT costo_hora_vuelo FROM aviones WHERE id = %s"
-        costo_hora_vuelo: float = self.db_manager.consultar(query, (id_avion,))[0][0]
+        consulta: list[tuple] = self.db_manager.consultar(query, (id_avion,))
+
+        if consulta:
+            costo_hora_vuelo: float = consulta[0][0]
+        else:
+            raise Exception("Error: no se encontró ningún resultado al consultar.")
 
         return (duracion_min / 60) * costo_hora_vuelo
 
@@ -183,7 +193,11 @@ class VuelosManager(TablaManager):
                 """
 
         consulta_vuelo: FilaVuelo = self.db_manager.consultar(query, (id_vuelo,))[0]
-        vuelo = Vuelo(*consulta_vuelo)
+
+        if consulta_vuelo:
+            vuelo = Vuelo(*consulta_vuelo)
+        else:
+            raise Exception("Error: no se encontró ningún resultado al consultar.")
 
         return vuelo
     
