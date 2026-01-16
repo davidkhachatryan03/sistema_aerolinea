@@ -39,7 +39,8 @@ class VentasManager(TablaManager):
         if not self._verificar_campos_requeridos(venta):
             raise Exception("Error: no se ingresaron todos los campos requeridos.")
         
-
+        if not self._verificar_pasajero(venta.id_pasajero):
+            raise Exception("Error: el pasajero no se encuentra registrado.")
 
     def _verificar_campos_requeridos(self, venta: Venta) -> bool:
         campos_requeridos = ["id_pasajero", "id_vuelo"]
@@ -85,3 +86,12 @@ class VentasManager(TablaManager):
         venta = Venta(*consulta_venta)
 
         return venta
+
+    def _verificar_pasajero(self, id_pasajero: int) -> bool:
+        query = "SELECT 1 FROM pasajeros where id = %s LIMIT 1"
+        consulta: list[tuple] = self.db_manager.consultar(query, (id_pasajero,))
+
+        if consulta:
+            return True
+        
+        return False
