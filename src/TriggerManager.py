@@ -1,5 +1,5 @@
 from mysql.connector import Error
-from DBManager import DBManager
+from src.DBManager import DBManager
 from mysql.connector.connection import MySQLConnection
 from mysql.connector.cursor import MySQLCursor
 from typing import Any, cast

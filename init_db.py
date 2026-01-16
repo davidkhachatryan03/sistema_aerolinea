@@ -1,5 +1,5 @@
-from DBManager import DBManager
-from TriggerManager import *
+from src.DBManager import DBManager
+from src.TriggerManager import *
 from mysql.connector import Error
 from mysql.connector.connection import MySQLConnection
 from mysql.connector.cursor import MySQLCursor
