@@ -42,6 +42,9 @@ class VentasManager(TablaManager):
         if not self._verificar_pasajero(venta.id_pasajero):
             raise Exception("Error: el pasajero no se encuentra registrado.")
         
+        if not self._verificar_capacidad(venta.id_vuelo):
+            raise Exception("Error: no hay más asientos disponibles.")
+        
         venta.num_reserva = self._generar_num_reserva()
         venta.id = None
         venta.fecha_venta = None
@@ -102,3 +105,49 @@ class VentasManager(TablaManager):
             return True
         
         return False
+    
+    def _verificar_capacidad(self, id_vuelo: int) -> bool:
+        num_ventas: int = self._obtener_num_ventas(id_vuelo)
+        capacidad: int = self._obtener_capacidad(id_vuelo)
+
+        if capacidad > num_ventas:
+            return True
+        
+        return False
+        
+    def _obtener_capacidad(self, id_vuelo: int) -> int:
+        query = """
+                SELECT  a.capacidad
+                FROM    ventas ve
+                JOIN    vuelos vu
+                ON      ve.id_vuelo = vu.id
+                JOIN    aviones a
+                ON      vu.id_avion = a.id
+                WHERE   ve.id_vuelo = %s
+                """
+
+        consulta: list[tuple] = self.db_manager.consultar(query, (id_vuelo,))
+
+        if consulta:
+            capacidad: int = consulta[0][0]
+        else:
+            raise Exception("Error: el avión seleccionado no existe.")
+        
+        return capacidad
+    
+    def _obtener_num_ventas(self, id_vuelo: int) -> int:
+        query = """
+                SELECT      COUNT(id_vuelo) AS num_ventas
+                FROM        ventas
+                GROUP BY    id_vuelo
+                WHERE       id = %s
+                """
+
+        consulta: list[tuple] = self.db_manager.consultar(query, (id_vuelo,))
+
+        if consulta:
+            num_ventas: int = consulta[0][0]
+        else:
+            raise Exception("Error: el vuelo selecionado no existe.")
+
+        return num_ventas
