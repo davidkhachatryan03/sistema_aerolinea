@@ -42,6 +42,9 @@ class VentasManager(TablaManager):
         if not self._verificar_pasajero(venta.id_pasajero):
             raise Exception("Error: el pasajero no se encuentra registrado.")
         
+        if not self._verificar_vuelo(venta.id_vuelo):
+            raise Exception("Error: el vuelo no se encuentra registrado.")
+        
         if not self._verificar_capacidad(venta.id_vuelo):
             raise Exception("Error: no hay más asientos disponibles.")
         
@@ -96,6 +99,15 @@ class VentasManager(TablaManager):
         venta = Venta(*consulta_venta)
 
         return venta
+    
+    def _verificar_vuelo(self, id_vuelo: int):
+        query = "SELECT 1 FROM pasajeros WHERE id = %s LIMIT 1"
+        consulta: list[tuple] = self.db_manager.consultar(query, (id_vuelo,))
+
+        if consulta:
+            return True
+        
+        return False
 
     def _verificar_pasajero(self, id_pasajero: int) -> bool:
         query = "SELECT 1 FROM pasajeros where id = %s LIMIT 1"
