@@ -41,6 +41,13 @@ class VentasManager(TablaManager):
         
         if not self._verificar_pasajero(venta.id_pasajero):
             raise Exception("Error: el pasajero no se encuentra registrado.")
+        
+        venta.num_reserva = self._generar_num_reserva()
+        venta.id = None
+        venta.fecha_venta = None
+        venta.precio_pagado_usd = self._obtener_precio_pagado_usd(venta.id_vuelo)
+        venta.id_estado_actual = 3
+
 
     def _verificar_campos_requeridos(self, venta: Venta) -> bool:
         campos_requeridos = ["id_pasajero", "id_vuelo"]
