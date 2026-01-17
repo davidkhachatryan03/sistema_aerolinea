@@ -17,7 +17,7 @@ class Venta:
         self.precio_pagado_usd = precio_pagado_usd
         self.id_estado_actual = id_estado_actual
 
-    def to_dict(self):
+    def to_dict(self) -> dict[str, Any]:
         datos = {
             "id_pasajero": self.id_pasajero,
             "id_vuelo": self.id_vuelo,
@@ -41,6 +41,22 @@ class VentasManager(TablaManager):
         
         if not self._verificar_pasajero(venta.id_pasajero):
             raise Exception("Error: el pasajero no se encuentra registrado.")
+        
+        if not self._verificar_vuelo(venta.id_vuelo):
+            raise Exception("Error: el vuelo no se encuentra registrado.")
+        
+        if not self._verificar_capacidad(venta.id_vuelo):
+            raise Exception("Error: no hay más asientos disponibles.")
+        
+        venta.num_reserva = self._generar_num_reserva()
+        venta.id = None
+        venta.fecha_venta = None
+        venta.precio_pagado_usd = self._obtener_precio_pagado_usd(venta.id_vuelo)
+        venta.id_estado_actual = 3
+
+        datos: dict[str, Any] = venta.to_dict()
+
+        super().agregar_fila(id_staff, datos)
 
     def _verificar_campos_requeridos(self, venta: Venta) -> bool:
         campos_requeridos = ["id_pasajero", "id_vuelo"]
@@ -86,6 +102,15 @@ class VentasManager(TablaManager):
         venta = Venta(*consulta_venta)
 
         return venta
+    
+    def _verificar_vuelo(self, id_vuelo: int):
+        query = "SELECT 1 FROM pasajeros WHERE id = %s LIMIT 1"
+        consulta: list[tuple] = self.db_manager.consultar(query, (id_vuelo,))
+
+        if consulta:
+            return True
+        
+        return False
 
     def _verificar_pasajero(self, id_pasajero: int) -> bool:
         query = "SELECT 1 FROM pasajeros where id = %s LIMIT 1"
@@ -95,3 +120,49 @@ class VentasManager(TablaManager):
             return True
         
         return False
+    
+    def _verificar_capacidad(self, id_vuelo: int) -> bool:
+        num_ventas: int = self._obtener_num_ventas(id_vuelo)
+        capacidad: int = self._obtener_capacidad(id_vuelo)
+
+        if capacidad > num_ventas:
+            return True
+        
+        return False
+        
+    def _obtener_capacidad(self, id_vuelo: int) -> int:
+        query = """
+                SELECT  a.capacidad
+                FROM    ventas ve
+                JOIN    vuelos vu
+                ON      ve.id_vuelo = vu.id
+                JOIN    aviones a
+                ON      vu.id_avion = a.id
+                WHERE   ve.id_vuelo = %s
+                """
+
+        consulta: list[tuple] = self.db_manager.consultar(query, (id_vuelo,))
+
+        if consulta:
+            capacidad: int = consulta[0][0]
+        else:
+            raise Exception("Error: el avión seleccionado no existe.")
+        
+        return capacidad
+    
+    def _obtener_num_ventas(self, id_vuelo: int) -> int:
+        query = """
+                SELECT      COUNT(id_vuelo) AS num_ventas
+                FROM        ventas
+                GROUP BY    id_vuelo
+                WHERE       id = %s
+                """
+
+        consulta: list[tuple] = self.db_manager.consultar(query, (id_vuelo,))
+
+        if consulta:
+            num_ventas: int = consulta[0][0]
+        else:
+            raise Exception("Error: el vuelo selecionado no existe.")
+
+        return num_ventas
