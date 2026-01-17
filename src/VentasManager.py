@@ -34,6 +34,11 @@ class VentasManager(TablaManager):
         datos: dict[str, Any] = venta.to_dict()
 
         super().agregar_fila(id_staff, datos)
+    
+    def modificar_num_reserva(self, id_staff: int, id_venta: int):
+        num_reserva: str = self._generar_num_reserva()
+
+        super().modificar_fila(id_venta, id_staff, num_reserva=num_reserva)
 
     def _verificar_campos_requeridos(self, venta: Venta) -> bool:
         campos_requeridos = ["id_pasajero", "id_vuelo"]
