@@ -39,6 +39,15 @@ class VuelosManager(TablaManager):
     def modificar_fechas(self, id_vuelo: int, id_staff: int, fecha_partida_programada: datetime, fecha_arribo_programada: datetime) -> None:
         vuelo: Vuelo = self._obtener_vuelo(id_vuelo)
 
+        if vuelo.fecha_partida_programada == fecha_partida_programada or vuelo.fecha_arribo_programada == fecha_arribo_programada:
+            return
+
+        if not super()._verificar_id_a_modificar(id_vuelo):
+            raise Exception("Error: el id a modificar no existe.")
+
+        if not super()._verificar_id_staff(id_staff):
+            raise Exception("Error: el staff ingresado no es válido.")
+
         if not self._verificar_fechas(fecha_partida_programada, fecha_arribo_programada):
             raise Exception("Error: la fecha de partida no puede ser mayor o igual a la fecha de llegada.")
 
@@ -52,6 +61,12 @@ class VuelosManager(TablaManager):
 
         if vuelo.id_avion == id_avion:
             return
+        
+        if not super()._verificar_id_a_modificar(id_vuelo):
+            raise Exception("Error: el id a modificaro no existe.")
+
+        if not super()._verificar_id_staff(id_staff):
+            raise Exception("Error: el staff ingresado no es válido.")
 
         if not self._verificar_avion(vuelo.id_avion, vuelo.id_ruta, vuelo.fecha_partida_programada, vuelo.fecha_arribo_programada):
             raise Exception("Error: no es posible asignar el avión seleccionado.")
@@ -63,6 +78,12 @@ class VuelosManager(TablaManager):
 
         if vuelo.id_ruta == id_ruta:
             return
+        
+        if not super()._verificar_id_a_modificar(id_vuelo):
+            raise Exception("Error: el id a modificaro no existe.")
+
+        if not super()._verificar_id_staff(id_staff):
+            raise Exception("Error: el staff ingresado no es válido.")
 
         if not self._verificar_avion(vuelo.id_avion, vuelo.id_ruta, vuelo.fecha_partida_programada, vuelo.fecha_arribo_programada):
             raise Exception("Error: no es posible cambiar la ruta.")
@@ -71,6 +92,12 @@ class VuelosManager(TablaManager):
 
     def modificar_estado(self, id_vuelo: int, id_staff: int, id_estado_actual: int) -> None:
         vuelo: Vuelo = self._obtener_vuelo(id_vuelo)
+
+        if not super()._verificar_id_a_modificar(id_vuelo):
+            raise Exception("Error: el id a modificaro no existe.")
+
+        if not super()._verificar_id_staff(id_staff):
+            raise Exception("Error: el staff ingresado no es válido.")
 
         if vuelo.id_estado_actual == id_estado_actual:
             return

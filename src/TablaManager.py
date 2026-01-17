@@ -90,3 +90,21 @@ class TablaManager:
                 else:
                     print("Hubo un error.\n")
                     self.conexion.rollback()
+
+    def _verificar_id_a_modificar(self, id: int) -> bool:
+        query = f"SELECT 1 FROM {self.tabla} WHERE id = %s LIMIT 1"
+        consulta: list[tuple] = self.db_manager.consultar(query, (id,))
+
+        if consulta:
+            return True
+        
+        return False
+
+    def _verificar_id_staff(self, id: int):
+        query = f"SELECT 1 FROM staff WHERE id = %s LIMIT 1"
+        consulta: list[tuple] = self.db_manager.consultar(query, (id,))
+
+        if consulta:
+            return True
+        
+        return False
