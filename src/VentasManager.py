@@ -17,7 +17,7 @@ class Venta:
         self.precio_pagado_usd = precio_pagado_usd
         self.id_estado_actual = id_estado_actual
 
-    def to_dict(self):
+    def to_dict(self) -> dict[str, Any]:
         datos = {
             "id_pasajero": self.id_pasajero,
             "id_vuelo": self.id_vuelo,
@@ -54,6 +54,9 @@ class VentasManager(TablaManager):
         venta.precio_pagado_usd = self._obtener_precio_pagado_usd(venta.id_vuelo)
         venta.id_estado_actual = 3
 
+        datos: dict[str, Any] = venta.to_dict()
+
+        super().agregar_fila(id_staff, datos)
 
     def _verificar_campos_requeridos(self, venta: Venta) -> bool:
         campos_requeridos = ["id_pasajero", "id_vuelo"]
