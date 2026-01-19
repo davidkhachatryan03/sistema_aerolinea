@@ -64,10 +64,47 @@ class VentasManager(TablaManager):
         if not super()._verificar_id_staff(id_staff):
             raise Exception("Error: el staff ingresado no es válido.")
         
+        if id_estado_actual not in self.estados_posibles:
+            raise Exception("Error: el estado ingresado no existe.")
+        
         if venta.id_estado_actual == id_estado_actual:
             return
         
         super().modificar_fila(id_venta, id_staff, id_estado_actual=id_estado_actual)
+    
+    def cambiar_vuelo(self, id_venta: int, id_staff: int, id_vuelo: int) -> None:
+        venta: Venta = self._obtener_venta(id_venta)
+
+        if not super()._verificar_id_a_modificar(id_venta):
+            raise Exception("Error: el id a modificar no existe.")
+
+        if not super()._verificar_id_staff(id_staff):
+            raise Exception("Error: el staff ingresado no es válido.")
+        
+        if not self._verificar_vuelo(venta.id_vuelo):
+            raise Exception("Error: el vuelo no se encuentra registrado.")
+        
+        if venta.id_vuelo == id_vuelo:
+            return
+        
+        precio_pagado_usd = self._obtener_precio_pagado_usd(id_vuelo)
+        
+        super().modificar_fila(id_venta, id_staff, id_vuelo=id_vuelo, precio_pagado_usd = precio_pagado_usd)
+    
+    def cambiar_pasajero(self, id_venta: int, id_staff: int, id_pasajero: int) -> None:
+        venta: Venta = self._obtener_venta(id_venta)
+        
+        if not super()._verificar_id_a_modificar(id_venta):
+            raise Exception("Error: el id a modificar no existe.")
+
+        if not super()._verificar_id_staff(id_staff):
+            raise Exception("Error: el staff ingresado no es válido.")
+        
+        if not self._verificar_pasajero(id_pasajero):
+            raise Exception("Error: el pasajero ingresado no existe.")
+        
+        if venta.id_pasajero == id_pasajero:
+            return
 
     def _verificar_campos_requeridos(self, venta: Venta) -> bool:
         campos_requeridos = ["id_pasajero", "id_vuelo"]
