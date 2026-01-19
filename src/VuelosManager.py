@@ -10,6 +10,12 @@ class VuelosManager(TablaManager):
 
     def __init__(self, db_manager: DBManager):
         super().__init__("vuelos", db_manager)
+        self.estados_posibles = {
+            1: "Programado",
+            2: "En vuelo",
+            3: "Aterrizado",
+            4: "Cancelado"
+        }
     
     def registrar_vuelo(self, id_staff: int, vuelo:Vuelo) -> None:
         if not self._verificar_campos_requeridos(vuelo):
@@ -101,18 +107,11 @@ class VuelosManager(TablaManager):
 
         if vuelo.id_estado_actual == id_estado_actual:
             return
-        
-        estados_posibles = {
-            1: "Programado",
-            2: "En vuelo",
-            3: "Aterrizado",
-            4: "Cancelado"
-        }
 
-        if estados_posibles[id_estado_actual] == "En vuelo":
+        if self.estados_posibles[id_estado_actual] == "En vuelo":
             fecha_partida_real: str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             super().modificar_fila(id_vuelo, id_staff, id_estado_actual=id_estado_actual, fecha_partida_real=fecha_partida_real)
-        elif estados_posibles[id_estado_actual] == "Aterrizado":
+        elif self.estados_posibles[id_estado_actual] == "Aterrizado":
             fecha_arribo_real: str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             super().modificar_fila(id_vuelo, id_staff, id_estado_actual=id_estado_actual, fecha_arribo_real=fecha_arribo_real)
 
