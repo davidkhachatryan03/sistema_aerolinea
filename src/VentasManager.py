@@ -11,8 +11,17 @@ class VentasManager(TablaManager):
 
     def __init__(self, db_manager):
         super().__init__("ventas", db_manager)
+        self.estados_posibles = {
+            1: "Pagado",
+            2: "Reembolsado",
+            3: "Reservado",
+            4: "Fraude detectado"
+        }
     
     def registrar_venta(self, id_staff: int, venta: Venta) -> None:
+        if not super()._verificar_id_staff(id_staff):
+            raise Exception("Error: el staff ingresado no es válido.")
+        
         if not self._verificar_campos_requeridos(venta):
             raise Exception("Error: no se ingresaron todos los campos requeridos.")
         
@@ -34,6 +43,31 @@ class VentasManager(TablaManager):
         datos: dict[str, Any] = venta.to_dict()
 
         super().agregar_fila(id_staff, datos)
+    
+    def modificar_num_reserva(self, id_staff: int, id_venta: int) -> None:
+        if not super()._verificar_id_a_modificar(id_venta):
+            raise Exception("Error: el id a modificar no existe.")
+
+        if not super()._verificar_id_staff(id_staff):
+            raise Exception("Error: el staff ingresado no es válido.")
+        
+        num_reserva: str = self._generar_num_reserva()
+
+        super().modificar_fila(id_venta, id_staff, num_reserva=num_reserva)
+
+    def modificar_estado(self, id_venta: int, id_staff: int, id_estado_actual: int) -> None:
+        venta: Venta = self._obtener_venta(id_venta)
+
+        if not super()._verificar_id_a_modificar(id_venta):
+            raise Exception("Error: el id a modificar no existe.")
+
+        if not super()._verificar_id_staff(id_staff):
+            raise Exception("Error: el staff ingresado no es válido.")
+        
+        if venta.id_estado_actual == id_estado_actual:
+            return
+        
+        super().modificar_fila(id_venta, id_staff, id_estado_actual=id_estado_actual)
 
     def _verificar_campos_requeridos(self, venta: Venta) -> bool:
         campos_requeridos = ["id_pasajero", "id_vuelo"]
