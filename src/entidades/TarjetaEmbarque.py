@@ -3,7 +3,7 @@ from typing import Any
 
 class TarjetaEmbarque:
 
-    def __init__(self, id_venta: int, id: int | None=None, fecha_emision: datetime | None=None, fecha_embarque: int | None=None, id_estado_actual: int | None=None) -> None:
+    def __init__(self, id_venta: int, id: int | None=None, fecha_emision: datetime | None=None, fecha_embarque: datetime | None=None, id_estado_actual: int | None=None) -> None:
         self.id_venta = id_venta
         self.id = id
         self.fecha_emision = fecha_emision

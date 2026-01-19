@@ -1,6 +1,9 @@
 from src.entidades.TarjetaEmbarque import TarjetaEmbarque
 from src.TablaManager import TablaManager
+from datetime import datetime
 from typing import Any
+
+FilaTarjetaEmbarque = tuple[int, int, datetime, datetime, int]
 
 class TarjetaEmbarqueManager(TablaManager):
 
@@ -29,7 +32,29 @@ class TarjetaEmbarqueManager(TablaManager):
         datos: dict[str, Any] = tarjeta_embarque.to_dict() 
 
         super().agregar_fila(id_staff, datos)
+    
+    def registrar_fecha_embarque(self, id_tarjeta_embarque: int, id_staff: int, fecha_emision: datetime) -> None:
+        if not super()._verificar_id_a_modificar(id_tarjeta_embarque):
+            raise Exception("Error: el id a modificar no existe.")
+
+        if not super()._verificar_id_staff(id_staff):
+            raise Exception("Error: el staff ingresado no es válido.")
         
+        super().modificar_fila(id_tarjeta_embarque, id_staff, fecha_emision=fecha_emision)
+    
+    def cambiar_estado(self, id_tarjeta_embarque: int, id_staff: int, id_estado_actual: int) -> None:
+        tarjeta_embarque: TarjetaEmbarque = self._obtener_tarjeta_embarque(id_tarjeta_embarque)
+
+        if not super()._verificar_id_a_modificar(id_tarjeta_embarque):
+            raise Exception("Error: el id a modificar no existe.")
+
+        if not super()._verificar_id_staff(id_staff):
+            raise Exception("Error: el staff ingresado no es válido.")
+        
+        if tarjeta_embarque.id_estado_actual == id_estado_actual:
+            return
+        
+        super().modificar_fila(id_tarjeta_embarque, id_staff, id_estado_actual=id_estado_actual)
         
     def _verificar_campos_requeridos(self, tarjeta_embarque: TarjetaEmbarque) -> bool:
         for campo in self.campos_requeridos:
@@ -37,3 +62,23 @@ class TarjetaEmbarqueManager(TablaManager):
                 return False
         
         return True
+    
+    def _obtener_tarjeta_embarque(self, id_tarjeta_embarque: int) -> TarjetaEmbarque:
+        query = """
+                SELECT  id_venta,
+                        id,
+                        fecha_emision,
+                        fecha_embarque,
+                        id_estado_actual
+                FROM    ventas
+                WHERE   id = %s
+                """
+        
+        consulta_tarjeta_embarque: FilaTarjetaEmbarque = self.db_manager.consultar(query, (id_tarjeta_embarque,))[0]
+
+        if consulta_tarjeta_embarque:
+            tarjeta_embarque = TarjetaEmbarque(*consulta_tarjeta_embarque)
+        else:
+            raise Exception("Error: no existe tarjeta de embarque con el id ingresado.")
+    
+        return tarjeta_embarque
