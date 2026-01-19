@@ -3,7 +3,7 @@ from typing import Any
 
 class Documento:
 
-    def __init__(self, num_documento: int, fecha_vencimiento: datetime, pais_emision: str, id_pasajero: int, id_tipo_documento: int, id: int | None) -> None:
+    def __init__(self, num_documento: str, fecha_vencimiento: datetime, pais_emision: str, id_pasajero: int, id_tipo_documento: int, id: int | None) -> None:
         self.num_documento = num_documento
         self.fecha_vencimiento = fecha_vencimiento
         self.pais_emision = pais_emision
