@@ -41,12 +41,12 @@ class TablaManager:
             print("Hubo un error.\n")
             self.conexion.rollback()
 
-    def modificar_fila(self, id: int, id_staff: int, **datos) -> None:
+    def modificar_fila(self, id: int, id_staff_modifica: int, **datos) -> None:
         if self.cursor == None or self.conexion == None:
                 print("No hay cursor.")
                 return
 
-        self.cursor.execute("SET @usuario = %s", (id_staff,))
+        self.cursor.execute("SET @usuario = %s", (id_staff_modifica,))
 
         columnas: str = ", ".join(map(str, datos.keys()))
         valores: list[Any] = ", ".join(map(str, datos.values())).split(", ")
