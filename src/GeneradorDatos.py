@@ -1,95 +1,55 @@
 from faker import Faker
 from datetime import datetime, timedelta, date
-from DBManager import DBManager
-from mysql.connector.connection import MySQLConnection
-from mysql.connector.cursor import MySQLCursor
-from typing import Any, cast
 import random
+from typing import Any, cast
+from src.entidades.Pasajero import Pasajero
+from src.entidades.Vuelo import Vuelo
+from src.entidades.Venta import Venta
+
+FilaPasajero = tuple[str, str, int, bool, bool]
+FilaVenta = tuple[int, int, str | None, datetime | None, float | None, int | None, int | None]
 
 class GeneradorDatos:
 
-    def __init__(self, db_manager: DBManager) -> None:
+    def __init__(self) -> None:
         self.fake: Faker = Faker('es_AR')
-        self.db_manager: DBManager = db_manager
-        self.cursor: MySQLCursor | None = db_manager.obtener_cursor()
-        self.conexion: MySQLConnection | None = db_manager.obtener_conexion()
 
-    def generar_pasajeros(self, cant: int) -> list[tuple]:
-        pasajeros: list[tuple[str, str, str, int, int ]] = []
+    def generar_pasajeros(self, cant: int) -> list[Pasajero]:
+        pasajeros: list[Pasajero] = []
 
         for _ in range(cant):
-            pasajero: tuple[str, str, str, int , int] = (
-                f"{self.fake.first_name()} {self.fake.last_name()}",
-                self.fake.email(),
-                self.fake.numerify("%#########"),
-                0,
-                0
-            )
+            nombre_completo: str = self.fake.name()
+            email: str = self.fake.email()
+            telefono: int = int(self.fake.numerify("11%#######"))
+            esta_en_lista_negra: bool = True
+            es_vip: bool = False
 
+            fila_pasajero: FilaPasajero = (nombre_completo, email, telefono, esta_en_lista_negra, es_vip)
+            pasajero = Pasajero(*fila_pasajero)
             pasajeros.append(pasajero)
 
         return pasajeros
 
-    def generar_vuelos(self, cant: int) -> list[tuple[date, date, None, None, float, float, float, int, int, int]] | None:
-        if self.cursor == None or self.conexion == None:
-                print("No hay cursor.")
-                return
-        
-        vuelos: list[tuple[date, date, None, None, float, float, float, int, int, int]] = []
+    def generar_ventas(self, pasajeros: list[Pasajero], vuelos: list[Vuelo]):
+        ventas: list[Venta] = []
 
-        self.cursor.execute("SELECT * FROM aviones")
-        aviones: list[tuple[int, str, str, str, int, int, float, int]] = cast(list[tuple[int, str, str, str, int, int, float, int]], self.cursor.fetchall())
+        for _ in range(len(pasajeros)):
+            pasajero: Pasajero = random.choice(pasajeros)
+            vuelo: Vuelo = random.choice(vuelos)
 
-        self.cursor.execute("SELECT * FROM rutas")
-        rutas: list[tuple[int, str, str, str, int, int]] = cast(list[tuple[int, str, str, str, int, int]], self.cursor.fetchall())
+            num_reserva: str = self.fake.bothify("??##?#")
+            precio_pagado_usd: float | None = vuelo.precio_venta_usd
+            id_vuelo: int = vuelo.id
+            id_estado_actual: int = 1
+            id_pasajero: int = pasajero.id
 
-        for _ in range(cant):
-            ruta: tuple[int, str, str, str, int, int] = random.choice(rutas)
-            distancia_km: int = ruta[5]
+            fila_venta: FilaVenta = (id_pasajero, id_vuelo, )
 
-            fecha_partida_programada: date = self.fake.date_between(start_date="+30d", end_date="+180d")
-            duracion_vuelo: timedelta = timedelta(minutes=ruta[5])
-            fecha_arribo_programada: date = fecha_partida_programada + duracion_vuelo
+    def generar_tarjetas_embarque(self):
+        pass
 
-            avion: tuple = random.choice(aviones)
-            autonomia_km: int = avion[5]
+    def generar_documentos(self):
+        pass
 
-            while autonomia_km < distancia_km:
-                avion = random.choice(aviones)
-
-            costo_operativo_usd: float = avion[6] * ruta[5] / 60
-
-            precio_venta_usd: float = costo_operativo_usd * 1.30
-
-            vuelo = (
-                fecha_partida_programada,
-                fecha_arribo_programada,
-                None,
-                None,
-                avion[6] * ruta[5] / 60,
-                costo_operativo_usd,
-                precio_venta_usd,
-                ruta[0],
-                avion[0],
-                1
-            )
-
-            vuelos.append(vuelo)
-        
-        return vuelos
-
-    def generar_ventas(self, pasajeros, vuelos, cant):
-        ventas = []
-
-        for _ in range(cant):
-            num_reserva = self.fake.bothify("??####", letters="ABCDEFGHIJKLMN")
-            fecha_venta = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
-            vuelo = random.choice(vuelo)
-
-            venta = (
-                num_reserva,
-                fecha_venta,
-
-
-            )
+    def generar_asignaciones_vuelos(self):
+        pass
