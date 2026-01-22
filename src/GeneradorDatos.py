@@ -3,8 +3,11 @@ from datetime import datetime, timedelta, date
 import random
 from typing import Any, cast
 from src.entidades.Pasajero import Pasajero
+from src.entidades.Vuelo import Vuelo
+from src.entidades.Venta import Venta
 
 FilaPasajero = tuple[str, str, int, bool, bool]
+FilaVenta = tuple[int, int, str | None, datetime | None, float | None, int | None, int | None]
 
 class GeneradorDatos:
 
@@ -27,8 +30,20 @@ class GeneradorDatos:
 
         return pasajeros
 
-    def generar_ventas(self):
-        pass
+    def generar_ventas(self, pasajeros: list[Pasajero], vuelos: list[Vuelo]):
+        ventas: list[Venta] = []
+
+        for _ in range(len(pasajeros)):
+            pasajero: Pasajero = random.choice(pasajeros)
+            vuelo: Vuelo = random.choice(vuelos)
+
+            num_reserva: str = self.fake.bothify("??##?#")
+            precio_pagado_usd: float | None = vuelo.precio_venta_usd
+            id_vuelo: int = vuelo.id
+            id_estado_actual: int = 1
+            id_pasajero: int = pasajero.id
+
+            fila_venta: FilaVenta = (id_pasajero, id_vuelo, )
 
     def generar_tarjetas_embarque(self):
         pass
