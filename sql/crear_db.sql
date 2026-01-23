@@ -136,7 +136,7 @@ CREATE TABLE ventas (
 
 CREATE TABLE tarjetas_embarque (
 	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    fecha_emision DATETIME NOT NULL,
+    fecha_emision DATETIME DEFAULT NOW(),
     fecha_embarque DATETIME,
     id_estado_actual INT UNSIGNED NOT NULL,
     id_venta INT UNSIGNED NOT NULL,

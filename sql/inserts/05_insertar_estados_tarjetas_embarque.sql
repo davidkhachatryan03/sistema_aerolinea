@@ -8,4 +8,4 @@ INSERT INTO estados_tarjetas_embarque (descripcion) VALUES
 ("Emitida"),
 ("No show"),
 ("Denegada"),
-("Pendiente")
+("Embarcado")
