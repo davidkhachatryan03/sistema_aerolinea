@@ -7,6 +7,8 @@ from src.entidades.Vuelo import VueloBase, VueloDesdeDB
 from src.entidades.Venta import VentaBase, VentaDesdeDB
 from src.entidades.TarjetaEmbarque import TarjetaEmbarqueBase, TarjetaEmbarqueDesdeDB
 from src.entidades.Documento import DocumentoBase, DocumentoDesdeDB
+from src.entidades.Ruta import RutaBase, RutaDesdeDB
+from src.entidades.Avion import AvionBase, AvionDesdeDB
 
 class GeneradorDatos:
 
@@ -82,8 +84,26 @@ class GeneradorDatos:
     def generar_asignaciones_vuelos(self):
         pass
 
-    def generar_vuelos(self):
-        pass
+    def generar_vuelos(self, cant: int, rutas: list[RutaDesdeDB], aviones: list[AvionDesdeDB]) -> list[VueloBase]:
+        vuelos: list[VueloBase] = []
+
+        for _ in range(cant):
+            ruta: RutaDesdeDB = random.choice(rutas)
+            avion: AvionDesdeDB = random.choice(aviones)
+
+            fecha_partida_programada: datetime = self.fake.date_time_between(start_date="+30d", end_date="+180d")
+            fecha_arribo_programada: datetime = fecha_partida_programada + timedelta(minutes=ruta.duracion_min)
+            costo_operativo_usd: float = avion.costo_hora_vuelo * ruta.duracion_min / 60
+            precio_venta_usd: float = costo_operativo_usd * 1.3
+            id_ruta: int = ruta.id
+            id_avion: int = avion.id
+            id_estado_actual: int = 1
+
+            vuelo = VueloBase(id_ruta, id_avion, id_estado_actual, fecha_arribo_programada, fecha_arribo_programada, costo_operativo_usd, precio_venta_usd)
+
+            vuelos.append(vuelo)
+
+        return vuelos
 
     def _generar_num_reserva(self, longitud=6) -> str:
         num_reserva: str = ""
