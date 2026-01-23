@@ -5,6 +5,7 @@ from typing import Any, cast
 from src.entidades.Pasajero import PasajeroBase, PasajeroDesdeDB
 from src.entidades.Vuelo import VueloBase, VueloDesdeDB
 from src.entidades.Venta import VentaBase, VentaDesdeDB
+from src.entidades.TarjetaEmbarque import TarjetaEmbarqueBase, TarjetaEmbarqueDesdeDB
 
 class GeneradorDatos:
 
@@ -46,8 +47,20 @@ class GeneradorDatos:
 
         return ventas
 
-    def generar_tarjetas_embarque(self):
-        pass
+    def generar_tarjetas_embarque(self, cant: int, ventas: list[VentaDesdeDB]) -> list[TarjetaEmbarqueBase]:
+        tarjetas_de_embarque: list[TarjetaEmbarqueBase] = []
+
+        for _ in range(cant):
+            venta: VentaDesdeDB = random.choice(ventas)
+
+            id_estado_actual: int = 1
+            id_venta: int = venta.id
+
+            tarjeta_embarque = TarjetaEmbarqueBase(id_estado_actual, id_venta)
+
+            tarjetas_de_embarque.append(tarjeta_embarque)
+
+        return tarjetas_de_embarque
 
     def generar_documentos(self):
         pass
