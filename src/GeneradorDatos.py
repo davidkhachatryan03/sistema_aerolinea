@@ -6,6 +6,7 @@ from src.entidades.Pasajero import PasajeroBase, PasajeroDesdeDB
 from src.entidades.Vuelo import VueloBase, VueloDesdeDB
 from src.entidades.Venta import VentaBase, VentaDesdeDB
 from src.entidades.TarjetaEmbarque import TarjetaEmbarqueBase, TarjetaEmbarqueDesdeDB
+from src.entidades.Documento import DocumentoBase, DocumentoDesdeDB
 
 class GeneradorDatos:
 
@@ -62,8 +63,21 @@ class GeneradorDatos:
 
         return tarjetas_de_embarque
 
-    def generar_documentos(self):
-        pass
+    def generar_documentos(self, pasajeros: list[PasajeroDesdeDB]) -> list[DocumentoBase]:
+        documentos: list[DocumentoBase] = []
+
+        for pasajero in pasajeros:
+            num_documento: str = self._generar_num_documento()
+            fecha_vencimiento: date = self.fake.date_between(start_date="+180d", end_date="+10y")
+            pais_emision: str = random.choices(["ARG","USA","ESP","BRA","CHL"], weights=[80,10,3,3,4])[0]
+            id_pasajero: int = pasajero.id
+            id_tipo_documento: int = random.choices([1,2,3], weights=[10,85,5])[0]
+
+            documento = DocumentoBase(num_documento, fecha_vencimiento, pais_emision, id_pasajero, id_tipo_documento)
+
+            documentos.append(documento)
+        
+        return documentos
 
     def generar_asignaciones_vuelos(self):
         pass
@@ -80,3 +94,13 @@ class GeneradorDatos:
             num_reserva += random.choice(caracteres)
 
         return num_reserva
+    
+    def _generar_num_documento(self, longitud=8) -> str:
+        num_documento: str = ""
+
+        numeros = "1234567890"
+
+        for _ in range(longitud):
+            num_documento += random.choice(numeros)
+
+        return num_documento
