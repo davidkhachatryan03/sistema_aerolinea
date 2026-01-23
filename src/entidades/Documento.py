@@ -1,9 +1,9 @@
-from datetime import datetime
+from datetime import datetime, date
 from typing import Any
 
 class DocumentoBase:
 
-    def __init__(self, num_documento: str, fecha_vencimiento: datetime, pais_emision: str, id_pasajero: int, id_tipo_documento: int) -> None:
+    def __init__(self, num_documento: str, fecha_vencimiento: date, pais_emision: str, id_pasajero: int, id_tipo_documento: int) -> None:
         self.num_documento = num_documento
         self.fecha_vencimiento = fecha_vencimiento
         self.pais_emision = pais_emision
