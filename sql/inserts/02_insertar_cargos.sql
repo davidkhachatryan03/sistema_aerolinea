@@ -8,6 +8,8 @@ INSERT INTO cargos (descripcion) VALUES
 ("Capitán"),
 ("Primer oficial"),
 ("Tripulante de cabina"),
+("Jefe de cabina"),
 ("Técnico de mantenimiento"),
-("Agente de mostrador"),
-("Gerente general")
+("Ingeniero aeronáutico"),
+("Agente de tierra"),
+("Jefe de tierra")

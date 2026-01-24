@@ -112,6 +112,8 @@ CREATE TABLE staff (
 
 CREATE TABLE asignaciones_vuelos (
 	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    fecha_inicio DATETIME NOT NULL,
+    fecha_fin DATETIME NOT NULL,
     id_rol INT UNSIGNED NOT NULL,
     id_vuelo INT UNSIGNED NOT NULL,
     id_staff INT UNSIGNED NOT NULL,
