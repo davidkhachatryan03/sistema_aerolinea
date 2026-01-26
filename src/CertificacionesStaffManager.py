@@ -1,9 +1,9 @@
-from src.entidades.CertificacionStaff import CertificacionStaff
+from src.entidades.CertificacionStaff import CertificacionStaffBase, CertificacionStaffDesdeDB
 from src.TablaManager import TablaManager
 from datetime import datetime
 from typing import Any
 
-FilaCertificacion = tuple[int, str, datetime, int | None]
+FilaCertificacion = tuple[int, int, str, datetime]
 
 class CertificacionesStaffManager(TablaManager):
 
@@ -11,7 +11,7 @@ class CertificacionesStaffManager(TablaManager):
         super().__init__("certificaciones_staff", db_manager)
         self.campos_requeridos = ["id_staff", "descripcion", "licencia_hasta"]
 
-    def registrar_certificacion(self, id_staff: int, certificacion: CertificacionStaff) -> None:
+    def registrar_certificacion(self, id_staff: int, certificacion: CertificacionStaffBase) -> None:
         if not super()._verificar_id_staff(id_staff):
             raise Exception("Error: el staff ingresado no es válido.")
         
@@ -32,7 +32,7 @@ class CertificacionesStaffManager(TablaManager):
         if not super()._verificar_id_staff(id_staff_nuevo):
             raise Exception("Error: el staff ingresado no es válido.")
         
-        certificacion: CertificacionStaff = self._obtener_documento(id_certificacion)
+        certificacion: CertificacionStaffDesdeDB = self._obtener_documento(id_certificacion)
 
         if certificacion.id_staff == id_staff_nuevo:
             return
@@ -46,7 +46,7 @@ class CertificacionesStaffManager(TablaManager):
         if not super()._verificar_id_staff(id_staff):
             raise Exception("Error: el staff ingresado no es válido.")
         
-        certificacion: CertificacionStaff = self._obtener_documento(id_certificacion)
+        certificacion: CertificacionStaffDesdeDB = self._obtener_documento(id_certificacion)
 
         if certificacion.id_staff == id_staff:
             return
@@ -60,21 +60,21 @@ class CertificacionesStaffManager(TablaManager):
         if not super()._verificar_id_staff(id_staff):
             raise Exception("Error: el staff ingresado no es válido.")
         
-        certificacion: CertificacionStaff = self._obtener_documento(id_certificacion)
+        certificacion: CertificacionStaffDesdeDB = self._obtener_documento(id_certificacion)
 
         if certificacion.licencia_hasta == licencia_hasta:
             return
         
         super().modificar_fila(id_certificacion, id_staff, licencia_hasta=licencia_hasta)
     
-    def _verificar_campos_requeridos(self, certificacion: CertificacionStaff):
+    def _verificar_campos_requeridos(self, certificacion: CertificacionStaffBase):
         for campo in self.campos_requeridos:
             if getattr(certificacion, campo) == None:
                 return False
         
         return True
     
-    def _obtener_documento(self, id_certificacion: int) -> CertificacionStaff:
+    def _obtener_documento(self, id_certificacion: int) -> CertificacionStaffDesdeDB:
         query = """
                 SELECT  id_staff,
                         descripcion,
@@ -88,7 +88,7 @@ class CertificacionesStaffManager(TablaManager):
 
         if consulta_certificacion:
             fila_certificacion: FilaCertificacion = consulta_certificacion[0]
-            certificacion = CertificacionStaff(*fila_certificacion)
+            certificacion = CertificacionStaffDesdeDB(*fila_certificacion)
         else:
             raise Exception("Error: no se encontró ningún resultado al consultar.")
         
