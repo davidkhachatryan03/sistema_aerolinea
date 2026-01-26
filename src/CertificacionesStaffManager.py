@@ -76,10 +76,10 @@ class CertificacionesStaffManager(TablaManager):
     
     def _obtener_certificacion(self, id_certificacion: int) -> CertificacionStaffDesdeDB:
         query = """
-                SELECT  id_staff,
+                SELECT  id,
+                        id_staff,
                         descripcion,
                         licencia_hasta,
-                        id
                 FROM    certificaciones_staff
                 WHERE   id = %s
                 """

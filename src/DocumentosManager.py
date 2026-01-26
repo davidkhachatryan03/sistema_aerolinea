@@ -1,9 +1,9 @@
 from src.TablaManager import TablaManager
-from src.entidades.Documento import Documento
+from src.entidades.Documento import DocumentoBase, DocumentoDesdeDB
 from datetime import datetime
 from typing import Any
 
-FilaDocumento = tuple[str, datetime, str, int, int, int]
+FilaDocumento = tuple[int, str, datetime, str, int, int]
 
 class DocumentosManager(TablaManager):
 
@@ -11,7 +11,7 @@ class DocumentosManager(TablaManager):
         super().__init__("documentos", db_manager)
 
     # se podría hacer que se extraigan todos los datos a partir del numero de documento ingresado
-    def registrar_documento(self, id_staff: int, documento: Documento) -> None:
+    def registrar_documento(self, id_staff: int, documento: DocumentoBase) -> None:
         if not super()._verificar_id_staff(id_staff):
             raise Exception("Error: el staff ingresado no es válido.")
         
@@ -26,7 +26,7 @@ class DocumentosManager(TablaManager):
         if not super()._verificar_id_staff(id_staff):
             raise Exception("Error: el staff ingresado no es válido.")
         
-        documento: Documento = self._obtener_documento(id_documento)
+        documento: DocumentoDesdeDB = self._obtener_documento(id_documento)
 
         if documento.num_documento == num_documento:
             return
@@ -40,7 +40,7 @@ class DocumentosManager(TablaManager):
         if not super()._verificar_id_staff(id_staff):
             raise Exception("Error: el staff ingresado no es válido.")
         
-        documento: Documento = self._obtener_documento(id_documento)
+        documento: DocumentoDesdeDB = self._obtener_documento(id_documento)
         
         if documento.fecha_vencimiento == fecha_vencimiento:
             return
@@ -54,7 +54,7 @@ class DocumentosManager(TablaManager):
         if not super()._verificar_id_staff(id_staff):
             raise Exception("Error: el staff ingresado no es válido.")
         
-        documento: Documento = self._obtener_documento(id_documento)
+        documento: DocumentoDesdeDB = self._obtener_documento(id_documento)
 
         if documento.pais_emision == pais_emision:
             return
@@ -68,7 +68,7 @@ class DocumentosManager(TablaManager):
         if not super()._verificar_id_staff(id_staff):
             raise Exception("Error: el staff ingresado no es válido.")
         
-        documento: Documento = self._obtener_documento(id_documento)
+        documento: DocumentoDesdeDB = self._obtener_documento(id_documento)
 
         if documento.id_pasajero == id_pasajero:
             return
@@ -82,29 +82,30 @@ class DocumentosManager(TablaManager):
         if not super()._verificar_id_staff(id_staff):
             raise Exception("Error: el staff ingresado no es válido.")
         
-        documento: Documento = self._obtener_documento(id_documento)
+        documento: DocumentoDesdeDB = self._obtener_documento(id_documento)
         
         if documento.id_tipo_documento == id_tipo_documento:
             return
 
         super().modificar_fila(id_documento, id_staff, id_tipo_documento=id_tipo_documento)
 
-    def _obtener_documento(self, id_documento: int) -> Documento:
+    def _obtener_documento(self, id_documento: int) -> DocumentoDesdeDB:
         query = """
-                SELECT  num_documento,
+                SELECT  id,
+                        num_documento,
                         fecha_vencimiento,
                         pais_emision,
                         id_pasajero,
-                        id_tipo_documento,
-                        id
+                        id_tipo_documento
                 FROM    documentos
                 WHERE   id = %s
                 """
 
-        consulta_documento: FilaDocumento = self.db_manager.consultar(query, (id_documento, ))[0]
+        consulta_documento: list[tuple] = self.db_manager.consultar(query, (id_documento, ))
 
         if consulta_documento:
-            documento = Documento(*consulta_documento)
+            fila_documento: FilaDocumento = consulta_documento[0]
+            documento = DocumentoDesdeDB(*fila_documento)
         else:
             raise Exception("Error: el id ingresado no existe.")
 
