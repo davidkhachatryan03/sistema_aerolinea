@@ -32,7 +32,7 @@ class CertificacionesStaffManager(TablaManager):
         if not super()._verificar_id_staff(id_staff_nuevo):
             raise Exception("Error: el staff ingresado no es válido.")
         
-        certificacion: CertificacionStaffDesdeDB = self._obtener_documento(id_certificacion)
+        certificacion: CertificacionStaffDesdeDB = self._obtener_certificacion(id_certificacion)
 
         if certificacion.id_staff == id_staff_nuevo:
             return
@@ -46,7 +46,7 @@ class CertificacionesStaffManager(TablaManager):
         if not super()._verificar_id_staff(id_staff):
             raise Exception("Error: el staff ingresado no es válido.")
         
-        certificacion: CertificacionStaffDesdeDB = self._obtener_documento(id_certificacion)
+        certificacion: CertificacionStaffDesdeDB = self._obtener_certificacion(id_certificacion)
 
         if certificacion.id_staff == id_staff:
             return
@@ -60,7 +60,7 @@ class CertificacionesStaffManager(TablaManager):
         if not super()._verificar_id_staff(id_staff):
             raise Exception("Error: el staff ingresado no es válido.")
         
-        certificacion: CertificacionStaffDesdeDB = self._obtener_documento(id_certificacion)
+        certificacion: CertificacionStaffDesdeDB = self._obtener_certificacion(id_certificacion)
 
         if certificacion.licencia_hasta == licencia_hasta:
             return
@@ -74,7 +74,7 @@ class CertificacionesStaffManager(TablaManager):
         
         return True
     
-    def _obtener_documento(self, id_certificacion: int) -> CertificacionStaffDesdeDB:
+    def _obtener_certificacion(self, id_certificacion: int) -> CertificacionStaffDesdeDB:
         query = """
                 SELECT  id_staff,
                         descripcion,
