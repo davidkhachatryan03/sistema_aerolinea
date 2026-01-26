@@ -10,11 +10,11 @@ class AsignacionesVuelosManager(TablaManager):
     def asignar_tripulacion(self):
         pass
 
-    def cambiar_piloto(self):
+    def asignar_piloto(self, id_staff: int, id_vuelo: int, id_piloto: int) -> None:
         pass
 
-    def cambiar_azafata(self):
+    def asignar_azafata(self):
         pass
 
-    def cambiar_mecanico(self):
+    def asignar_mecanico(self):
         pass
