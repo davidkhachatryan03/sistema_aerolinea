@@ -173,16 +173,16 @@ class VuelosManager(TablaManager):
 
     def _obtener_vuelo(self, id_vuelo: int) -> VueloDesdeDB:
         query = """
-                SELECT  fecha_partida_programada,
-                        fecha_arribo_programada,
+                SELECT  id,
                         id_ruta,
                         id_avion,
-                        id,
-                        fecha_partida_real,
-                        fecha_arribo_real,
+                        id_estado_actual,
+                        fecha_partida_programada,
+                        fecha_arribo_programada,
                         costo_operativo_usd,
                         precio_venta_usd,
-                        id_estado_actual                        
+                        fecha_partida_real,
+                        fecha_arribo_real
                 FROM    vuelos 
                 WHERE   id = %s
                 """
