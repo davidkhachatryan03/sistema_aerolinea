@@ -2,9 +2,9 @@ from TablaManager import TablaManager
 from DBManager import DBManager
 from datetime import datetime
 from typing import Any, cast
-from src.entidades.Vuelo import Vuelo
+from src.entidades.Vuelo import VueloBase, VueloDesdeDB
 
-FilaVuelo = tuple[datetime, datetime, int, int, int | None, datetime | None, datetime | None, float | None, float | None, int | None ]
+FilaVuelo = tuple[int, int, int, int, datetime, datetime, float, float, datetime | None, datetime | None]
 
 class VuelosManager(TablaManager):
 
@@ -17,7 +17,7 @@ class VuelosManager(TablaManager):
             4: "Cancelado"
         }
     
-    def registrar_vuelo(self, id_staff: int, vuelo:Vuelo) -> None:
+    def registrar_vuelo(self, id_staff: int, vuelo: VueloBase) -> None:
         if not self._verificar_campos_requeridos(vuelo):
             raise Exception("Error: no se ingresaron todos los campos requeridos.")
 
@@ -26,8 +26,6 @@ class VuelosManager(TablaManager):
 
         if not self._verificar_avion(vuelo.id_avion, vuelo.id_ruta, vuelo.fecha_partida_programada, vuelo.fecha_arribo_programada):
             raise Exception("Error: la ruta y avión seleccionados no son compatibles.")
-        
-        vuelo.id = None
 
         costo_operativo_usd: float = self._calcular_costo_operativo_usd(vuelo.id_ruta, vuelo.id_avion)
         
@@ -43,7 +41,7 @@ class VuelosManager(TablaManager):
         super().agregar_fila(id_staff, datos)
 
     def modificar_fechas(self, id_vuelo: int, id_staff: int, fecha_partida_programada: datetime, fecha_arribo_programada: datetime) -> None:
-        vuelo: Vuelo = self._obtener_vuelo(id_vuelo)
+        vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
 
         if vuelo.fecha_partida_programada == fecha_partida_programada or vuelo.fecha_arribo_programada == fecha_arribo_programada:
             return
@@ -63,7 +61,7 @@ class VuelosManager(TablaManager):
         super().modificar_fila(id_vuelo, id_staff, fecha_partida_programada=fecha_partida_programada, fecha_arribo_programada=fecha_arribo_programada)
     
     def modificar_avion(self, id_vuelo: int, id_staff: int, id_avion: int) -> None:
-        vuelo: Vuelo = self._obtener_vuelo(id_vuelo)
+        vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
 
         if vuelo.id_avion == id_avion:
             return
@@ -80,7 +78,7 @@ class VuelosManager(TablaManager):
         super().modificar_fila(id_vuelo, id_staff, id_avion=id_avion)
 
     def modificar_ruta(self, id_vuelo: int, id_staff: int, id_ruta: int) -> None:
-        vuelo: Vuelo = self._obtener_vuelo(id_vuelo)
+        vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
 
         if vuelo.id_ruta == id_ruta:
             return
@@ -97,7 +95,7 @@ class VuelosManager(TablaManager):
         super().modificar_fila(id_vuelo, id_staff, id_ruta=id_ruta)
 
     def modificar_estado(self, id_vuelo: int, id_staff: int, id_estado_actual: int) -> None:
-        vuelo: Vuelo = self._obtener_vuelo(id_vuelo)
+        vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
 
         if not super()._verificar_id_a_modificar(id_vuelo):
             raise Exception("Error: el id a modificaro no existe.")
@@ -173,7 +171,7 @@ class VuelosManager(TablaManager):
 
         return (duracion_min / 60) * costo_hora_vuelo
 
-    def _obtener_vuelo(self, id_vuelo: int) -> Vuelo:
+    def _obtener_vuelo(self, id_vuelo: int) -> VueloDesdeDB:
         query = """
                 SELECT  fecha_partida_programada,
                         fecha_arribo_programada,
@@ -189,16 +187,17 @@ class VuelosManager(TablaManager):
                 WHERE   id = %s
                 """
 
-        consulta_vuelo: FilaVuelo = self.db_manager.consultar(query, (id_vuelo,))[0]
+        consulta_vuelo: list[tuple] = self.db_manager.consultar(query, (id_vuelo,))
 
         if consulta_vuelo:
-            vuelo = Vuelo(*consulta_vuelo)
+            fila_vuelo: FilaVuelo = consulta_vuelo[0]
+            vuelo = VueloDesdeDB(*fila_vuelo)
         else:
             raise Exception("Error: no se encontró ningún resultado al consultar.")
 
         return vuelo
     
-    def _verificar_campos_requeridos(self, vuelo: Vuelo) -> bool:
+    def _verificar_campos_requeridos(self, vuelo: VueloBase) -> bool:
         campos_requeridos = ["fecha_partida_programada", "fecha_arribo_programada", "id_ruta", "id_avion"]
 
         for campo in campos_requeridos:
