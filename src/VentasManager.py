@@ -2,15 +2,16 @@ from TablaManager import TablaManager
 from datetime import datetime
 from typing import Any
 from collections.abc import Iterable
-from src.entidades.Venta import Venta
+from src.entidades.Venta import VentaBase, VentaDesdeDB
 import random
 
-FilaVenta = tuple[int, int, int | None, str | None, datetime | None, float | None, int | None]
+FilaVenta = tuple[datetime, int, int, int, str, float, int]
 
 class VentasManager(TablaManager):
 
     def __init__(self, db_manager):
         super().__init__("ventas", db_manager)
+        self.campos_requeridos = ["id_pasajero", "id_vuelo"]
         self.estados_posibles = {
             1: "Pagado",
             2: "Reembolsado",
@@ -18,7 +19,7 @@ class VentasManager(TablaManager):
             4: "Fraude detectado"
         }
     
-    def registrar_venta(self, id_staff: int, venta: Venta) -> None:
+    def registrar_venta(self, id_staff: int, venta: VentaBase) -> None:
         if not super()._verificar_id_staff(id_staff):
             raise Exception("Error: el staff ingresado no es válido.")
         
@@ -35,8 +36,6 @@ class VentasManager(TablaManager):
             raise Exception("Error: no hay más asientos disponibles.")
         
         venta.num_reserva = self._generar_num_reserva()
-        venta.id = None
-        venta.fecha_venta = None
         venta.precio_pagado_usd = self._obtener_precio_pagado_usd(venta.id_vuelo)
         venta.id_estado_actual = 3
 
@@ -56,7 +55,7 @@ class VentasManager(TablaManager):
         super().modificar_fila(id_venta, id_staff, num_reserva=num_reserva)
 
     def modificar_estado(self, id_venta: int, id_staff: int, id_estado_actual: int) -> None:
-        venta: Venta = self._obtener_venta(id_venta)
+        venta: VentaDesdeDB = self._obtener_venta(id_venta)
 
         if not super()._verificar_id_a_modificar(id_venta):
             raise Exception("Error: el id a modificar no existe.")
@@ -73,7 +72,7 @@ class VentasManager(TablaManager):
         super().modificar_fila(id_venta, id_staff, id_estado_actual=id_estado_actual)
     
     def cambiar_vuelo(self, id_venta: int, id_staff: int, id_vuelo: int) -> None:
-        venta: Venta = self._obtener_venta(id_venta)
+        venta: VentaDesdeDB = self._obtener_venta(id_venta)
 
         if not super()._verificar_id_a_modificar(id_venta):
             raise Exception("Error: el id a modificar no existe.")
@@ -92,7 +91,7 @@ class VentasManager(TablaManager):
         super().modificar_fila(id_venta, id_staff, id_vuelo=id_vuelo, precio_pagado_usd = precio_pagado_usd)
     
     def cambiar_pasajero(self, id_venta: int, id_staff: int, id_pasajero: int) -> None:
-        venta: Venta = self._obtener_venta(id_venta)
+        venta: VentaDesdeDB = self._obtener_venta(id_venta)
         
         if not super()._verificar_id_a_modificar(id_venta):
             raise Exception("Error: el id a modificar no existe.")
@@ -106,10 +105,8 @@ class VentasManager(TablaManager):
         if venta.id_pasajero == id_pasajero:
             return
 
-    def _verificar_campos_requeridos(self, venta: Venta) -> bool:
-        campos_requeridos = ["id_pasajero", "id_vuelo"]
-
-        for campo in campos_requeridos:
+    def _verificar_campos_requeridos(self, venta: VentaBase) -> bool:
+        for campo in self.campos_requeridos:
             if getattr(venta, campo) == None:
                 return False
         
@@ -133,7 +130,7 @@ class VentasManager(TablaManager):
         
         return num_reserva
     
-    def _obtener_venta(self, id_venta: int) -> Venta:
+    def _obtener_venta(self, id_venta: int) -> VentaDesdeDB:
         query = """
                 SELECT  id_pasajero,
                         id_vuelo,
@@ -146,8 +143,11 @@ class VentasManager(TablaManager):
                 WHERE   id = %s
                 """
         
-        consulta_venta: FilaVenta = self.db_manager.consultar(query, (id_venta,))[0]
-        venta = Venta(*consulta_venta)
+        consulta_venta: list[tuple] = self.db_manager.consultar(query, (id_venta,))
+
+        if consulta_venta:
+            fila_venta: FilaVenta = consulta_venta[0]
+            venta = VentaDesdeDB(*fila_venta)
 
         return venta
     
