@@ -2,6 +2,7 @@ from faker import Faker
 from datetime import datetime, timedelta, date
 import random
 from typing import Any, cast
+from src.DBManager import DBManager
 from src.entidades.Pasajero import PasajeroBase, PasajeroDesdeDB
 from src.entidades.Vuelo import VueloBase, VueloDesdeDB
 from src.entidades.Venta import VentaBase, VentaDesdeDB
@@ -9,11 +10,13 @@ from src.entidades.TarjetaEmbarque import TarjetaEmbarqueBase, TarjetaEmbarqueDe
 from src.entidades.Documento import DocumentoBase, DocumentoDesdeDB
 from src.entidades.Ruta import RutaBase, RutaDesdeDB
 from src.entidades.Avion import AvionBase, AvionDesdeDB
+from src.entidades.AsignacionVuelo import AsignacionVueloBase, AsignacionVueloDesdeDB
 
 class GeneradorDatos:
 
-    def __init__(self) -> None:
+    def __init__(self, db_manager: DBManager) -> None:
         self.fake: Faker = Faker('es_AR')
+        self.db_manager = db_manager
 
     def generar_pasajeros(self, cant: int) -> list[PasajeroBase]:
         pasajeros: list[PasajeroBase] = []
@@ -80,9 +83,80 @@ class GeneradorDatos:
             documentos.append(documento)
         
         return documentos
+    
+    def generar_asignaciones_vuelos(self, vuelos: list[VueloDesdeDB]) -> list[AsignacionVueloBase]:
+        asignaciones: list[AsignacionVueloBase] = []
 
-    def generar_asignaciones_vuelos(self):
-        pass
+        for vuelo in vuelos:
+            comandantes_disponibles: list[int] = self._obtener_personal_avion_disponibles(vuelo.fecha_partida_programada, vuelo.fecha_arribo_programada, 1)
+            copilotos_disponibles: list[int] = self._obtener_personal_avion_disponibles(vuelo.fecha_partida_programada, vuelo.fecha_arribo_programada, 2)
+            auxiliares_vuelo_disponibles: list[int] = self._obtener_personal_avion_disponibles(vuelo.fecha_partida_programada, vuelo.fecha_arribo_programada, 3)
+            supervisores_cabina_disponibles: list[int] = self._obtener_personal_avion_disponibles(vuelo.fecha_partida_programada, vuelo.fecha_arribo_programada, 4)
+            mecanicos_disponibles: list[int] = self._obtener_staff_disponibles(vuelo.fecha_partida_programada, 5)
+            inspectores_disponibles: list[int] = self._obtener_staff_disponibles(vuelo.fecha_partida_programada, 6)
+            agentes_disponibles: list[int] = self._obtener_staff_disponibles(vuelo.fecha_partida_programada, 7)
+            supervisores_agentes_disponibles: list[int] = self._obtener_staff_disponibles(vuelo.fecha_partida_programada, 8)
+
+            if not comandantes_disponibles:
+                raise Exception("Error: no hay comandantes disponibles.")
+            
+            if not copilotos_disponibles:
+                raise Exception("Error: no hay copilotos disponibles.")
+            
+            if not auxiliares_vuelo_disponibles:
+                raise Exception("Error: no hay auxiliares de vuelo disponibles.")
+            
+            if not supervisores_cabina_disponibles:
+                raise Exception("Error: no hay supervisores de cabina disponibles.")
+            
+            if not mecanicos_disponibles:
+                raise Exception("Error: no hay mecánicos disponibles.")
+            
+            if not inspectores_disponibles:
+                raise Exception("Error: no hay inspectores disponibles.")
+            
+            if len(agentes_disponibles) < 4:
+                raise Exception("Error: no hay suficientes agentes disponibles.")
+            
+            if not supervisores_agentes_disponibles:
+                raise Exception("Error: no hay supervisores de agentes disponibles.")
+            
+            fecha_inicio: datetime = vuelo.fecha_partida_programada - timedelta(hours=2)
+            fecha_fin: datetime = vuelo.fecha_arribo_programada
+            
+            id_comandante: int = random.choice(comandantes_disponibles)
+            asignacion_comandante = AsignacionVueloBase(fecha_inicio, fecha_fin, 1, vuelo.id, id_comandante)
+
+            id_copiloto: int = random.choice(copilotos_disponibles)
+            asignacion_copiloto = AsignacionVueloBase(fecha_inicio, fecha_fin, 2, vuelo.id, id_copiloto)
+
+            id_auxiliar_vuelo: int = random.choice(auxiliares_vuelo_disponibles)
+            asignacion_auxiliar_vuelo = AsignacionVueloBase(fecha_inicio, fecha_fin, 3, vuelo.id, id_auxiliar_vuelo)
+
+            id_supervisor_cabina: int = random.choice(supervisores_cabina_disponibles)
+            asignacion_supervisor_cabina = AsignacionVueloBase(fecha_inicio, fecha_fin, 4, vuelo.id, id_supervisor_cabina)
+            
+            fecha_fin: datetime = vuelo.fecha_arribo_programada
+
+            id_mecanico: int = random.choice(mecanicos_disponibles)
+            asingacion_mecanico = AsignacionVueloBase(fecha_inicio, fecha_fin, 8, vuelo.id, id_mecanico)
+
+            id_inspector: int = random.choice(inspectores_disponibles)
+            asignacion_inspector = AsignacionVueloBase(fecha_inicio, fecha_fin, 10, vuelo.id, id_inspector)
+
+            for _ in range(2):
+                id_agente: int = agentes_disponibles.pop()
+                asignacion_agente = AsignacionVueloBase(fecha_inicio, fecha_fin, 5, vuelo.id, id_agente)
+                asignaciones.append(asignacion_agente)
+            
+            for _ in range(2):
+                id_agente: int = agentes_disponibles.pop()
+                asignacion_agente = AsignacionVueloBase(fecha_inicio, fecha_fin, 6, vuelo.id, id_agente)
+                asignaciones.append(asignacion_agente)
+
+            asignaciones.extend([asignacion_comandante, asignacion_copiloto, asignacion_auxiliar_vuelo, asignacion_supervisor_cabina, asingacion_mecanico, asignacion_inspector])
+        
+        return asignaciones
 
     def generar_vuelos(self, cant: int, rutas: list[RutaDesdeDB], aviones: list[AvionDesdeDB]) -> list[VueloBase]:
         vuelos: list[VueloBase] = []
@@ -124,3 +198,66 @@ class GeneradorDatos:
             num_documento += random.choice(numeros)
 
         return num_documento
+    
+    def _obtener_personal_avion_disponibles(self, fecha_inicio: datetime, fecha_fin: datetime, id_cargo: int) -> list[int]:
+        pilotos_disponibles: list[int] = []
+
+        query = """
+                SELECT  s.id
+                FROM    staff s
+                WHERE   s.id NOT IN (
+                    SELECT  av.id_staff
+                    FROM    asignaciones_vuelos av
+                    JOIN    vuelos v 
+                    ON      av.id_vuelo = v.id
+                    WHERE   DATE_ADD(v.fecha_arribo_programada, INTERVAL 1 DAY) >= DATE_SUB(%s, INTERVAL 2 HOUR)
+                    AND     v.fecha_partida_programada <= DATE_ADD(%s, INTERVAL 1 DAY)
+                )
+                AND     s.id IN (
+                        SELECT  cs.id_staff
+                        FROM    certificaciones_staff cs
+                        WHERE   cs.licencia_hasta >= %s
+                )
+                AND     s.id_cargo_actual = %s
+                AND     s.id_estado_actual = 1;
+                """
+        
+        valores = (fecha_inicio, fecha_fin, fecha_fin, id_cargo)
+
+        consulta_pilotos_disponibles: list[tuple] = self.db_manager.consultar(query, valores)
+
+        for piloto in consulta_pilotos_disponibles:
+            pilotos_disponibles.append(piloto[0])
+        
+        return pilotos_disponibles
+    
+    def _obtener_staff_disponibles(self, fecha_inicio: datetime, id_cargo: int) -> list[int]:
+        staff_disponible: list[int] = []
+
+        query = """
+                SELECT  s.id
+                FROM    staff s
+                WHERE   s.id NOT IN (
+                    SELECT  av.id_staff
+                    FROM    asignaciones_vuelos av
+                    JOIN    vuelos v ON av.id_vuelo = v.id
+                    WHERE   DATE_SUB(v.fecha_partida_programada, INTERVAL 2 HOUR) < %s
+                    AND     v.fecha_partida_programada > DATE_SUB(%s, INTERVAL 2 HOUR)
+                )
+                AND     s.id IN (
+                        SELECT  cs.id_staff
+                        FROM    certificaciones_staff cs
+                        WHERE   cs.licencia_hasta >= %s
+                )
+                AND     s.id_cargo_actual = %s
+                AND     s.id_estado_actual = 1
+                """
+
+        valores = (fecha_inicio, fecha_inicio, fecha_inicio, id_cargo)
+
+        consulta_staff_disponible: list[tuple] = self.db_manager.consultar(query, valores)
+
+        for staff in consulta_staff_disponible:
+            staff_disponible.append(staff[0])
+
+        return staff_disponible
