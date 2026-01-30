@@ -5,7 +5,7 @@ from typing import Any
 
 FilaTarjetaEmbarque = tuple[int, datetime, datetime | None, int, int]
 
-class TarjetaEmbarqueManager(TablaManager):
+class TarjetasEmbarqueManager(TablaManager):
 
     def __init__(self, db_manager):
         super().__init__("tarjetas_embarque", db_manager)
