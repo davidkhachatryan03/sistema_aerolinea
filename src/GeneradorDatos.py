@@ -53,11 +53,10 @@ class GeneradorDatos:
 
         return ventas
 
-    def generar_tarjetas_embarque(self, cant: int, ventas: list[VentaDesdeDB]) -> list[TarjetaEmbarqueBase]:
+    def generar_tarjetas_embarque(self, ventas: list[VentaDesdeDB]) -> list[TarjetaEmbarqueBase]:
         tarjetas_de_embarque: list[TarjetaEmbarqueBase] = []
 
-        for _ in range(cant):
-            venta: VentaDesdeDB = random.choice(ventas)
+        for venta in ventas:
 
             id_estado_actual: int = 1
             id_venta: int = venta.id
