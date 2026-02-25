@@ -10,15 +10,15 @@ from src.GeneradorDatos import GeneradorDatos
 from src.entidades.Pasajero import PasajeroBase, PasajeroDesdeDB
 from src.entidades.Vuelo import VueloBase, VueloDesdeDB
 from src.entidades.Venta import VentaBase, VentaDesdeDB
-from src.entidades.TarjetaEmbarque import TarjetaEmbarqueBase, TarjetaEmbarqueDesdeDB
-from src.entidades.Documento import DocumentoBase, DocumentoDesdeDB
-from src.entidades.Ruta import RutaBase, RutaDesdeDB
-from src.entidades.Avion import AvionBase, AvionDesdeDB
-from src.entidades.AsignacionVuelo import AsignacionVueloBase, AsignacionVueloDesdeDB
+from src.entidades.TarjetaEmbarque import TarjetaEmbarqueBase
+from src.entidades.Documento import DocumentoBase
+from src.entidades.Ruta import RutaDesdeDB
+from src.entidades.Avion import AvionDesdeDB
+from src.entidades.AsignacionVuelo import AsignacionVueloBase
 from mysql.connector import Error
 from mysql.connector.connection import MySQLConnection
 from mysql.connector.cursor import MySQLCursor
-from typing import Any, cast
+from typing import cast
 import os
 
 def main() -> None:

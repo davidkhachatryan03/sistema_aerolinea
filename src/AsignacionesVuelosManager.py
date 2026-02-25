@@ -1,8 +1,7 @@
-from typing import Any
 from datetime import datetime
 from src.DBManager import DBManager
 from src.TablaManager import TablaManager
-from src.entidades.AsignacionVuelo import AsignacionVueloBase, AsignacionVueloDesdeDB
+from src.entidades.AsignacionVuelo import AsignacionVueloBase
 
 class AsignacionesVuelosManager(TablaManager):
 

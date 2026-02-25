@@ -1,8 +1,7 @@
-from mysql.connector import Error
 from src.DBManager import DBManager
 from mysql.connector.connection import MySQLConnection
 from mysql.connector.cursor import MySQLCursor
-from typing import Any, cast
+from typing import cast
 
 class TriggerManager:
 

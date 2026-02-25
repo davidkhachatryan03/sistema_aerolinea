@@ -1,11 +1,10 @@
 from src.TablaManager import TablaManager
 from datetime import datetime
 from typing import Any
-from collections.abc import Iterable
 from src.entidades.Venta import VentaBase, VentaDesdeDB
 import random
 
-FilaVenta = tuple[datetime, int, int, int, str, float, int]
+FilaVenta = tuple[int, str, datetime, float, int, int, int]
 
 class VentasManager(TablaManager):
 
