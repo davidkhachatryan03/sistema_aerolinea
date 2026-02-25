@@ -109,7 +109,7 @@ class GeneradorDatos:
                 raise Exception("Error: no hay supervisores de cabina disponibles.")
             
             if not mecanicos_disponibles:
-                raise Exception("Error: no hay mecánicos disponibles.")
+                raise Exception("Error: no hay supervisores de cabina disponibles.")
             
             if not inspectores_disponibles:
                 raise Exception("Error: no hay inspectores disponibles.")
@@ -167,12 +167,13 @@ class GeneradorDatos:
             fecha_partida_programada: datetime = self.fake.date_time_between(start_date="+30d", end_date="+180d")
             fecha_arribo_programada: datetime = fecha_partida_programada + timedelta(minutes=ruta.duracion_min)
             costo_operativo_usd: float = avion.costo_hora_vuelo * ruta.duracion_min / 60
+            costo_operativo_usd = float(costo_operativo_usd)
             precio_venta_usd: float = costo_operativo_usd * 1.3
             id_ruta: int = ruta.id
             id_avion: int = avion.id
             id_estado_actual: int = 1
 
-            vuelo = VueloBase(id_ruta, id_avion, id_estado_actual, fecha_arribo_programada, fecha_arribo_programada, costo_operativo_usd, precio_venta_usd)
+            vuelo = VueloBase(id_ruta, id_avion, id_estado_actual, fecha_partida_programada, fecha_arribo_programada, costo_operativo_usd, precio_venta_usd)
 
             vuelos.append(vuelo)
 

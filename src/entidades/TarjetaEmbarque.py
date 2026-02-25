@@ -14,7 +14,7 @@ class TarjetaEmbarqueBase:
         }
 
         return datos
-    
+
 class TarjetaEmbarqueDesdeDB(TarjetaEmbarqueBase):
 
     def __init__(self, id: int, fecha_emision: datetime, fecha_embarque: datetime | None, id_estado_actual: int, id_venta: int) -> None:

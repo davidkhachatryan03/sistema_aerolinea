@@ -12,4 +12,5 @@ INSERT INTO cargos (descripcion) VALUES
 ("Técnico de mantenimiento"),
 ("Ingeniero aeronáutico"),
 ("Agente de tierra"),
-("Jefe de tierra")
+("Jefe de tierra"),
+("Tester")

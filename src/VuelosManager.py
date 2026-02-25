@@ -1,5 +1,5 @@
-from TablaManager import TablaManager
-from DBManager import DBManager
+from src.TablaManager import TablaManager
+from src.DBManager import DBManager
 from datetime import datetime
 from typing import Any, cast
 from src.entidades.Vuelo import VueloBase, VueloDesdeDB
@@ -25,7 +25,8 @@ class VuelosManager(TablaManager):
             raise Exception("Error: la fecha de llegada debe ser posterior a la de partida.")
 
         if not self._verificar_avion(vuelo.id_avion, vuelo.id_ruta, vuelo.fecha_partida_programada, vuelo.fecha_arribo_programada):
-            raise Exception("Error: la ruta y avión seleccionados no son compatibles.")
+            print("Error: la ruta y avión seleccionados no son compatibles.\n")
+            return
 
         costo_operativo_usd: float = self._calcular_costo_operativo_usd(vuelo.id_ruta, vuelo.id_avion)
         
@@ -165,7 +166,7 @@ class VuelosManager(TablaManager):
         consulta: list[tuple] = self.db_manager.consultar(query, (id_avion,))
 
         if consulta:
-            costo_hora_vuelo: float = consulta[0][0]
+            costo_hora_vuelo: float = float(consulta[0][0])
         else:
             raise Exception("Error: no se encontró ningún resultado al consultar.")
 

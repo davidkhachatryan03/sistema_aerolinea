@@ -1,5 +1,5 @@
 from mysql.connector import Error
-from DBManager import DBManager
+from src.DBManager import DBManager
 from mysql.connector.connection import MySQLConnection
 from mysql.connector.cursor import MySQLCursor
 from typing import Any
@@ -14,8 +14,8 @@ class TablaManager:
 
     def agregar_fila(self, id_staff: int, datos: dict[str, Any]) -> None:
         if self.cursor == None or self.conexion == None:
-                print("No hay cursor.")
-                return
+            print("No hay cursor.")
+            return
         
         self.cursor.execute("SET @usuario = %s", (id_staff,))
 
@@ -26,6 +26,10 @@ class TablaManager:
         for i in range(len(valores)):
             if valores[i] == "None":
                 valores[i] = None
+            elif valores[i] == "False":
+                valores[i] = False
+            elif valores[i] == "True":
+                valores[i] = True
 
         query = f"""
                 INSERT INTO {self.tabla} ({columnas})

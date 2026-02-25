@@ -1,4 +1,4 @@
-from TablaManager import TablaManager
+from src.TablaManager import TablaManager
 from datetime import datetime
 from typing import Any
 from collections.abc import Iterable
@@ -33,7 +33,8 @@ class VentasManager(TablaManager):
             raise Exception("Error: el vuelo no se encuentra registrado.")
         
         if not self._verificar_capacidad(venta.id_vuelo):
-            raise Exception("Error: no hay más asientos disponibles.")
+            print("Error: no hay más asientos disponibles.\n")
+            return
         
         venta.num_reserva = self._generar_num_reserva()
         venta.precio_pagado_usd = self._obtener_precio_pagado_usd(venta.id_vuelo)
@@ -115,7 +116,7 @@ class VentasManager(TablaManager):
     def _obtener_precio_pagado_usd(self, id_vuelo: int) -> float:
         query = "SELECT precio_venta_usd FROM vuelos WHERE id = %s"
 
-        consulta: list[tuple] = self.db_manager.consultar(query, (id_vuelo,))[0][0]
+        consulta: list[tuple] = self.db_manager.consultar(query, (id_vuelo,))
 
         if consulta:
             precio_venta_usd: float = consulta[0][0]
@@ -171,6 +172,10 @@ class VentasManager(TablaManager):
     
     def _verificar_capacidad(self, id_vuelo: int) -> bool:
         num_ventas: int = self._obtener_num_ventas(id_vuelo)
+
+        if num_ventas == 0:
+            return True
+
         capacidad: int = self._obtener_capacidad(id_vuelo)
 
         if capacidad > num_ventas:
@@ -202,8 +207,8 @@ class VentasManager(TablaManager):
         query = """
                 SELECT      COUNT(id_vuelo) AS num_ventas
                 FROM        ventas
+                WHERE       id_vuelo = %s
                 GROUP BY    id_vuelo
-                WHERE       id = %s
                 """
 
         consulta: list[tuple] = self.db_manager.consultar(query, (id_vuelo,))
@@ -211,6 +216,6 @@ class VentasManager(TablaManager):
         if consulta:
             num_ventas: int = consulta[0][0]
         else:
-            raise Exception("Error: el vuelo selecionado no existe.")
+            num_ventas = 0
 
         return num_ventas

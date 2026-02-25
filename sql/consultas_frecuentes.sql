@@ -19,5 +19,3 @@ SELECT * FROM cargos;
 SELECT * FROM staff;
 SELECT * FROM pasajeros;
 SELECT * FROM historial_cambios;
-
-select * from pasajeros where id =100;

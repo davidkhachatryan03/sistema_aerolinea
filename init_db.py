@@ -28,8 +28,8 @@ def main() -> None:
 
         db_manager.conectar()
 
-        cursor: MySQLCursor | None = cast(MySQLCursor, db_manager.obtener_cursor())
-        conexion: MySQLConnection | None = cast(MySQLConnection, db_manager.obtener_conexion())
+        cursor: MySQLCursor = cast(MySQLCursor, db_manager.obtener_cursor())
+        conexion: MySQLConnection = cast(MySQLConnection, db_manager.obtener_conexion())
 
         dir_actual: str = os.getcwd()
         dir_sql: str = os.path.join(dir_actual, "sql")
@@ -64,7 +64,7 @@ def main() -> None:
         pasajeros: list[PasajeroBase] = generador_datos.generar_pasajeros(100)
         pasajeros_manager = TablaManager("pasajeros", db_manager)
         for pasajero in pasajeros:
-            pasajeros_manager.agregar_fila(99, pasajero.to_dict())
+            pasajeros_manager.agregar_fila(9, pasajero.to_dict())
 
         query = "SELECT * FROM pasajeros"
         consulta_pasajeros: list[tuple] = db_manager.consultar(query)
@@ -73,12 +73,12 @@ def main() -> None:
         documentos: list[DocumentoBase] = generador_datos.generar_documentos(pasajeros_desde_db)
         documentos_manager = DocumentosManager(db_manager)
         for documento in documentos:
-            documentos_manager.registrar_documento(99, documento)
+            documentos_manager.registrar_documento(9, documento)
 
         vuelos: list[VueloBase] = generador_datos.generar_vuelos(100, rutas_desde_db, aviones_desde_db)
         vuelos_manager = VuelosManager(db_manager)
         for vuelo in vuelos:
-            vuelos_manager.registrar_vuelo(99, vuelo)
+            vuelos_manager.registrar_vuelo(9, vuelo)
 
         query = "SELECT * FROM vuelos"
         consulta_vuelos: list[tuple] = db_manager.consultar(query)
@@ -87,7 +87,7 @@ def main() -> None:
         ventas: list[VentaBase] = generador_datos.generar_ventas(200, vuelos_desde_db, pasajeros_desde_db)
         ventas_manager = VentasManager(db_manager)
         for venta in ventas:
-            ventas_manager.registrar_venta(99, venta)
+            ventas_manager.registrar_venta(9, venta)
 
         query = "SELECT * FROM ventas"
         consulta_ventas: list[tuple] = db_manager.consultar(query)
@@ -96,12 +96,12 @@ def main() -> None:
         tarjetas_embarque: list[TarjetaEmbarqueBase] = generador_datos.generar_tarjetas_embarque(ventas_desde_db)
         tarjetas_embarque_manager = TarjetasEmbarqueManager(db_manager)
         for tarjeta_embarque in tarjetas_embarque:
-            tarjetas_embarque_manager.registrar_tarjeta_embarque(99, tarjeta_embarque)
+            tarjetas_embarque_manager.registrar_tarjeta_embarque(9, tarjeta_embarque)
 
         asignaciones_vuelos: list[AsignacionVueloBase] = generador_datos.generar_asignaciones_vuelos(vuelos_desde_db)
         asignaciones_vuelos_manager = AsignacionesVuelosManager(db_manager)
         for asignacion_vuelo in asignaciones_vuelos:
-            asignaciones_vuelos_manager.agregar_fila(99, asignacion_vuelo.to_dict())
+            asignaciones_vuelos_manager.agregar_fila(9, asignacion_vuelo.to_dict())
 
         conexion.commit()
 
