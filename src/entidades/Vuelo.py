@@ -1,9 +1,10 @@
 from datetime import datetime
 from typing import Any
+from decimal import Decimal
 
 class VueloBase:
     
-    def __init__(self, id_ruta: int, id_avion: int, id_estado_actual: int, fecha_partida_programada: datetime, fecha_arribo_programada: datetime, costo_operativo_usd: float, precio_venta_usd: float) -> None:
+    def __init__(self, id_ruta: int, id_avion: int, id_estado_actual: int, fecha_partida_programada: datetime, fecha_arribo_programada: datetime, costo_operativo_usd: Decimal, precio_venta_usd: Decimal) -> None:
         self.id_ruta = id_ruta
         self.id_avion = id_avion
         self.id_estado_actual = id_estado_actual
@@ -27,7 +28,7 @@ class VueloBase:
     
 class VueloDesdeDB(VueloBase):
 
-    def __init__(self, id: int, fecha_partida_programada: datetime, fecha_arribo_programada: datetime, fecha_partida_real: datetime | None, fecha_arribo_real: datetime | None, costo_operativo_usd: float, precio_venta_usd: float, id_ruta: int, id_avion: int, id_estado_actual: int) -> None:
+    def __init__(self, id: int, fecha_partida_programada: datetime, fecha_arribo_programada: datetime, fecha_partida_real: datetime | None, fecha_arribo_real: datetime | None, costo_operativo_usd: Decimal, precio_venta_usd: Decimal, id_ruta: int, id_avion: int, id_estado_actual: int) -> None:
         super().__init__(id_ruta, id_avion, id_estado_actual, fecha_partida_programada, fecha_arribo_programada, costo_operativo_usd, precio_venta_usd)
         self.id = id
         self.fecha_partida_real = fecha_partida_real

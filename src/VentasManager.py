@@ -1,10 +1,11 @@
 from src.TablaManager import TablaManager
 from datetime import datetime
 from typing import Any
+from decimal import Decimal
 from src.entidades.Venta import VentaBase, VentaDesdeDB
 import random
 
-FilaVenta = tuple[int, str, datetime, float, int, int, int]
+FilaVenta = tuple[int, str, datetime, Decimal, int, int, int]
 
 class VentasManager(TablaManager):
 
@@ -112,13 +113,13 @@ class VentasManager(TablaManager):
         
         return True
     
-    def _obtener_precio_pagado_usd(self, id_vuelo: int) -> float:
+    def _obtener_precio_pagado_usd(self, id_vuelo: int) -> Decimal:
         query = "SELECT precio_venta_usd FROM vuelos WHERE id = %s"
 
         consulta: list[tuple] = self.db_manager.consultar(query, (id_vuelo,))
 
         if consulta:
-            precio_venta_usd: float = consulta[0][0]
+            precio_venta_usd: Decimal = consulta[0][0]
         else:
             raise Exception("Error: no se encontró ningún resultado al consultar.")
 

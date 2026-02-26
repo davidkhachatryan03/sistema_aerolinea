@@ -1,10 +1,11 @@
 from src.TablaManager import TablaManager
 from src.DBManager import DBManager
 from datetime import datetime
+from decimal import Decimal
 from typing import Any, cast
 from src.entidades.Vuelo import VueloBase, VueloDesdeDB
 
-FilaVuelo = tuple[int, datetime, datetime, datetime | None, datetime | None, float, float, int, int, int]
+FilaVuelo = tuple[int, datetime, datetime, datetime | None, datetime | None, Decimal, Decimal, int, int, int]
 
 class VuelosManager(TablaManager):
 
@@ -28,9 +29,9 @@ class VuelosManager(TablaManager):
             print("Error: la ruta y avión seleccionados no son compatibles.\n")
             return
 
-        costo_operativo_usd: float = self._calcular_costo_operativo_usd(vuelo.id_ruta, vuelo.id_avion)
+        costo_operativo_usd: Decimal = self._calcular_costo_operativo_usd(vuelo.id_ruta, vuelo.id_avion)
         
-        precio_venta_usd: float = costo_operativo_usd * 1.30
+        precio_venta_usd: Decimal = costo_operativo_usd * Decimal(1.30)
 
         vuelo.costo_operativo_usd = costo_operativo_usd
         vuelo.precio_venta_usd = precio_venta_usd
@@ -153,7 +154,7 @@ class VuelosManager(TablaManager):
 
         return False
 
-    def _calcular_costo_operativo_usd(self, id_ruta: int, id_avion: int) -> float:
+    def _calcular_costo_operativo_usd(self, id_ruta: int, id_avion: int) -> Decimal:
         query: str = "SELECT duracion_min FROM rutas WHERE id = %s"
         consulta: list[tuple] = self.db_manager.consultar(query, (id_ruta,))
         
@@ -166,11 +167,11 @@ class VuelosManager(TablaManager):
         consulta: list[tuple] = self.db_manager.consultar(query, (id_avion,))
 
         if consulta:
-            costo_hora_vuelo: float = float(consulta[0][0])
+            costo_hora_vuelo = Decimal(str(consulta[0][0]))
         else:
             raise Exception("Error: no se encontró ningún resultado al consultar.")
 
-        return (duracion_min / 60) * costo_hora_vuelo
+        return (duracion_min / Decimal("60")) * costo_hora_vuelo
 
     def _obtener_vuelo(self, id_vuelo: int) -> VueloDesdeDB:
         query = """

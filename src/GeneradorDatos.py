@@ -1,5 +1,6 @@
 from faker import Faker
 from datetime import datetime, timedelta, date
+from decimal import Decimal
 import random
 from src.DBManager import DBManager
 from src.entidades.Pasajero import PasajeroBase, PasajeroDesdeDB
@@ -43,7 +44,7 @@ class GeneradorDatos:
             id_pasajero: int = pasajero.id
             id_vuelo: int = vuelo.id
             num_reserva: str = self._generar_num_reserva()
-            precio_pagado_usd: float = vuelo.precio_venta_usd
+            precio_pagado_usd: Decimal = vuelo.precio_venta_usd
             id_estado_actual: int = random.choices([1,2,3,4], weights=[70,10,15,5])[0]
 
             venta = VentaBase(id_pasajero, id_vuelo, num_reserva, precio_pagado_usd, id_estado_actual)
@@ -165,9 +166,9 @@ class GeneradorDatos:
 
             fecha_partida_programada: datetime = self.fake.date_time_between(start_date="+30d", end_date="+180d")
             fecha_arribo_programada: datetime = fecha_partida_programada + timedelta(minutes=ruta.duracion_min)
-            costo_operativo_usd: float = avion.costo_hora_vuelo * ruta.duracion_min / 60
-            costo_operativo_usd = float(costo_operativo_usd)
-            precio_venta_usd: float = costo_operativo_usd * 1.3
+            costo_operativo_usd: Decimal = avion.costo_hora_vuelo * ruta.duracion_min / 60
+            costo_operativo_usd = Decimal(costo_operativo_usd)
+            precio_venta_usd: Decimal = costo_operativo_usd * Decimal("1.3")
             id_ruta: int = ruta.id
             id_avion: int = avion.id
             id_estado_actual: int = 1

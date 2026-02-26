@@ -1,9 +1,10 @@
 from datetime import datetime
 from typing import Any
+from decimal import Decimal
 
 class VentaBase:
 
-    def __init__(self, id_pasajero: int, id_vuelo: int, num_reserva: str, precio_pagado_usd: float, id_estado_actual: int) -> None:
+    def __init__(self, id_pasajero: int, id_vuelo: int, num_reserva: str, precio_pagado_usd: Decimal, id_estado_actual: int) -> None:
         self.id_pasajero = id_pasajero
         self.id_vuelo = id_vuelo
         self.num_reserva = num_reserva
@@ -23,7 +24,7 @@ class VentaBase:
 
 class VentaDesdeDB(VentaBase):
 
-    def __init__(self, id: int, num_reserva: str, fecha_venta: datetime, precio_pagado_usd: float, id_vuelo: int, id_estado_actual: int, id_pasajero: int) -> None:
+    def __init__(self, id: int, num_reserva: str, fecha_venta: datetime, precio_pagado_usd: Decimal, id_vuelo: int, id_estado_actual: int, id_pasajero: int) -> None:
         super().__init__(id_pasajero, id_vuelo, num_reserva, precio_pagado_usd, id_estado_actual)
         self.fecha_venta = fecha_venta
         self.id = id
