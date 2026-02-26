@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Any, cast
 from src.entidades.Vuelo import VueloBase, VueloDesdeDB
 
-FilaVuelo = tuple[int, int, int, int, datetime, datetime, float, float, datetime | None, datetime | None]
+FilaVuelo = tuple[int, datetime, datetime, datetime | None, datetime | None, float, float, int, int, int]
 
 class VuelosManager(TablaManager):
 
