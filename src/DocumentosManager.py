@@ -1,5 +1,6 @@
 from src.TablaManager import TablaManager
 from src.entidades.Documento import DocumentoBase, DocumentoDesdeDB
+from src.querys import OBTENER_DOCUMENTO
 from datetime import datetime
 from typing import Any
 
@@ -90,16 +91,7 @@ class DocumentosManager(TablaManager):
         super().modificar_fila(id_documento, id_staff, id_tipo_documento=id_tipo_documento)
 
     def _obtener_documento(self, id_documento: int) -> DocumentoDesdeDB:
-        query = """
-                SELECT  id,
-                        num_documento,
-                        fecha_vencimiento,
-                        pais_emision,
-                        id_pasajero,
-                        id_tipo_documento
-                FROM    documentos
-                WHERE   id = %s
-                """
+        query = OBTENER_DOCUMENTO
 
         consulta_documento: list[tuple] = self.db_manager.consultar(query, (id_documento, ))
 

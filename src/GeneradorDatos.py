@@ -2,6 +2,7 @@ from faker import Faker
 from datetime import datetime, timedelta, date
 from decimal import Decimal
 import random
+from src.querys import OBTENER_PERSONAL_AVION, OBTENER_STAFF
 from src.DBManager import DBManager
 from src.entidades.Pasajero import PasajeroBase, PasajeroDesdeDB
 from src.entidades.Vuelo import VueloBase, VueloDesdeDB
@@ -202,26 +203,8 @@ class GeneradorDatos:
     def _obtener_personal_avion_disponibles(self, fecha_inicio: datetime, fecha_fin: datetime, id_cargo: int) -> list[int]:
         pilotos_disponibles: list[int] = []
 
-        query = """
-                SELECT  s.id
-                FROM    staff s
-                WHERE   s.id NOT IN (
-                    SELECT  av.id_staff
-                    FROM    asignaciones_vuelos av
-                    JOIN    vuelos v 
-                    ON      av.id_vuelo = v.id
-                    WHERE   DATE_ADD(v.fecha_arribo_programada, INTERVAL 1 DAY) >= DATE_SUB(%s, INTERVAL 2 HOUR)
-                    AND     v.fecha_partida_programada <= DATE_ADD(%s, INTERVAL 1 DAY)
-                )
-                AND     s.id IN (
-                        SELECT  cs.id_staff
-                        FROM    certificaciones_staff cs
-                        WHERE   cs.licencia_hasta >= %s
-                )
-                AND     s.id_cargo_actual = %s
-                AND     s.id_estado_actual = 1;
-                """
-        
+        query = OBTENER_PERSONAL_AVION
+
         valores = (fecha_inicio, fecha_fin, fecha_fin, id_cargo)
 
         consulta_pilotos_disponibles: list[tuple] = self.db_manager.consultar(query, valores)
@@ -234,24 +217,7 @@ class GeneradorDatos:
     def _obtener_staff_disponibles(self, fecha_inicio: datetime, id_cargo: int) -> list[int]:
         staff_disponible: list[int] = []
 
-        query = """
-                SELECT  s.id
-                FROM    staff s
-                WHERE   s.id NOT IN (
-                    SELECT  av.id_staff
-                    FROM    asignaciones_vuelos av
-                    JOIN    vuelos v ON av.id_vuelo = v.id
-                    WHERE   DATE_SUB(v.fecha_partida_programada, INTERVAL 2 HOUR) < %s
-                    AND     v.fecha_partida_programada > DATE_SUB(%s, INTERVAL 2 HOUR)
-                )
-                AND     s.id IN (
-                        SELECT  cs.id_staff
-                        FROM    certificaciones_staff cs
-                        WHERE   cs.licencia_hasta >= %s
-                )
-                AND     s.id_cargo_actual = %s
-                AND     s.id_estado_actual = 1
-                """
+        query = OBTENER_STAFF
 
         valores = (fecha_inicio, fecha_inicio, fecha_inicio, id_cargo)
 

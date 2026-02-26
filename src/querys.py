@@ -1,0 +1,289 @@
+OBTENER_COMANDANTES =   """
+                        SELECT  s.id
+                        FROM    staff s
+                        WHERE   s.id NOT IN (
+                            SELECT  av.id_staff
+                            FROM    asignaciones_vuelos av
+                            JOIN    vuelos v 
+                            ON      av.id_vuelo = v.id
+                            WHERE   DATE_ADD(v.fecha_arribo_programada, INTERVAL 1 DAY) >= DATE_SUB(%s, INTERVAL 2 HOUR)
+                            AND     v.fecha_partida_programada <= DATE_ADD(%s, INTERVAL 1 DAY)
+                        )
+                        AND     s.id IN (
+                                SELECT  cs.id_staff
+                                FROM    certificaciones_staff cs
+                                WHERE   cs.licencia_hasta >= %s
+                        )
+                        AND     s.id_cargo_actual = 1
+                        AND     s.id_estado_actual = 1;
+                        """
+
+OBTENER_COPILOTOS = """
+                    SELECT  s.id
+                    FROM    staff s
+                    WHERE   s.id NOT IN (
+                        SELECT  av.id_staff
+                        FROM    asignaciones_vuelos av
+                        JOIN    vuelos v 
+                        ON      av.id_vuelo = v.id
+                        WHERE   DATE_ADD(v.fecha_arribo_programada, INTERVAL 1 DAY) >= DATE_SUB(%s, INTERVAL 2 HOUR)
+                        AND     v.fecha_partida_programada <= DATE_ADD(%s, INTERVAL 1 DAY)
+                    )
+                    AND     s.id IN (
+                            SELECT  cs.id_staff
+                            FROM    certificaciones_staff cs
+                            WHERE   cs.licencia_hasta >= %s
+                    )
+                    AND     s.id_cargo_actual = 2
+                    AND     s.id_estado_actual = 1;
+                    """
+
+OBTENER_AUXILIARES_VUELO =  """
+                            SELECT  s.id
+                            FROM    staff s
+                            WHERE   s.id NOT IN (
+                                SELECT  av.id_staff
+                                FROM    asignaciones_vuelos av
+                                JOIN    vuelos v 
+                                ON      av.id_vuelo = v.id
+                                WHERE   DATE_ADD(v.fecha_arribo_programada, INTERVAL 1 DAY) >= DATE_SUB(%s, INTERVAL 2 HOUR)
+                                AND     v.fecha_partida_programada <= DATE_ADD(%s, INTERVAL 1 DAY)
+                            )
+                            AND     s.id IN (
+                                    SELECT  cs.id_staff
+                                    FROM    certificaciones_staff cs
+                                    WHERE   cs.licencia_hasta >= %s
+                            )
+                            AND     s.id_cargo_actual = 3
+                            AND     s.id_estado_actual = 1;
+                            """
+
+OBTENER_MECANICOS = """
+                    SELECT  s.id
+                    FROM    staff s
+                    WHERE   s.id NOT IN (
+                        SELECT  av.id_staff
+                        FROM    asignaciones_vuelos av
+                        JOIN    vuelos v 
+                        ON      av.id_vuelo = v.id
+                        WHERE   DATE_ADD(v.fecha_arribo_programada, INTERVAL 1 DAY) >= DATE_SUB(%s, INTERVAL 2 HOUR)
+                        AND     v.fecha_partida_programada <= DATE_ADD(%s, INTERVAL 1 DAY)
+                    )
+                    AND     s.id IN (
+                            SELECT  cs.id_staff
+                            FROM    certificaciones_staff cs
+                            WHERE   cs.licencia_hasta >= %s
+                    )
+                    AND     s.id_cargo_actual = 5
+                    AND     s.id_estado_actual = 1;
+                    """
+
+OBTENER_AGENTES =   """
+                    SELECT  s.id
+                    FROM    staff s
+                    WHERE   s.id NOT IN (
+                        SELECT  av.id_staff
+                        FROM    asignaciones_vuelos av
+                        JOIN    vuelos v 
+                        ON      av.id_vuelo = v.id
+                        WHERE   DATE_ADD(v.fecha_arribo_programada, INTERVAL 1 DAY) >= DATE_SUB(%s, INTERVAL 2 HOUR)
+                        AND     v.fecha_partida_programada <= DATE_ADD(%s, INTERVAL 1 DAY)
+                    )
+                    AND     s.id IN (
+                            SELECT  cs.id_staff
+                            FROM    certificaciones_staff cs
+                            WHERE   cs.licencia_hasta >= %s
+                    )
+                    AND     s.id_cargo_actual = 7
+                    AND     s.id_estado_actual = 1;
+                    """
+
+OBTENER_INSPECTORES =   """
+                        SELECT  s.id
+                        FROM    staff s
+                        WHERE   s.id NOT IN (
+                            SELECT  av.id_staff
+                            FROM    asignaciones_vuelos av
+                            JOIN    vuelos v 
+                            ON      av.id_vuelo = v.id
+                            WHERE   DATE_ADD(v.fecha_arribo_programada, INTERVAL 1 DAY) >= DATE_SUB(%s, INTERVAL 2 HOUR)
+                            AND     v.fecha_partida_programada <= DATE_ADD(%s, INTERVAL 1 DAY)
+                        )
+                        AND     s.id IN (
+                                SELECT  cs.id_staff
+                                FROM    certificaciones_staff cs
+                                WHERE   cs.licencia_hasta >= %s
+                        )
+                        AND     s.id_cargo_actual = 6
+                        AND     s.id_estado_actual = 1;
+                        """
+
+OBTENER_SUPERVISORES_AGENTES =  """
+                                SELECT  s.id
+                                FROM    staff s
+                                WHERE   s.id NOT IN (
+                                    SELECT  av.id_staff
+                                    FROM    asignaciones_vuelos av
+                                    JOIN    vuelos v 
+                                    ON      av.id_vuelo = v.id
+                                    WHERE   DATE_ADD(v.fecha_arribo_programada, INTERVAL 1 DAY) >= DATE_SUB(%s, INTERVAL 2 HOUR)
+                                    AND     v.fecha_partida_programada <= DATE_ADD(%s, INTERVAL 1 DAY)
+                                )
+                                AND     s.id IN (
+                                        SELECT  cs.id_staff
+                                        FROM    certificaciones_staff cs
+                                        WHERE   cs.licencia_hasta >= %s
+                                )
+                                AND     s.id_cargo_actual = 8
+                                AND     s.id_estado_actual = 1;
+                                """
+
+OBTENER_SUPERVISORES_CABINA =   """
+                                SELECT  s.id
+                                FROM    staff s
+                                WHERE   s.id NOT IN (
+                                    SELECT  av.id_staff
+                                    FROM    asignaciones_vuelos av
+                                    JOIN    vuelos v 
+                                    ON      av.id_vuelo = v.id
+                                    WHERE   DATE_ADD(v.fecha_arribo_programada, INTERVAL 1 DAY) >= DATE_SUB(%s, INTERVAL 2 HOUR)
+                                    AND     v.fecha_partida_programada <= DATE_ADD(%s, INTERVAL 1 DAY)
+                                )
+                                AND     s.id IN (
+                                        SELECT  cs.id_staff
+                                        FROM    certificaciones_staff cs
+                                        WHERE   cs.licencia_hasta >= %s
+                                )
+                                AND     s.id_cargo_actual = 4
+                                AND     s.id_estado_actual = 1;
+                                """
+
+OBTENER_CERTIFICACION = """
+                        SELECT  id,
+                                id_staff,
+                                descripcion,
+                                licencia_hasta,
+                        FROM    certificaciones_staff
+                        WHERE   id = %s
+                        """
+
+OBTENER_DOCUMENTO = """
+                    SELECT  id,
+                            num_documento,
+                            fecha_vencimiento,
+                            pais_emision,
+                            id_pasajero,
+                            id_tipo_documento
+                    FROM    documentos
+                    WHERE   id = %s
+                    """
+
+OBTENER_PERSONAL_AVION =    """
+                            SELECT  s.id
+                            FROM    staff s
+                            WHERE   s.id NOT IN (
+                                SELECT  av.id_staff
+                                FROM    asignaciones_vuelos av
+                                JOIN    vuelos v 
+                                ON      av.id_vuelo = v.id
+                                WHERE   DATE_ADD(v.fecha_arribo_programada, INTERVAL 1 DAY) >= DATE_SUB(%s, INTERVAL 2 HOUR)
+                                AND     v.fecha_partida_programada <= DATE_ADD(%s, INTERVAL 1 DAY)
+                            )
+                            AND     s.id IN (
+                                    SELECT  cs.id_staff
+                                    FROM    certificaciones_staff cs
+                                    WHERE   cs.licencia_hasta >= %s
+                            )
+                            AND     s.id_cargo_actual = %s
+                            AND     s.id_estado_actual = 1;
+                            """
+
+OBTENER_STAFF = """
+                SELECT  s.id
+                FROM    staff s
+                WHERE   s.id NOT IN (
+                    SELECT  av.id_staff
+                    FROM    asignaciones_vuelos av
+                    JOIN    vuelos v ON av.id_vuelo = v.id
+                    WHERE   DATE_SUB(v.fecha_partida_programada, INTERVAL 2 HOUR) < %s
+                    AND     v.fecha_partida_programada > DATE_SUB(%s, INTERVAL 2 HOUR)
+                )
+                AND     s.id IN (
+                        SELECT  cs.id_staff
+                        FROM    certificaciones_staff cs
+                        WHERE   cs.licencia_hasta >= %s
+                )
+                AND     s.id_cargo_actual = %s
+                AND     s.id_estado_actual = 1
+                """
+
+OBTENER_TARJETA_EMBARQUE =  """
+                            SELECT  id,
+                                    fecha_emision,
+                                    fecha_embarque,
+                                    id_estado_actual,
+                                    id_venta
+                            FROM    ventas
+                            WHERE   id = %s
+                            """
+
+OBTENER_VENTA = """
+                SELECT  id_pasajero,
+                        id_vuelo,
+                        id,
+                        num_reserva,
+                        fecha_venta,
+                        precio_pagado_usd,
+                        id_estado_actual
+                FROM    ventas
+                WHERE   id = %s
+                """
+
+OBTENER_CAPACIDAD = """
+                    SELECT  a.capacidad
+                    FROM    ventas ve
+                    JOIN    vuelos vu
+                    ON      ve.id_vuelo = vu.id
+                    JOIN    aviones a
+                    ON      vu.id_avion = a.id
+                    WHERE   ve.id_vuelo = %s
+                    """
+
+OBTENER_NUM_VENTAS =    """
+                        SELECT      COUNT(id_vuelo) AS num_ventas
+                        FROM        ventas
+                        WHERE       id_vuelo = %s
+                        GROUP BY    id_vuelo
+                        """
+
+OBTENER_AVIONES =   """
+                    SELECT  a.id
+                    FROM    aviones a
+                    WHERE   a.id NOT IN (
+                        SELECT  v.id_avion
+                        FROM    vuelos v
+                        WHERE   DATE_ADD(v.fecha_arribo_programada, INTERVAL 1 DAY) >= %s
+                        AND     v.fecha_partida_programada <= DATE_ADD(%s, INTERVAL 1 DAY)
+                    )
+                    AND     a.autonomia_km > (
+                            SELECT distancia_km 
+                            FROM rutas 
+                            WHERE id = %s
+                    )
+                    AND     a.id_estado_actual <> 3;
+                    """
+
+OBTENER_VUELO = """
+                SELECT  id,
+                        id_ruta,
+                        id_avion,
+                        id_estado_actual,
+                        fecha_partida_programada,
+                        fecha_arribo_programada,
+                        costo_operativo_usd,
+                        precio_venta_usd,
+                        fecha_partida_real,
+                        fecha_arribo_real
+                FROM    vuelos 
+                WHERE   id = %s
+                """

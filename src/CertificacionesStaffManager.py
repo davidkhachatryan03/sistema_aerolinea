@@ -1,5 +1,6 @@
 from src.entidades.CertificacionStaff import CertificacionStaffBase, CertificacionStaffDesdeDB
 from src.TablaManager import TablaManager
+from src.querys import OBTENER_CERTIFICACION
 from datetime import datetime
 from typing import Any
 
@@ -75,14 +76,7 @@ class CertificacionesStaffManager(TablaManager):
         return True
     
     def _obtener_certificacion(self, id_certificacion: int) -> CertificacionStaffDesdeDB:
-        query = """
-                SELECT  id,
-                        id_staff,
-                        descripcion,
-                        licencia_hasta,
-                FROM    certificaciones_staff
-                WHERE   id = %s
-                """
+        query = OBTENER_CERTIFICACION
         
         consulta_certificacion: list[tuple] = self.db_manager.consultar(query, (id_certificacion,))
 

@@ -1,5 +1,6 @@
 from src.TablaManager import TablaManager
 from src.DBManager import DBManager
+from src.querys import OBTENER_VUELO, OBTENER_AVIONES
 from datetime import datetime
 from decimal import Decimal
 from typing import Any, cast
@@ -116,22 +117,7 @@ class VuelosManager(TablaManager):
             super().modificar_fila(id_vuelo, id_staff, id_estado_actual=id_estado_actual, fecha_arribo_real=fecha_arribo_real)
 
     def _obtener_aviones_disponibles(self, id_ruta: int, fecha_partida_programada: datetime, fecha_arribo_programada: datetime) -> list[tuple[int]]:
-        query = """
-                SELECT  a.id
-                FROM    aviones a
-                WHERE   a.id NOT IN (
-                    SELECT  v.id_avion
-                    FROM    vuelos v
-                    WHERE   DATE_ADD(v.fecha_arribo_programada, INTERVAL 1 DAY) >= %s
-                    AND     v.fecha_partida_programada <= DATE_ADD(%s, INTERVAL 1 DAY)
-                )
-                AND     a.autonomia_km > (
-                        SELECT distancia_km 
-                        FROM rutas 
-                        WHERE id = %s
-                )
-                AND     a.id_estado_actual <> 3;
-                """
+        query = OBTENER_AVIONES
 
         valores = (fecha_partida_programada, fecha_arribo_programada, id_ruta)
 
@@ -174,20 +160,7 @@ class VuelosManager(TablaManager):
         return (duracion_min / Decimal("60")) * costo_hora_vuelo
 
     def _obtener_vuelo(self, id_vuelo: int) -> VueloDesdeDB:
-        query = """
-                SELECT  id,
-                        id_ruta,
-                        id_avion,
-                        id_estado_actual,
-                        fecha_partida_programada,
-                        fecha_arribo_programada,
-                        costo_operativo_usd,
-                        precio_venta_usd,
-                        fecha_partida_real,
-                        fecha_arribo_real
-                FROM    vuelos 
-                WHERE   id = %s
-                """
+        query = OBTENER_VUELO
 
         consulta_vuelo: list[tuple] = self.db_manager.consultar(query, (id_vuelo,))
 

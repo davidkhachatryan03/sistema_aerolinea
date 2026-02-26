@@ -1,3 +1,4 @@
+from src.querys import OBTENER_TARJETA_EMBARQUE
 from src.entidades.TarjetaEmbarque import TarjetaEmbarqueBase, TarjetaEmbarqueDesdeDB
 from src.TablaManager import TablaManager
 from datetime import datetime
@@ -59,15 +60,7 @@ class TarjetasEmbarqueManager(TablaManager):
         return True
     
     def _obtener_tarjeta_embarque(self, id_tarjeta_embarque: int) -> TarjetaEmbarqueDesdeDB:
-        query = """
-                SELECT  id,
-                        fecha_emision,
-                        fecha_embarque,
-                        id_estado_actual,
-                        id_venta
-                FROM    ventas
-                WHERE   id = %s
-                """
+        query = OBTENER_TARJETA_EMBARQUE
         
         consulta_tarjeta_embarque: list[tuple] = self.db_manager.consultar(query, (id_tarjeta_embarque,))
 

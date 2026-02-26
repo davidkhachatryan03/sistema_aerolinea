@@ -1,3 +1,4 @@
+from src.querys import OBTENER_VENTA, OBTENER_CAPACIDAD, OBTENER_NUM_VENTAS
 from src.TablaManager import TablaManager
 from datetime import datetime
 from typing import Any
@@ -132,17 +133,7 @@ class VentasManager(TablaManager):
         return num_reserva
     
     def _obtener_venta(self, id_venta: int) -> VentaDesdeDB:
-        query = """
-                SELECT  id_pasajero,
-                        id_vuelo,
-                        id,
-                        num_reserva,
-                        fecha_venta,
-                        precio_pagado_usd,
-                        id_estado_actual
-                FROM    ventas
-                WHERE   id = %s
-                """
+        query = OBTENER_VENTA
         
         consulta_venta: list[tuple] = self.db_manager.consultar(query, (id_venta,))
 
@@ -184,15 +175,7 @@ class VentasManager(TablaManager):
         return False
         
     def _obtener_capacidad(self, id_vuelo: int) -> int:
-        query = """
-                SELECT  a.capacidad
-                FROM    ventas ve
-                JOIN    vuelos vu
-                ON      ve.id_vuelo = vu.id
-                JOIN    aviones a
-                ON      vu.id_avion = a.id
-                WHERE   ve.id_vuelo = %s
-                """
+        query = OBTENER_CAPACIDAD
 
         consulta: list[tuple] = self.db_manager.consultar(query, (id_vuelo,))
 
@@ -204,12 +187,7 @@ class VentasManager(TablaManager):
         return capacidad
     
     def _obtener_num_ventas(self, id_vuelo: int) -> int:
-        query = """
-                SELECT      COUNT(id_vuelo) AS num_ventas
-                FROM        ventas
-                WHERE       id_vuelo = %s
-                GROUP BY    id_vuelo
-                """
+        query = OBTENER_NUM_VENTAS
 
         consulta: list[tuple] = self.db_manager.consultar(query, (id_vuelo,))
 

@@ -1,4 +1,5 @@
 from datetime import datetime
+from src.querys import OBTENER_SUPERVISORES_AGENTES, OBTENER_AGENTES, OBTENER_AUXILIARES_VUELO, OBTENER_COMANDANTES, OBTENER_COPILOTOS, OBTENER_INSPECTORES, OBTENER_MECANICOS, OBTENER_SUPERVISORES_CABINA
 from src.DBManager import DBManager
 from src.TablaManager import TablaManager
 from src.entidades.AsignacionVuelo import AsignacionVueloBase
@@ -102,25 +103,7 @@ class AsignacionesVuelosManager(TablaManager):
     def _obtener_comandantes_disponibles(self, fecha_inicio: datetime, fecha_fin: datetime) -> list[int]:
         comandantes: list[int] = []
 
-        query = """
-                SELECT  s.id
-                FROM    staff s
-                WHERE   s.id NOT IN (
-                    SELECT  av.id_staff
-                    FROM    asignaciones_vuelos av
-                    JOIN    vuelos v 
-                    ON      av.id_vuelo = v.id
-                    WHERE   DATE_ADD(v.fecha_arribo_programada, INTERVAL 1 DAY) >= DATE_SUB(%s, INTERVAL 2 HOUR)
-                    AND     v.fecha_partida_programada <= DATE_ADD(%s, INTERVAL 1 DAY)
-                )
-                AND     s.id IN (
-                        SELECT  cs.id_staff
-                        FROM    certificaciones_staff cs
-                        WHERE   cs.licencia_hasta >= %s
-                )
-                AND     s.id_cargo_actual = 1
-                AND     s.id_estado_actual = 1;
-                """
+        query = OBTENER_COMANDANTES
         
         valores = (fecha_inicio, fecha_fin, fecha_fin)
 
@@ -134,25 +117,7 @@ class AsignacionesVuelosManager(TablaManager):
     def _obtener_copilotos_disponibles(self, fecha_inicio: datetime, fecha_fin: datetime) -> list[int]:
         copilotos_disponibles: list[int] = []
 
-        query = """
-                SELECT  s.id
-                FROM    staff s
-                WHERE   s.id NOT IN (
-                    SELECT  av.id_staff
-                    FROM    asignaciones_vuelos av
-                    JOIN    vuelos v 
-                    ON      av.id_vuelo = v.id
-                    WHERE   DATE_ADD(v.fecha_arribo_programada, INTERVAL 1 DAY) >= DATE_SUB(%s, INTERVAL 2 HOUR)
-                    AND     v.fecha_partida_programada <= DATE_ADD(%s, INTERVAL 1 DAY)
-                )
-                AND     s.id IN (
-                        SELECT  cs.id_staff
-                        FROM    certificaciones_staff cs
-                        WHERE   cs.licencia_hasta >= %s
-                )
-                AND     s.id_cargo_actual = 2
-                AND     s.id_estado_actual = 1;
-                """
+        query = OBTENER_COPILOTOS
 
         valores = (fecha_inicio, fecha_fin, fecha_fin)
 
@@ -166,25 +131,7 @@ class AsignacionesVuelosManager(TablaManager):
     def _obtener_auxiliares_vuelo_disponibles(self, fecha_inicio: datetime, fecha_fin: datetime) -> list[int]:
         auxiliares_vuelo_disponibles: list[int] = []
 
-        query = """
-                SELECT  s.id
-                FROM    staff s
-                WHERE   s.id NOT IN (
-                    SELECT  av.id_staff
-                    FROM    asignaciones_vuelos av
-                    JOIN    vuelos v 
-                    ON      av.id_vuelo = v.id
-                    WHERE   DATE_ADD(v.fecha_arribo_programada, INTERVAL 1 DAY) >= DATE_SUB(%s, INTERVAL 2 HOUR)
-                    AND     v.fecha_partida_programada <= DATE_ADD(%s, INTERVAL 1 DAY)
-                )
-                AND     s.id IN (
-                        SELECT  cs.id_staff
-                        FROM    certificaciones_staff cs
-                        WHERE   cs.licencia_hasta >= %s
-                )
-                AND     s.id_cargo_actual = 3
-                AND     s.id_estado_actual = 1;
-                """
+        query = OBTENER_AUXILIARES_VUELO
         
         valores = (fecha_inicio, fecha_fin, fecha_fin)
 
@@ -198,25 +145,7 @@ class AsignacionesVuelosManager(TablaManager):
     def _obtener_mecanicos_disponibles(self, fecha_inicio: datetime, fecha_fin: datetime) -> list[int]:
         mecanicos_disponibles: list[int] = []
 
-        query = """
-                SELECT  s.id
-                FROM    staff s
-                WHERE   s.id NOT IN (
-                    SELECT  av.id_staff
-                    FROM    asignaciones_vuelos av
-                    JOIN    vuelos v 
-                    ON      av.id_vuelo = v.id
-                    WHERE   DATE_ADD(v.fecha_arribo_programada, INTERVAL 1 DAY) >= DATE_SUB(%s, INTERVAL 2 HOUR)
-                    AND     v.fecha_partida_programada <= DATE_ADD(%s, INTERVAL 1 DAY)
-                )
-                AND     s.id IN (
-                        SELECT  cs.id_staff
-                        FROM    certificaciones_staff cs
-                        WHERE   cs.licencia_hasta >= %s
-                )
-                AND     s.id_cargo_actual = 5
-                AND     s.id_estado_actual = 1;
-                """
+        query = OBTENER_MECANICOS
         
         valores = (fecha_inicio, fecha_fin, fecha_fin)
 
@@ -230,25 +159,7 @@ class AsignacionesVuelosManager(TablaManager):
     def _obtener_agentes_disponibles(self, fecha_inicio: datetime, fecha_fin: datetime) -> list[int]:
         agentes_disponibles: list[int] = []
 
-        query = """
-                SELECT  s.id
-                FROM    staff s
-                WHERE   s.id NOT IN (
-                    SELECT  av.id_staff
-                    FROM    asignaciones_vuelos av
-                    JOIN    vuelos v 
-                    ON      av.id_vuelo = v.id
-                    WHERE   DATE_ADD(v.fecha_arribo_programada, INTERVAL 1 DAY) >= DATE_SUB(%s, INTERVAL 2 HOUR)
-                    AND     v.fecha_partida_programada <= DATE_ADD(%s, INTERVAL 1 DAY)
-                )
-                AND     s.id IN (
-                        SELECT  cs.id_staff
-                        FROM    certificaciones_staff cs
-                        WHERE   cs.licencia_hasta >= %s
-                )
-                AND     s.id_cargo_actual = 7
-                AND     s.id_estado_actual = 1;
-                """
+        query = OBTENER_AGENTES
         
         valores = (fecha_inicio, fecha_fin, fecha_fin)
 
@@ -262,25 +173,7 @@ class AsignacionesVuelosManager(TablaManager):
     def _obtener_inspectores_disponibles(self, fecha_inicio: datetime, fecha_fin: datetime) -> list[int]:
         inspectores_disponibles: list[int] = []
 
-        query = """
-                SELECT  s.id
-                FROM    staff s
-                WHERE   s.id NOT IN (
-                    SELECT  av.id_staff
-                    FROM    asignaciones_vuelos av
-                    JOIN    vuelos v 
-                    ON      av.id_vuelo = v.id
-                    WHERE   DATE_ADD(v.fecha_arribo_programada, INTERVAL 1 DAY) >= DATE_SUB(%s, INTERVAL 2 HOUR)
-                    AND     v.fecha_partida_programada <= DATE_ADD(%s, INTERVAL 1 DAY)
-                )
-                AND     s.id IN (
-                        SELECT  cs.id_staff
-                        FROM    certificaciones_staff cs
-                        WHERE   cs.licencia_hasta >= %s
-                )
-                AND     s.id_cargo_actual = 6
-                AND     s.id_estado_actual = 1;
-                """
+        query = OBTENER_INSPECTORES
         
         valores = (fecha_inicio, fecha_fin, fecha_fin)
 
@@ -294,25 +187,7 @@ class AsignacionesVuelosManager(TablaManager):
     def _obtener_supervisores_agentes_disponibles(self, fecha_inicio: datetime, fecha_fin: datetime) -> list[int]:
         supervisores_agentes_disponibles: list[int] = []
 
-        query = """
-                SELECT  s.id
-                FROM    staff s
-                WHERE   s.id NOT IN (
-                    SELECT  av.id_staff
-                    FROM    asignaciones_vuelos av
-                    JOIN    vuelos v 
-                    ON      av.id_vuelo = v.id
-                    WHERE   DATE_ADD(v.fecha_arribo_programada, INTERVAL 1 DAY) >= DATE_SUB(%s, INTERVAL 2 HOUR)
-                    AND     v.fecha_partida_programada <= DATE_ADD(%s, INTERVAL 1 DAY)
-                )
-                AND     s.id IN (
-                        SELECT  cs.id_staff
-                        FROM    certificaciones_staff cs
-                        WHERE   cs.licencia_hasta >= %s
-                )
-                AND     s.id_cargo_actual = 8
-                AND     s.id_estado_actual = 1;
-                """
+        query = OBTENER_SUPERVISORES_AGENTES
         
         valores = (fecha_inicio, fecha_fin, fecha_fin)
 
@@ -326,25 +201,7 @@ class AsignacionesVuelosManager(TablaManager):
     def _obtener_supervisores_cabina_disponibles(self, fecha_inicio: datetime, fecha_fin: datetime) -> list[int]:
         supervisores_cabina_disponibles: list[int] = []
 
-        query = """
-                SELECT  s.id
-                FROM    staff s
-                WHERE   s.id NOT IN (
-                    SELECT  av.id_staff
-                    FROM    asignaciones_vuelos av
-                    JOIN    vuelos v 
-                    ON      av.id_vuelo = v.id
-                    WHERE   DATE_ADD(v.fecha_arribo_programada, INTERVAL 1 DAY) >= DATE_SUB(%s, INTERVAL 2 HOUR)
-                    AND     v.fecha_partida_programada <= DATE_ADD(%s, INTERVAL 1 DAY)
-                )
-                AND     s.id IN (
-                        SELECT  cs.id_staff
-                        FROM    certificaciones_staff cs
-                        WHERE   cs.licencia_hasta >= %s
-                )
-                AND     s.id_cargo_actual = 4
-                AND     s.id_estado_actual = 1;
-                """
+        query = OBTENER_SUPERVISORES_CABINA
         
         valores = (fecha_inicio, fecha_fin, fecha_fin)
 
