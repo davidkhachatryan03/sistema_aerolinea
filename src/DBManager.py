@@ -1,8 +1,8 @@
+from typing import cast
 import os
 import mysql.connector
 from mysql.connector.connection import MySQLConnection
 from mysql.connector.cursor import MySQLCursor
-from typing import cast
 from dotenv import load_dotenv 
 
 load_dotenv()

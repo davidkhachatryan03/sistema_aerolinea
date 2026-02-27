@@ -1,8 +1,7 @@
-from faker import Faker
 from datetime import datetime, timedelta, date
 from decimal import Decimal
 import random
-from src.querys import OBTENER_PERSONAL_AVION, OBTENER_STAFF
+from faker import Faker
 from src.DBManager import DBManager
 from src.entidades.Pasajero import PasajeroBase, PasajeroDesdeDB
 from src.entidades.Vuelo import VueloBase, VueloDesdeDB
@@ -12,6 +11,7 @@ from src.entidades.Documento import DocumentoBase
 from src.entidades.Ruta import RutaDesdeDB
 from src.entidades.Avion import AvionDesdeDB
 from src.entidades.AsignacionVuelo import AsignacionVueloBase
+from src.querys import OBTENER_PERSONAL_AVION, OBTENER_STAFF
 
 FilaStaff = tuple[int, str, int, int]
 

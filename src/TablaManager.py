@@ -1,7 +1,7 @@
+from typing import Any
 from src.DBManager import DBManager
 from mysql.connector.connection import MySQLConnection
 from mysql.connector.cursor import MySQLCursor
-from typing import Any
 
 class TablaManager:
 

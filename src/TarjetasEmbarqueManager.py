@@ -1,8 +1,8 @@
-from src.querys import OBTENER_TARJETA_EMBARQUE
-from src.entidades.TarjetaEmbarque import TarjetaEmbarqueBase, TarjetaEmbarqueDesdeDB
-from src.TablaManager import TablaManager
-from datetime import datetime
 from typing import Any
+from datetime import datetime
+from src.TablaManager import TablaManager
+from src.entidades.TarjetaEmbarque import TarjetaEmbarqueBase, TarjetaEmbarqueDesdeDB
+from src.querys import OBTENER_TARJETA_EMBARQUE
 
 FilaTarjetaEmbarque = tuple[int, datetime, datetime | None, int, int]
 
