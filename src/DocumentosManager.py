@@ -1,7 +1,7 @@
 from typing import Any
 from datetime import datetime
 from src.TablaManager import TablaManager
-from src.entidades.Documento import DocumentoBase, DocumentoDesdeDB
+from src.entidades import DocumentoBase, DocumentoDesdeDB
 from src.querys import OBTENER_DOCUMENTO
 
 FilaDocumento = tuple[int, str, datetime, str, int, int]

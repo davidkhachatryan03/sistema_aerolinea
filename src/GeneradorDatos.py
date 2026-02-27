@@ -3,14 +3,7 @@ from decimal import Decimal
 import random
 from faker import Faker
 from src.DBManager import DBManager
-from src.entidades.Pasajero import PasajeroBase, PasajeroDesdeDB
-from src.entidades.Vuelo import VueloBase, VueloDesdeDB
-from src.entidades.Venta import VentaBase, VentaDesdeDB
-from src.entidades.TarjetaEmbarque import TarjetaEmbarqueBase
-from src.entidades.Documento import DocumentoBase
-from src.entidades.Ruta import RutaDesdeDB
-from src.entidades.Avion import AvionDesdeDB
-from src.entidades.AsignacionVuelo import AsignacionVueloBase
+from src.entidades import PasajeroBase, PasajeroDesdeDB, VueloBase, VueloDesdeDB, VentaBase, VentaDesdeDB, TarjetaEmbarqueBase, DocumentoBase, RutaDesdeDB, AvionDesdeDB, AsignacionVueloBase
 from src.querys import OBTENER_PERSONAL_AVION, OBTENER_STAFF
 
 FilaStaff = tuple[int, str, int, int]

@@ -1,20 +1,5 @@
-from src.DBManager import DBManager
-from src.TablaManager import TablaManager
-from src.DocumentosManager import DocumentosManager
-from src.VuelosManager import VuelosManager
-from src.VentasManager import VentasManager
-from src.AsignacionesVuelosManager import AsignacionesVuelosManager
-from src.TarjetasEmbarqueManager import TarjetasEmbarqueManager
-from src.TriggerManager import TriggerManager
-from src.GeneradorDatos import GeneradorDatos
-from src.entidades.Pasajero import PasajeroBase, PasajeroDesdeDB
-from src.entidades.Vuelo import VueloBase, VueloDesdeDB
-from src.entidades.Venta import VentaBase, VentaDesdeDB
-from src.entidades.TarjetaEmbarque import TarjetaEmbarqueBase
-from src.entidades.Documento import DocumentoBase
-from src.entidades.Ruta import RutaDesdeDB
-from src.entidades.Avion import AvionDesdeDB
-from src.entidades.AsignacionVuelo import AsignacionVueloBase
+from src import DBManager, TablaManager, DocumentosManager, VuelosManager, VentasManager, AsignacionesVuelosManager, TarjetasEmbarqueManager, TriggerManager, GeneradorDatos
+from src.entidades import PasajeroBase, PasajeroDesdeDB, VueloBase, VueloDesdeDB, VentaBase, VentaDesdeDB, TarjetaEmbarqueBase, DocumentoBase, RutaDesdeDB, AvionDesdeDB, AsignacionVueloBase
 from mysql.connector import Error
 from mysql.connector.connection import MySQLConnection
 from mysql.connector.cursor import MySQLCursor

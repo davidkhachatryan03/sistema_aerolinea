@@ -3,7 +3,7 @@ from datetime import datetime
 from decimal import Decimal
 import random
 from src.TablaManager import TablaManager
-from src.entidades.Venta import VentaBase, VentaDesdeDB
+from src.entidades import VentaBase, VentaDesdeDB
 from src.querys import OBTENER_VENTA, OBTENER_CAPACIDAD, OBTENER_NUM_VENTAS
 
 FilaVenta = tuple[int, str, datetime, Decimal, int, int, int]

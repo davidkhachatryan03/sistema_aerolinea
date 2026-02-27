@@ -1,7 +1,7 @@
 from typing import Any
 from datetime import datetime
 from src.TablaManager import TablaManager
-from src.entidades.CertificacionStaff import CertificacionStaffBase, CertificacionStaffDesdeDB
+from src.entidades import CertificacionStaffBase, CertificacionStaffDesdeDB
 from src.querys import OBTENER_CERTIFICACION
 
 FilaCertificacion = tuple[int, int, str, datetime]
