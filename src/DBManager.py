@@ -13,11 +13,9 @@ class DBManager:
         self.user: str = os.environ["DB_USER"]
         self.password: str = os.environ["DB_PASS"]
         self.db_name: str = os.environ["DB_NAME"]
-        self.conexion: MySQLConnection | None = None
-        self.cursor: MySQLCursor | None = None
 
     def conectar(self) -> None:
-        self.conexion = cast(MySQLConnection, mysql.connector.connect(
+        self.conexion: MySQLConnection = cast(MySQLConnection, mysql.connector.connect(
             host = self.host,
             port = 3306,
             user = self.user,
