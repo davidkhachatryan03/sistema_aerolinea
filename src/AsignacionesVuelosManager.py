@@ -121,7 +121,7 @@ class AsignacionesVuelosManager(TablaManager):
 
         valores = (fecha_inicio, fecha_fin, fecha_fin)
 
-        consulta_copilotos_disponibles: list[tuple] = self.db_manager.consultar(query, valores)
+        consulta_copilotos_disponibles: list[tuple[int]] = self.db_manager.consultar(query, valores)
 
         for copiloto in consulta_copilotos_disponibles:
             copilotos_disponibles.append(copiloto[0])
@@ -135,7 +135,7 @@ class AsignacionesVuelosManager(TablaManager):
         
         valores = (fecha_inicio, fecha_fin, fecha_fin)
 
-        consulta_auxiliares_vuelo_disponibles: list[tuple] = self.db_manager.consultar(query, valores)
+        consulta_auxiliares_vuelo_disponibles: list[tuple[int]] = self.db_manager.consultar(query, valores)
 
         for auxiliar_vuelo in consulta_auxiliares_vuelo_disponibles:
             auxiliares_vuelo_disponibles.append(auxiliar_vuelo[0])
@@ -149,7 +149,7 @@ class AsignacionesVuelosManager(TablaManager):
         
         valores = (fecha_inicio, fecha_fin, fecha_fin)
 
-        consulta_mecanicos_disponibles: list[tuple] = self.db_manager.consultar(query, valores)
+        consulta_mecanicos_disponibles: list[tuple[int]] = self.db_manager.consultar(query, valores)
 
         for mecanico in consulta_mecanicos_disponibles:
             mecanicos_disponibles.append(mecanico[0])
@@ -163,7 +163,7 @@ class AsignacionesVuelosManager(TablaManager):
         
         valores = (fecha_inicio, fecha_fin, fecha_fin)
 
-        consulta_agentes_disponibles: list[tuple] = self.db_manager.consultar(query, valores)
+        consulta_agentes_disponibles: list[tuple[int]] = self.db_manager.consultar(query, valores)
 
         for agente in consulta_agentes_disponibles:
             agentes_disponibles.append(agente[0])
@@ -177,7 +177,7 @@ class AsignacionesVuelosManager(TablaManager):
         
         valores = (fecha_inicio, fecha_fin, fecha_fin)
 
-        consulta_inspectores_disponibles: list[tuple] = self.db_manager.consultar(query, valores)
+        consulta_inspectores_disponibles: list[tuple[int]] = self.db_manager.consultar(query, valores)
 
         for inspector in consulta_inspectores_disponibles:
             inspectores_disponibles.append(inspector[0])
@@ -191,7 +191,7 @@ class AsignacionesVuelosManager(TablaManager):
         
         valores = (fecha_inicio, fecha_fin, fecha_fin)
 
-        consulta_supervisores_agentes_disponibles: list[tuple] = self.db_manager.consultar(query, valores)
+        consulta_supervisores_agentes_disponibles: list[tuple[int]] = self.db_manager.consultar(query, valores)
 
         for supersor_agente in consulta_supervisores_agentes_disponibles:
             supervisores_agentes_disponibles.append(supersor_agente[0])
@@ -205,7 +205,7 @@ class AsignacionesVuelosManager(TablaManager):
         
         valores = (fecha_inicio, fecha_fin, fecha_fin)
 
-        consulta_supervisores_cabina_disponibles: list[tuple] = self.db_manager.consultar(query, valores)
+        consulta_supervisores_cabina_disponibles: list[tuple[int]] = self.db_manager.consultar(query, valores)
         
         for supervisor_cabina in consulta_supervisores_cabina_disponibles:
             supervisores_cabina_disponibles.append(supervisor_cabina[0])

@@ -93,7 +93,7 @@ class DocumentosManager(TablaManager):
     def _obtener_documento(self, id_documento: int) -> DocumentoDesdeDB:
         query = OBTENER_DOCUMENTO
 
-        consulta_documento: list[tuple] = self.db_manager.consultar(query, (id_documento, ))
+        consulta_documento: list[FilaDocumento] = self.db_manager.consultar(query, (id_documento, ))
 
         if consulta_documento:
             fila_documento: FilaDocumento = consulta_documento[0]

@@ -13,6 +13,8 @@ from src.entidades.Ruta import RutaDesdeDB
 from src.entidades.Avion import AvionDesdeDB
 from src.entidades.AsignacionVuelo import AsignacionVueloBase
 
+FilaStaff = tuple[int, str, int, int]
+
 class GeneradorDatos:
 
     def __init__(self, db_manager: DBManager) -> None:
@@ -207,7 +209,7 @@ class GeneradorDatos:
 
         valores = (fecha_inicio, fecha_fin, fecha_fin, id_cargo)
 
-        consulta_pilotos_disponibles: list[tuple] = self.db_manager.consultar(query, valores)
+        consulta_pilotos_disponibles: list[FilaStaff] = self.db_manager.consultar(query, valores)
 
         for piloto in consulta_pilotos_disponibles:
             pilotos_disponibles.append(piloto[0])
@@ -221,7 +223,7 @@ class GeneradorDatos:
 
         valores = (fecha_inicio, fecha_inicio, fecha_inicio, id_cargo)
 
-        consulta_staff_disponible: list[tuple] = self.db_manager.consultar(query, valores)
+        consulta_staff_disponible: list[FilaStaff] = self.db_manager.consultar(query, valores)
 
         for staff in consulta_staff_disponible:
             staff_disponible.append(staff[0])

@@ -78,7 +78,7 @@ class CertificacionesStaffManager(TablaManager):
     def _obtener_certificacion(self, id_certificacion: int) -> CertificacionStaffDesdeDB:
         query = OBTENER_CERTIFICACION
         
-        consulta_certificacion: list[tuple] = self.db_manager.consultar(query, (id_certificacion,))
+        consulta_certificacion: list[FilaCertificacion] = self.db_manager.consultar(query, (id_certificacion,))
 
         if consulta_certificacion:
             fila_certificacion: FilaCertificacion = consulta_certificacion[0]
