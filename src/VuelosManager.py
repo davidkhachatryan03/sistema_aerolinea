@@ -116,12 +116,12 @@ class VuelosManager(TablaManager):
             fecha_arribo_real: str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             super().modificar_fila(id_vuelo, id_staff, id_estado_actual=id_estado_actual, fecha_arribo_real=fecha_arribo_real)
 
-    def _obtener_aviones_disponibles(self, id_ruta: int, fecha_partida_programada: datetime, fecha_arribo_programada: datetime) -> list[tuple[int]]:
+    def _obtener_aviones_disponibles(self, id_ruta: int, fecha_partida_programada: datetime, fecha_arribo_programada: datetime) -> list[int]:
         query = OBTENER_AVIONES
 
         valores = (fecha_partida_programada, fecha_arribo_programada, id_ruta)
 
-        aviones_disponibles: list[tuple[int]] = cast(list[tuple[int]], self.db_manager.consultar(query, valores))
+        aviones_disponibles: list[int] = self.db_manager.consultar_columna_unica(query, valores)
 
         return aviones_disponibles
 
@@ -132,30 +132,30 @@ class VuelosManager(TablaManager):
         return False
 
     def _verificar_avion(self, id_avion: int, id_ruta: int, fecha_partida_programada: datetime, fecha_arribo_programada: datetime) -> bool:
-        id_aviones_disponibles: list[tuple[int]] = self._obtener_aviones_disponibles(id_ruta, fecha_partida_programada, fecha_arribo_programada)
+        id_aviones_disponibles: list[int] = self._obtener_aviones_disponibles(id_ruta, fecha_partida_programada, fecha_arribo_programada)
 
         for id_avion_disponible in id_aviones_disponibles:
-            if id_avion_disponible[0] == id_avion:
+            if id_avion_disponible == id_avion:
                 return True
 
         return False
 
     def _calcular_costo_operativo_usd(self, id_ruta: int, id_avion: int) -> Decimal:
         query: str = "SELECT duracion_min FROM rutas WHERE id = %s"
-        consulta: list[tuple] = self.db_manager.consultar(query, (id_ruta,))
+        consulta_duracion_min: list[int] = self.db_manager.consultar_columna_unica(query, (id_ruta,))
         
-        if consulta:
-            duracion_min: int = consulta[0][0]
-        else:
+        if not consulta_duracion_min:
             raise Exception("Error: no se encontró ningún resultado al consultar.")
+        
+        duracion_min: int = consulta_duracion_min[0]
 
         query = "SELECT costo_hora_vuelo FROM aviones WHERE id = %s"
-        consulta: list[tuple] = self.db_manager.consultar(query, (id_avion,))
+        consulta_costo_hora_vuelo: list[int] = self.db_manager.consultar_columna_unica(query, (id_avion,))
 
-        if consulta:
-            costo_hora_vuelo = Decimal(str(consulta[0][0]))
-        else:
+        if not consulta_costo_hora_vuelo:
             raise Exception("Error: no se encontró ningún resultado al consultar.")
+        
+        costo_hora_vuelo: int = consulta_costo_hora_vuelo[0]
 
         return (duracion_min / Decimal("60")) * costo_hora_vuelo
 

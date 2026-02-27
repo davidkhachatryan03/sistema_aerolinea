@@ -1,4 +1,4 @@
-from typing import cast
+from typing import Any, cast
 import os
 import mysql.connector
 from mysql.connector.connection import MySQLConnection
@@ -55,5 +55,14 @@ class DBManager:
         
         self.cursor.execute(query, valores)
         resultados: list[tuple] = cast(list[tuple], self.cursor.fetchall())
+
+        return resultados
+    
+    def consultar_columna_unica(self, query: str, valores: tuple | None = None) -> list[Any]:
+        if self.cursor == None:
+            raise Exception("Error: no hay cursor disponible.")
+        
+        self.cursor.execute(query, valores)
+        resultados: list[Any] = [elemento[0] for elemento in self.cursor.fetchall()]
 
         return resultados

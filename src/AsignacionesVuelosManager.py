@@ -101,44 +101,29 @@ class AsignacionesVuelosManager(TablaManager):
 
 
     def _obtener_comandantes_disponibles(self, fecha_inicio: datetime, fecha_fin: datetime) -> list[int]:
-        comandantes: list[int] = []
-
         query = OBTENER_COMANDANTES
         
         valores = (fecha_inicio, fecha_fin, fecha_fin)
 
-        consulta_comandantes_disponibles: list[tuple] = self.db_manager.consultar(query, valores)
-
-        for comandante in consulta_comandantes_disponibles:
-            comandantes.append(comandante[0])
+        comandantes_disponibles: list[int] = self.db_manager.consultar_columna_unica(query, valores)
         
-        return comandantes
+        return comandantes_disponibles
     
     def _obtener_copilotos_disponibles(self, fecha_inicio: datetime, fecha_fin: datetime) -> list[int]:
-        copilotos_disponibles: list[int] = []
-
         query = OBTENER_COPILOTOS
 
         valores = (fecha_inicio, fecha_fin, fecha_fin)
 
-        consulta_copilotos_disponibles: list[tuple[int]] = self.db_manager.consultar(query, valores)
+        copilotos_disponibles: list[int] = self.db_manager.consultar_columna_unica(query, valores)
 
-        for copiloto in consulta_copilotos_disponibles:
-            copilotos_disponibles.append(copiloto[0])
-        
         return copilotos_disponibles
     
     def _obtener_auxiliares_vuelo_disponibles(self, fecha_inicio: datetime, fecha_fin: datetime) -> list[int]:
-        auxiliares_vuelo_disponibles: list[int] = []
-
         query = OBTENER_AUXILIARES_VUELO
         
         valores = (fecha_inicio, fecha_fin, fecha_fin)
 
-        consulta_auxiliares_vuelo_disponibles: list[tuple[int]] = self.db_manager.consultar(query, valores)
-
-        for auxiliar_vuelo in consulta_auxiliares_vuelo_disponibles:
-            auxiliares_vuelo_disponibles.append(auxiliar_vuelo[0])
+        auxiliares_vuelo_disponibles: list[int] = self.db_manager.consultar_columna_unica(query, valores)
 
         return auxiliares_vuelo_disponibles
     
@@ -149,65 +134,42 @@ class AsignacionesVuelosManager(TablaManager):
         
         valores = (fecha_inicio, fecha_fin, fecha_fin)
 
-        consulta_mecanicos_disponibles: list[tuple[int]] = self.db_manager.consultar(query, valores)
-
-        for mecanico in consulta_mecanicos_disponibles:
-            mecanicos_disponibles.append(mecanico[0])
+        mecanicos_disponibles: list[int] = self.db_manager.consultar_columna_unica(query, valores)
 
         return mecanicos_disponibles
 
     def _obtener_agentes_disponibles(self, fecha_inicio: datetime, fecha_fin: datetime) -> list[int]:
-        agentes_disponibles: list[int] = []
-
         query = OBTENER_AGENTES
         
         valores = (fecha_inicio, fecha_fin, fecha_fin)
 
-        consulta_agentes_disponibles: list[tuple[int]] = self.db_manager.consultar(query, valores)
-
-        for agente in consulta_agentes_disponibles:
-            agentes_disponibles.append(agente[0])
+        agentes_disponibles: list[int] = self.db_manager.consultar_columna_unica(query, valores)
 
         return agentes_disponibles
     
     def _obtener_inspectores_disponibles(self, fecha_inicio: datetime, fecha_fin: datetime) -> list[int]:
-        inspectores_disponibles: list[int] = []
-
         query = OBTENER_INSPECTORES
         
         valores = (fecha_inicio, fecha_fin, fecha_fin)
 
-        consulta_inspectores_disponibles: list[tuple[int]] = self.db_manager.consultar(query, valores)
-
-        for inspector in consulta_inspectores_disponibles:
-            inspectores_disponibles.append(inspector[0])
+        inspectores_disponibles: list[int] = self.db_manager.consultar_columna_unica(query, valores)
 
         return inspectores_disponibles
     
     def _obtener_supervisores_agentes_disponibles(self, fecha_inicio: datetime, fecha_fin: datetime) -> list[int]:
-        supervisores_agentes_disponibles: list[int] = []
-
         query = OBTENER_SUPERVISORES_AGENTES
         
         valores = (fecha_inicio, fecha_fin, fecha_fin)
 
-        consulta_supervisores_agentes_disponibles: list[tuple[int]] = self.db_manager.consultar(query, valores)
-
-        for supersor_agente in consulta_supervisores_agentes_disponibles:
-            supervisores_agentes_disponibles.append(supersor_agente[0])
+        supervisores_agentes_disponibles: list[int] = self.db_manager.consultar_columna_unica(query, valores)
 
         return supervisores_agentes_disponibles
     
     def _obtener_supervisores_cabina_disponibles(self, fecha_inicio: datetime, fecha_fin: datetime) -> list[int]:
-        supervisores_cabina_disponibles: list[int] = []
-
         query = OBTENER_SUPERVISORES_CABINA
         
         valores = (fecha_inicio, fecha_fin, fecha_fin)
 
-        consulta_supervisores_cabina_disponibles: list[tuple[int]] = self.db_manager.consultar(query, valores)
-        
-        for supervisor_cabina in consulta_supervisores_cabina_disponibles:
-            supervisores_cabina_disponibles.append(supervisor_cabina[0])
+        supervisores_cabina_disponibles: list[int] = self.db_manager.consultar_columna_unica(query, valores)
 
         return supervisores_cabina_disponibles
