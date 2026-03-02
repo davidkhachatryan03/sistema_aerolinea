@@ -2,7 +2,6 @@ from src.GeneradorDatos import GeneradorDatos
 from src.entidades import PasajeroBase, PasajeroDesdeDB, VueloBase, VueloDesdeDB, VentaBase, VentaDesdeDB, TarjetaEmbarqueBase, DocumentoBase, RutaDesdeDB, AvionDesdeDB, AsignacionVueloBase
 from mysql.connector import Error
 from mysql.connector.connection import MySQLConnection
-from mysql.connector.cursor import MySQLCursor
 from typing import cast
 import os
 
