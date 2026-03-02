@@ -13,7 +13,6 @@ def main() -> None:
 
         db_manager.conectar()
 
-        cursor: MySQLCursor = cast(MySQLCursor, db_manager.obtener_cursor())
         conexion: MySQLConnection = cast(MySQLConnection, db_manager.obtener_conexion())
 
         dir_actual: str = os.getcwd()
@@ -21,13 +20,12 @@ def main() -> None:
 
         db_manager.ejecutar_archivo_sql(os.path.join(dir_sql, "crear_db.sql"))
 
-        cursor.execute("SHOW TABLES")
-
-        tablas: list[tuple] = cursor.fetchall()
+        query = "SHOW TABLES"
+        tablas: list[str] = db_manager.consultar_columna_unica(query)
 
         for tabla in tablas:
-            if tabla[0] not in ["historial_cambios", "sys_config"]:
-                trigger_manager = TriggerManager(tabla[0], db_manager)
+            if tabla not in ["historial_cambios", "sys_config"]:
+                trigger_manager = TriggerManager(tabla, db_manager)
                 trigger_manager.crear_trigger_after_insert()
                 trigger_manager.crear_trigger_after_update()
                 trigger_manager.crear_trigger_after_delete()
