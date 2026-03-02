@@ -2,7 +2,7 @@ from typing import Any
 from datetime import datetime
 from decimal import Decimal
 import random
-from src.TablaManager import TablaManager
+from src.managers.TablaManager import TablaManager
 from src.entidades import VentaBase, VentaDesdeDB
 from src.querys import OBTENER_VENTA, OBTENER_CAPACIDAD, OBTENER_NUM_VENTAS
 

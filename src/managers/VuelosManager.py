@@ -1,8 +1,8 @@
 from typing import Any, cast
 from datetime import datetime
 from decimal import Decimal
-from src.DBManager import DBManager
-from src.TablaManager import TablaManager
+from src.managers.DBManager import DBManager
+from src.managers.TablaManager import TablaManager
 from src.entidades import VueloBase, VueloDesdeDB
 from src.querys import OBTENER_VUELO, OBTENER_AVIONES
 

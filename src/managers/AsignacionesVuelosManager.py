@@ -1,6 +1,6 @@
 from datetime import datetime
-from src.DBManager import DBManager
-from src.TablaManager import TablaManager
+from src.managers.DBManager import DBManager
+from src.managers.TablaManager import TablaManager
 from src.entidades import AsignacionVueloBase
 from src.querys import OBTENER_SUPERVISORES_AGENTES, OBTENER_AGENTES, OBTENER_AUXILIARES_VUELO, OBTENER_COMANDANTES, OBTENER_COPILOTOS, OBTENER_INSPECTORES, OBTENER_MECANICOS, OBTENER_SUPERVISORES_CABINA
 

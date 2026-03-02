@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, date
 from decimal import Decimal
 import random
 from faker import Faker
-from src.DBManager import DBManager
+from src.managers import DBManager
 from src.entidades import PasajeroBase, PasajeroDesdeDB, VueloBase, VueloDesdeDB, VentaBase, VentaDesdeDB, TarjetaEmbarqueBase, DocumentoBase, RutaDesdeDB, AvionDesdeDB, AsignacionVueloBase
 from src.querys import OBTENER_PERSONAL_AVION, OBTENER_STAFF
 

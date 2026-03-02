@@ -1,5 +1,5 @@
 from typing import cast
-from src.DBManager import DBManager
+from src.managers.DBManager import DBManager
 from mysql.connector.connection import MySQLConnection
 from mysql.connector.cursor import MySQLCursor
 

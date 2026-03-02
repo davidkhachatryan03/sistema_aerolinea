@@ -1,6 +1,6 @@
 from typing import Any
 from datetime import datetime
-from src.TablaManager import TablaManager
+from src.managers.TablaManager import TablaManager
 from src.entidades import TarjetaEmbarqueBase, TarjetaEmbarqueDesdeDB
 from src.querys import OBTENER_TARJETA_EMBARQUE
 
