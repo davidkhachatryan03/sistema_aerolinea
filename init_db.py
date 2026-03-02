@@ -1,20 +1,18 @@
 from src.GeneradorDatos import GeneradorDatos
 from src.entidades import PasajeroBase, PasajeroDesdeDB, VueloBase, VueloDesdeDB, VentaBase, VentaDesdeDB, TarjetaEmbarqueBase, DocumentoBase, RutaDesdeDB, AvionDesdeDB, AsignacionVueloBase
+from src.managers import AsignacionesVuelosManager, DBManager, DocumentosManager, TablaManager, TarjetasEmbarqueManager, TriggerManager, VentasManager, VuelosManager
 from mysql.connector import Error
-from mysql.connector.connection import MySQLConnection
 from typing import cast
 import os
 
-from src.managers import AsignacionesVuelosManager, DBManager, DocumentosManager, TablaManager, TarjetasEmbarqueManager, TriggerManager, VentasManager, VuelosManager
-
 def main() -> None:
+
+    db_manager = DBManager()
+
     try:
-        db_manager = DBManager()
         generador_datos = GeneradorDatos(db_manager)
 
         db_manager.conectar()
-
-        conexion: MySQLConnection = cast(MySQLConnection, db_manager.obtener_conexion())
 
         dir_actual: str = os.getcwd()
         dir_sql: str = os.path.join(dir_actual, "sql")
@@ -32,7 +30,7 @@ def main() -> None:
             db_manager.ejecutar_archivo_sql(os.path.join(dir_sql_inserts, archivo))
         
         aviones_desde_db: list[AvionDesdeDB] = _obtener_aviones(db_manager)
-
+        
         rutas_desde_db: list[RutaDesdeDB] = _obtener_rutas(db_manager)
 
         pasajeros: list[PasajeroBase] = generador_datos.generar_pasajeros(100)
@@ -59,11 +57,11 @@ def main() -> None:
         asignaciones_vuelos: list[AsignacionVueloBase] = generador_datos.generar_asignaciones_vuelos(vuelos_desde_db)
         _poblar_asignaciones_vuelos(db_manager, asignaciones_vuelos)
 
-        conexion.commit()
+        db_manager.commit()
 
     except Error as ex:
         print("Error durante la conexión: {}\n".format(ex))
-        conexion.rollback()
+        db_manager.rollback()
 
     finally:
         db_manager.desconectar()

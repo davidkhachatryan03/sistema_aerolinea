@@ -66,3 +66,9 @@ class DBManager:
         resultados: list[Any] = [elemento[0] for elemento in self.cursor.fetchall()]
 
         return resultados
+    
+    def commit(self) -> None:
+        self.conexion.commit()
+    
+    def rollback(self) -> None:
+        self.conexion.rollback()
