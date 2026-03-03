@@ -2,7 +2,6 @@ from src.GeneradorDatos import GeneradorDatos
 from src.entidades import PasajeroBase, PasajeroDesdeDB, VueloBase, VueloDesdeDB, VentaBase, VentaDesdeDB, TarjetaEmbarqueBase, DocumentoBase, RutaDesdeDB, AvionDesdeDB, AsignacionVueloBase
 from src.managers import AsignacionesVuelosManager, DBManager, DocumentosManager, TablaManager, TarjetasEmbarqueManager, TriggerManager, VentasManager, VuelosManager
 from mysql.connector import Error
-from typing import cast
 import os
 
 def main() -> None:
