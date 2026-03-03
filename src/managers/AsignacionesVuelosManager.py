@@ -128,8 +128,6 @@ class AsignacionesVuelosManager(TablaManager):
         return auxiliares_vuelo_disponibles
     
     def _obtener_mecanicos_disponibles(self, fecha_inicio: datetime, fecha_fin: datetime) -> list[int]:
-        mecanicos_disponibles: list[int] = []
-
         query = OBTENER_MECANICOS
         
         valores = (fecha_inicio, fecha_fin, fecha_fin)
