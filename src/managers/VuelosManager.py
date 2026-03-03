@@ -12,6 +12,7 @@ class VuelosManager(TablaManager):
 
     def __init__(self, db_manager: DBManager):
         super().__init__("vuelos", db_manager)
+        self.campos_requeridos = ["fecha_partida_programada", "fecha_arribo_programada", "id_ruta", "id_avion"]
         self.estados_posibles = {
             1: "Programado",
             2: "En vuelo",
@@ -173,9 +174,7 @@ class VuelosManager(TablaManager):
         return vuelo
     
     def _verificar_campos_requeridos(self, vuelo: VueloBase) -> bool:
-        campos_requeridos = ["fecha_partida_programada", "fecha_arribo_programada", "id_ruta", "id_avion"]
-
-        for campo in campos_requeridos:
+        for campo in self.campos_requeridos:
             if getattr(vuelo, campo) == None:
                 return False
         

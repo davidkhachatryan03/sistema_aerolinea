@@ -10,13 +10,13 @@ class TarjetasEmbarqueManager(TablaManager):
 
     def __init__(self, db_manager):
         super().__init__("tarjetas_embarque", db_manager)
+        self.campos_requeridos = ["id_venta"]
         self.estados_posibles = {
             1: "Emitida",
             2: "No Show",
             3: "Denegada",
             4: "Pendiente"
         }
-        self.campos_requeridos = ["id_venta"]
 
     def registrar_tarjeta_embarque(self, id_staff: int, tarjeta_embarque: TarjetaEmbarqueBase) -> None:
         if not super()._verificar_id_staff(id_staff):

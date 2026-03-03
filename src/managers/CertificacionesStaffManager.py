@@ -68,7 +68,7 @@ class CertificacionesStaffManager(TablaManager):
         
         super().modificar_fila(id_certificacion, id_staff, licencia_hasta=licencia_hasta)
     
-    def _verificar_campos_requeridos(self, certificacion: CertificacionStaffBase):
+    def _verificar_campos_requeridos(self, certificacion: CertificacionStaffBase) -> bool:
         for campo in self.campos_requeridos:
             if getattr(certificacion, campo) == None:
                 return False

@@ -10,11 +10,14 @@ class DocumentosManager(TablaManager):
 
     def __init__(self, db_manager) -> None:
         super().__init__("documentos", db_manager)
+        self.campos_requeridos = ["num_documento", "fecha_vencimiento", "pais_emision", "id_pasajero", "id_tipo_documento"]
 
-    # se podría hacer que se extraigan todos los datos a partir del numero de documento ingresado
     def registrar_documento(self, id_staff: int, documento: DocumentoBase) -> None:
         if not super()._verificar_id_staff(id_staff):
             raise Exception("Error: el staff ingresado no es válido.")
+        
+        if not self._verificar_campos_requeridos(documento):
+            raise Exception("Error: no se ingresaron todos los campos requeridos.")
         
         datos: dict[str, Any] = documento.to_dict()
 
@@ -102,3 +105,10 @@ class DocumentosManager(TablaManager):
             raise Exception("Error: el id ingresado no existe.")
 
         return documento
+    
+    def _verificar_campos_requeridos(self, documento: DocumentoBase) -> bool:
+        for campo in self.campos_requeridos:
+            if getattr(documento, campo) == None:
+                return False
+        
+        return True
