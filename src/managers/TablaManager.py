@@ -1,22 +1,18 @@
 from typing import Any
 from src.managers.DBManager import DBManager
-from mysql.connector.connection import MySQLConnection
-from mysql.connector.cursor import MySQLCursor
 
 class TablaManager:
 
     def __init__(self, tabla: str, db_manager: DBManager) -> None:
         self.db_manager: DBManager = db_manager
         self.tabla: str = tabla
-        self.cursor: MySQLCursor | None = db_manager.obtener_cursor()
-        self.conexion: MySQLConnection | None = db_manager.obtener_conexion()
 
     def agregar_fila(self, id_staff: int, datos: dict[str, Any]) -> None:
-        if self.cursor == None or self.conexion == None:
+        if self.db_manager.obtener_cursor() == None or self.db_manager.obtener_conexion() == None:
             print("No hay cursor.")
             return
         
-        self.cursor.execute("SET @usuario = %s", (id_staff,))
+        self.db_manager.execute("SET @usuario = %s", (id_staff,))
 
         columnas: str = ", ".join(map(str, datos.keys()))
         valores: list[Any] = ", ".join(map(str, datos.values())).split(", ")
@@ -35,21 +31,21 @@ class TablaManager:
                 VALUES ({cantidad_columnas})
                 """
         
-        self.cursor.execute(query, valores)
+        self.db_manager.execute(query, valores)
 
-        if self.cursor.rowcount == 1:
+        if self.db_manager.obtener_cursor().rowcount == 1:
             print("Fila agregada correctamente.\n")
-            self.conexion.commit()
+            self.db_manager.commit()
         else:
             print("Hubo un error.\n")
-            self.conexion.rollback()
+            self.db_manager.rollback()
 
     def modificar_fila(self, id: int, id_staff_modifica: int, **datos) -> None:
-        if self.cursor == None or self.conexion == None:
+        if self.db_manager.obtener_cursor() == None or self.db_manager.obtener_conexion() == None:
                 print("No hay cursor.")
                 return
 
-        self.cursor.execute("SET @usuario = %s", (id_staff_modifica,))
+        self.db_manager.execute("SET @usuario = %s", (id_staff_modifica,))
 
         columnas: str = ", ".join(map(str, datos.keys()))
         valores: list[Any] = ", ".join(map(str, datos.values())).split(", ")
@@ -64,14 +60,14 @@ class TablaManager:
             valores_: list[Any] = valores.copy()
             valores_.append(id)
 
-            self.cursor.execute(query, valores_)
+            self.db_manager.execute(query, valores_)
 
-            if self.cursor.rowcount == 1:
+            if self.db_manager.obtener_cursor().rowcount == 1:
                 print("Fila agregada correctamente.\n")
-                self.conexion.commit()
+                self.db_manager.commit()
             else:
                 print("Hubo un error.\n")
-                self.conexion.rollback()
+                self.db_manager.rollback()
 
         else:
             # optimizar esto con .executemany
@@ -85,14 +81,14 @@ class TablaManager:
 
                 valores__: tuple[Any, int] = (valores[i], id)
 
-                self.cursor.execute(query, valores__)
+                self.db_manager.execute(query, valores__)
 
-                if self.cursor.rowcount == 1:
+                if self.db_manager.obtener_cursor().rowcount == 1:
                     print("Fila agregada correctamente.\n")
-                    self.conexion.commit()
+                    self.db_manager.commit()
                 else:
                     print("Hubo un error.\n")
-                    self.conexion.rollback()
+                    self.db_manager.rollback()
 
     def _verificar_id_a_modificar(self, id: int) -> bool:
         query = f"SELECT 1 FROM {self.tabla} WHERE id = %s LIMIT 1"

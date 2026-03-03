@@ -33,10 +33,10 @@ class DBManager:
             self.cursor.close()
             print("Conexión finalizada.")
 
-    def obtener_cursor(self) -> MySQLCursor | None:
+    def obtener_cursor(self) -> MySQLCursor:
         return self.cursor
     
-    def obtener_conexion(self) -> MySQLConnection | None:
+    def obtener_conexion(self) -> MySQLConnection:
         return self.conexion
     
     def ejecutar_archivo_sql(self, ruta_archivo: str) -> None:
@@ -73,5 +73,5 @@ class DBManager:
     def rollback(self) -> None:
         self.conexion.rollback()
 
-    def ejecutar(self, query: str, valores: tuple | list | None = None) -> None:
+    def execute(self, query: str, valores: tuple | list | None = None) -> None:
         self.cursor.execute(query, valores)
