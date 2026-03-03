@@ -49,7 +49,7 @@ class DBManager:
             for comando in comandos:
                 self.cursor.execute(comando)
 
-    def consultar(self, query: str, valores: tuple[Any] | list[Any] | None = None) -> list[tuple]:
+    def consultar(self, query: str, valores: tuple | list | None = None) -> list[tuple]:
         if self.cursor == None:
             raise Exception("Error: no hay cursor disponible.")
         
@@ -58,7 +58,7 @@ class DBManager:
 
         return resultados
     
-    def consultar_columna_unica(self, query: str, valores: tuple[Any] | list[Any] | None = None) -> list[Any]:
+    def consultar_columna_unica(self, query: str, valores: tuple | list | None = None) -> list[Any]:
         if self.cursor == None:
             raise Exception("Error: no hay cursor disponible.")
         
@@ -73,5 +73,5 @@ class DBManager:
     def rollback(self) -> None:
         self.conexion.rollback()
 
-    def ejecutar(self, query: str, valores: tuple[Any] | list[Any] | None = None) -> None:
+    def ejecutar(self, query: str, valores: tuple | list | None = None) -> None:
         self.cursor.execute(query, valores)
