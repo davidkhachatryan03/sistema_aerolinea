@@ -1,5 +1,5 @@
 from typing import Any
-from datetime import datetime, date
+from datetime import date
 
 class DocumentoBase:
 
