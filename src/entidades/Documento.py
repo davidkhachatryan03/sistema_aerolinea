@@ -26,7 +26,7 @@ class DocumentoBase:
 
 class DocumentoDesdeDB(DocumentoBase):
 
-    def __init__(self, id: int, num_documento: str, fecha_vencimiento: datetime, pais_emision: str, id_pasajero: int, id_tipo_documento: int) -> None:
+    def __init__(self, id: int, num_documento: str, fecha_vencimiento: date, pais_emision: str, id_pasajero: int, id_tipo_documento: int) -> None:
         super().__init__(num_documento, fecha_vencimiento, pais_emision, id_pasajero, id_tipo_documento)
         self.id = id
 
