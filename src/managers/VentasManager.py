@@ -2,11 +2,10 @@ from typing import Any
 from datetime import datetime
 from decimal import Decimal
 import random
+from src.tipos import FilaVenta
 from src.managers.TablaManager import TablaManager
 from src.entidades import VentaBase, VentaDesdeDB
 from src.querys import OBTENER_VENTA, OBTENER_CAPACIDAD, OBTENER_NUM_VENTAS
-
-FilaVenta = tuple[int, str, datetime, Decimal, int, int, int]
 
 class VentasManager(TablaManager):
 

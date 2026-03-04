@@ -1,12 +1,11 @@
 from typing import Any, cast
 from datetime import datetime
 from decimal import Decimal
+from src.tipos import FilaVuelo
 from src.managers.DBManager import DBManager
 from src.managers.TablaManager import TablaManager
 from src.entidades import VueloBase, VueloDesdeDB
 from src.querys import OBTENER_VUELO, OBTENER_AVIONES
-
-FilaVuelo = tuple[int, datetime, datetime, datetime | None, datetime | None, Decimal, Decimal, int, int, int]
 
 class VuelosManager(TablaManager):
 

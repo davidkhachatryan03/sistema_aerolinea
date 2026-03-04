@@ -1,10 +1,9 @@
 from typing import Any
 from datetime import datetime
+from src.tipos import FilaDocumento
 from src.managers.TablaManager import TablaManager
 from src.entidades import DocumentoBase, DocumentoDesdeDB
 from src.querys import OBTENER_DOCUMENTO
-
-FilaDocumento = tuple[int, str, datetime, str, int, int]
 
 class DocumentosManager(TablaManager):
 

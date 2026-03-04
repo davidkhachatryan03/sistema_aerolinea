@@ -1,10 +1,9 @@
 from typing import Any
 from datetime import datetime
+from src.tipos import FilaCertificacion
 from src.managers.TablaManager import TablaManager
 from src.entidades import CertificacionStaffBase, CertificacionStaffDesdeDB
 from src.querys import OBTENER_CERTIFICACION
-
-FilaCertificacion = tuple[int, int, str, datetime]
 
 class CertificacionesStaffManager(TablaManager):
 
