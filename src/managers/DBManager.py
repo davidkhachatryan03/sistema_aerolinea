@@ -13,6 +13,7 @@ class DBManager:
         self.user: str = os.environ["DB_USER"]
         self.password: str = os.environ["DB_PASS"]
         self.db_name: str = os.environ["DB_NAME"]
+        self.dir_sql: str = os.path.join(os.getcwd(), "sql")
 
     def conectar(self) -> None:
         self.conexion: MySQLConnection = cast(MySQLConnection, mysql.connector.connect(
@@ -75,3 +76,12 @@ class DBManager:
 
     def execute(self, query: str, valores: tuple | list | None = None) -> None:
         self.cursor.execute(query, valores)
+
+    def crear_db(self) -> None:
+        self.ejecutar_archivo_sql(os.path.join(self.dir_sql, "crear_db.sql"))
+
+    def borrar_db(self) -> None:
+        self.execute("DROP DATABASE IF EXISTS aerolinea;")
+
+    def borrar_datos(self) -> None:
+        self.ejecutar_archivo_sql(os.path.join(self.dir_sql, "borrar_datos.sql"))
