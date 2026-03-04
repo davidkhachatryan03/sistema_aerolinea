@@ -4,6 +4,9 @@ from datetime import datetime
 class AsignacionVueloBase:
 
     def __init__(self, fecha_inicio: datetime, fecha_fin: datetime, id_rol: int, id_vuelo: int, id_staff: int) -> None:
+        if type(fecha_inicio) != datetime or type(fecha_fin) != datetime or type(id_rol) != int or type(id_vuelo) != int or type(id_staff) != int:
+            raise Exception("Error: el formato de los datos es incorrecto.")
+
         self.fecha_inicio = fecha_inicio
         self.fecha_fin = fecha_fin
         self.id_rol = id_rol

@@ -4,6 +4,9 @@ from datetime import datetime
 class TarjetaEmbarqueBase:
 
     def __init__(self, id_estado_actual: int, id_venta: int) -> None:
+        if type(id_estado_actual) != int or type(id_venta) != int:
+            raise Exception("Error: el formato de los datos es incorrecto.")
+
         self.id_estado_actual = id_estado_actual
         self.id_venta = id_venta
 

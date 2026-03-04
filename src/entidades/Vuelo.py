@@ -5,6 +5,9 @@ from decimal import Decimal
 class VueloBase:
     
     def __init__(self, id_ruta: int, id_avion: int, id_estado_actual: int, fecha_partida_programada: datetime, fecha_arribo_programada: datetime, costo_operativo_usd: Decimal, precio_venta_usd: Decimal) -> None:
+        if type(id_ruta) != int or type(id_avion) != int or type(id_estado_actual) != int or type(fecha_partida_programada) != datetime or type(fecha_arribo_programada) != datetime or type(costo_operativo_usd) != Decimal or type(precio_venta_usd) != Decimal:
+            raise Exception("Error: el formato de los datos es incorrecto.")
+
         self.id_ruta = id_ruta
         self.id_avion = id_avion
         self.id_estado_actual = id_estado_actual

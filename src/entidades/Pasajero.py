@@ -3,6 +3,9 @@ from typing import Any
 class PasajeroBase:
 
     def __init__(self, nombre_completo: str, email: str, telefono: str, esta_en_lista_negra: bool, es_vip: bool) -> None:
+        if type(nombre_completo) != str or type(email) != str or type(esta_en_lista_negra) != bool or type(es_vip) != bool:
+            raise Exception("Error: el formato de los datos es incorrecto.")
+        
         self.nombre_completo = nombre_completo
         self.email = email
         self.telefono = telefono

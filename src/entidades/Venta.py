@@ -5,6 +5,9 @@ from decimal import Decimal
 class VentaBase:
 
     def __init__(self, id_pasajero: int, id_vuelo: int, num_reserva: str, precio_pagado_usd: Decimal, id_estado_actual: int) -> None:
+        if type(id_pasajero) != int or type(id_vuelo) != int or type(num_reserva) != str or type(precio_pagado_usd) != Decimal or type(id_estado_actual) != int:
+            raise Exception("Error: el formato de los datos es incorrecto.")
+
         self.id_pasajero = id_pasajero
         self.id_vuelo = id_vuelo
         self.num_reserva = num_reserva

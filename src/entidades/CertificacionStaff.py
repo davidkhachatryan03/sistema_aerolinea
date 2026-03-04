@@ -4,6 +4,9 @@ from datetime import datetime
 class CertificacionStaffBase:
 
     def __init__(self, id_staff: int, descripcion: str, licencia_hasta: datetime) -> None:
+        if type(id_staff) != int or type(descripcion) != str or type(licencia_hasta) != datetime:
+            raise Exception("Error: el formato de los datos es incorrecto.")
+        
         self.id_staff = id_staff
         self.descripcion = descripcion
         self.licencia_hasta = licencia_hasta

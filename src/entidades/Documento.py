@@ -4,6 +4,9 @@ from datetime import datetime, date
 class DocumentoBase:
 
     def __init__(self, num_documento: str, fecha_vencimiento: date, pais_emision: str, id_pasajero: int, id_tipo_documento: int) -> None:
+        if type(num_documento) != str or type(fecha_vencimiento) != date or type(pais_emision) != str or type(id_pasajero) != int or type(id_tipo_documento) != int:
+            raise Exception("Error: el formato de los datos es incorrecto.")
+
         self.num_documento = num_documento
         self.fecha_vencimiento = fecha_vencimiento
         self.pais_emision = pais_emision
