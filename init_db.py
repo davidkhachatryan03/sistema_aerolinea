@@ -96,7 +96,17 @@ def _obtener_rutas(db_manager: DBManager) -> list[RutaDesdeDB]:
 def _obtener_pasajeros(db_manager: DBManager) -> list[PasajeroDesdeDB]:
     query = "SELECT * FROM pasajeros"
     consulta_pasajeros: list[tuple] = db_manager.consultar(query)
-    pasajeros_desde_db: list[PasajeroDesdeDB] = [PasajeroDesdeDB(*pasajero) for pasajero in consulta_pasajeros]
+    
+    pasajeros_desde_db: list[PasajeroDesdeDB] = []
+    for pasajero in consulta_pasajeros:
+        pasajeros_desde_db.append(PasajeroDesdeDB(
+            id=pasajero[0],
+            nombre_completo=pasajero[1],
+            email=pasajero[2],
+            telefono=pasajero[3],
+            esta_en_lista_negra=bool(pasajero[4]),
+            es_vip=bool(pasajero[5])
+        ))
 
     return pasajeros_desde_db
 

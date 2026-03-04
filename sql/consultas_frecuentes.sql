@@ -19,3 +19,5 @@ SELECT * FROM cargos;
 SELECT * FROM staff;
 SELECT * FROM pasajeros;
 SELECT * FROM historial_cambios;
+
+SHOW TABLES;

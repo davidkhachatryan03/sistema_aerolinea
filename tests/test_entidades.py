@@ -6,7 +6,7 @@ from src.entidades import *
 def test_pasajero_se_crea_con_formato_correcto():
     nombre_completo = "David Khachatryan"
     email = "email@test.com"
-    telefono = "1143254683"
+    telefono = 1143254683
     esta_en_lista_negra = False
     es_vip = True
 
