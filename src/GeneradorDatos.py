@@ -20,7 +20,7 @@ class GeneradorDatos:
         for _ in range(cant):
             nombre_completo: str = self.fake.name()
             email: str = self.fake.email()
-            telefono: str = self.fake.numerify("11%#######")
+            telefono: int = int(self.fake.numerify("11%#######"))
             esta_en_lista_negra: bool = random.choices([True, False], weights=[3, 97])[0]
             es_vip: bool = random.choices([True, False], weights=[20, 80])[0]
 
