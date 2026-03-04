@@ -41,7 +41,7 @@ class DBManager:
         return self.conexion
     
     def ejecutar_archivo_sql(self, ruta_archivo: str) -> None:
-        if self.cursor == None:
+        if self.obtener_cursor() == None:
             raise Exception("Error: no hay cursor disponible.")
         
         with open(ruta_archivo, "r") as f:
@@ -51,10 +51,10 @@ class DBManager:
                 self.cursor.execute(comando)
 
     def consultar(self, query: str, valores: tuple | list | None = None) -> list[tuple]:
-        if self.cursor == None:
+        if self.obtener_cursor() == None:
             raise Exception("Error: no hay cursor disponible.")
         
-        self.cursor.execute(query, valores)
+        self.execute(query, valores)
         resultados: list[tuple] = cast(list[tuple], self.cursor.fetchall())
 
         return resultados
@@ -69,13 +69,13 @@ class DBManager:
         return resultados
     
     def commit(self) -> None:
-        self.conexion.commit()
+        self.obtener_conexion().commit()
     
     def rollback(self) -> None:
-        self.conexion.rollback()
+        self.obtener_conexion().rollback()
 
     def execute(self, query: str, valores: tuple | list | None = None) -> None:
-        self.cursor.execute(query, valores)
+        self.obtener_cursor().execute(query, valores)
 
     def crear_db(self) -> None:
         self.ejecutar_archivo_sql(os.path.join(self.dir_sql, "crear_db.sql"))
