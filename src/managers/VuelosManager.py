@@ -32,11 +32,10 @@ class VuelosManager(TablaManager):
 
         costo_operativo_usd: Decimal = self._calcular_costo_operativo_usd(vuelo.id_ruta, vuelo.id_avion)
         
-        precio_venta_usd: Decimal = costo_operativo_usd * Decimal(1.30)
+        precio_venta_usd: Decimal = costo_operativo_usd * Decimal("1.3")
 
         vuelo.costo_operativo_usd = costo_operativo_usd
-        vuelo.precio_venta_usd = precio_venta_usd
-
+        vuelo.precio_venta_usd = precio_venta_usd.quantize(Decimal("0.01"))
         vuelo.id_estado_actual = 1
 
         datos: dict[str, Any] = vuelo.to_dict()
