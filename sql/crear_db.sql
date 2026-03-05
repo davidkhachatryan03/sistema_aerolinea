@@ -125,7 +125,7 @@ CREATE TABLE asignaciones_vuelos (
 
 CREATE TABLE ventas (
 	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    num_reserva CHAR(6) NOT NULL,
+    num_reserva VARCHAR(6) NOT NULL,
     fecha_venta DATETIME NOT NULL DEFAULT NOW(),
     precio_pagado_usd DECIMAL(10,2) NOT NULL,
     id_vuelo INT UNSIGNED NOT NULL,
