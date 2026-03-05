@@ -12,7 +12,6 @@ class DBManager:
         self.host: str = os.environ["DB_HOST"]
         self.user: str = os.environ["DB_USER"]
         self.password: str = os.environ["DB_PASS"]
-        self.db_name: str = os.environ["DB_NAME"]
         self.dir_sql: str = os.path.join(os.getcwd(), "sql")
 
     def conectar(self) -> None:
@@ -20,8 +19,7 @@ class DBManager:
             host = self.host,
             port = 3306,
             user = self.user,
-            password = self.password,
-            db = self.db_name
+            password = self.password
         ))
 
         if self.conexion.is_connected():
