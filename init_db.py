@@ -12,6 +12,7 @@ def main() -> None:
         generador_datos = GeneradorDatos(db_manager)
 
         db_manager.conectar()
+        db_manager.borrar_db()
 
         dir_actual: str = os.getcwd()
         dir_sql: str = os.path.join(dir_actual, "sql")
