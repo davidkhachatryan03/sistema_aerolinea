@@ -11,7 +11,6 @@ class VentasManager(TablaManager):
 
     def __init__(self, db_manager):
         super().__init__("ventas", db_manager)
-        self.campos_requeridos = ["id_pasajero", "id_vuelo"]
         self.estados_posibles = {
             1: "Pagado",
             2: "Reembolsado",
@@ -22,9 +21,6 @@ class VentasManager(TablaManager):
     def registrar_venta(self, id_staff: int, venta: VentaBase) -> None:
         if not super()._verificar_id_staff(id_staff):
             raise Exception("Error: el staff ingresado no es válido.")
-        
-        if not self._verificar_campos_requeridos(venta):
-            raise Exception("Error: no se ingresaron todos los campos requeridos.")
         
         if not self._verificar_pasajero(venta.id_pasajero):
             raise Exception("Error: el pasajero no se encuentra registrado.")
@@ -105,13 +101,6 @@ class VentasManager(TablaManager):
         
         if venta.id_pasajero == id_pasajero:
             return
-
-    def _verificar_campos_requeridos(self, venta: VentaBase) -> bool:
-        for campo in self.campos_requeridos:
-            if getattr(venta, campo) == None:
-                return False
-        
-        return True
     
     def _obtener_precio_pagado_usd(self, id_vuelo: int) -> Decimal:
         query = "SELECT precio_venta_usd FROM vuelos WHERE id = %s"
@@ -125,10 +114,18 @@ class VentasManager(TablaManager):
 
         return precio_venta_usd
     
-    def _generar_num_reserva(self, longitud=6) -> str:
-        caracteres = "23456789ABCDEFGHJKMNPQRSTUVWXYZ"
-        num_reserva: str = ''.join(random.choice(caracteres) for _ in range(longitud))
-        
+    def _generar_num_reserva(self) -> str:
+        num_reserva: str = ""
+
+        letras = "ABCDEFGHIJK"
+        numeros = "23456789"
+
+        for _ in range(3):
+            num_reserva += random.choice(letras)
+
+        for _ in range(3):
+            num_reserva += random.choice(numeros)
+
         return num_reserva
     
     def _obtener_venta(self, id_venta: int) -> VentaDesdeDB:
