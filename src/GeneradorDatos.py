@@ -175,13 +175,17 @@ class GeneradorDatos:
 
         return vuelos
 
-    def _generar_num_reserva(self, longitud=6) -> str:
+    def _generar_num_reserva(self) -> str:
         num_reserva: str = ""
 
-        caracteres = "23456789ABCDEFGHIJK"
+        letras = "ABCDEFGHIJK"
+        numeros = "23456789"
 
-        for _ in range(longitud):
-            num_reserva += random.choice(caracteres)
+        for _ in range(3):
+            num_reserva += random.choice(letras)
+
+        for _ in range(3):
+            num_reserva += random.choice(numeros)
 
         return num_reserva
     
