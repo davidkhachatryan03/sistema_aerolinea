@@ -35,7 +35,7 @@ class TarjetasEmbarqueManager(TablaManager):
         if not super()._verificar_id_staff(id_staff):
             raise Exception("Error: el staff ingresado no es válido.")
         
-        super().modificar_fila(id_tarjeta_embarque, id_staff, fecha_emision=fecha_emision)
+        super().modificar_fila(id_tarjeta_embarque, id_staff, "fecha_emision", fecha_emision)
     
     def cambiar_estado(self, id_tarjeta_embarque: int, id_staff: int, id_estado_actual: int) -> None:
         tarjeta_embarque: TarjetaEmbarqueDesdeDB = self._obtener_tarjeta_embarque(id_tarjeta_embarque)
@@ -49,7 +49,7 @@ class TarjetasEmbarqueManager(TablaManager):
         if tarjeta_embarque.id_estado_actual == id_estado_actual:
             return
         
-        super().modificar_fila(id_tarjeta_embarque, id_staff, id_estado_actual=id_estado_actual)
+        super().modificar_fila(id_tarjeta_embarque, id_staff, "id_estado_actual", id_estado_actual)
         
     def _verificar_campos_requeridos(self, tarjeta_embarque: TarjetaEmbarqueBase) -> bool:
         for campo in self.campos_requeridos:
