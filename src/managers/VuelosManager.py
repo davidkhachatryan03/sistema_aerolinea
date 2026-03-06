@@ -27,8 +27,7 @@ class VuelosManager(TablaManager):
             raise Exception("Error: la fecha de llegada debe ser posterior a la de partida.")
 
         if not self._verificar_avion(vuelo.id_avion, vuelo.id_ruta, vuelo.fecha_partida_programada, vuelo.fecha_arribo_programada):
-            print("Error: la ruta y avión seleccionados no son compatibles.\n")
-            return
+            raise Exception("Error: la ruta y avión seleccionados no son compatibles.")
 
         costo_operativo_usd: Decimal = self._calcular_costo_operativo_usd(vuelo.id_ruta, vuelo.id_avion)
         

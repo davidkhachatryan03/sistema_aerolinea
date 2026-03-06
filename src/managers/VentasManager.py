@@ -29,8 +29,7 @@ class VentasManager(TablaManager):
             raise Exception("Error: el vuelo no se encuentra registrado.")
         
         if not self._verificar_capacidad(venta.id_vuelo):
-            print("Error: no hay más asientos disponibles.\n")
-            return
+            raise Exception("Error: no hay más asientos disponibles.")
         
         venta.num_reserva = self._generar_num_reserva()
         venta.precio_pagado_usd = self._obtener_precio_pagado_usd(venta.id_vuelo)
