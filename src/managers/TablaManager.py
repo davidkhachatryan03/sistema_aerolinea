@@ -40,55 +40,28 @@ class TablaManager:
             print("Hubo un error.\n")
             self.db_manager.rollback()
 
-    def modificar_fila(self, id: int, id_staff_modifica: int, **datos) -> None:
+    def modificar_fila(self, id: int, id_staff_modifica: int, campo: str, valor: Any) -> None:
         if self.db_manager.obtener_cursor() == None or self.db_manager.obtener_conexion() == None:
                 print("No hay cursor.")
                 return
 
         self.db_manager.execute("SET @usuario = %s", (id_staff_modifica,))
 
-        columnas: str = ", ".join(map(str, datos.keys()))
-        valores: list[Any] = ", ".join(map(str, datos.values())).split(", ")
-
-        if len(datos) == 1:
-            query: str = f"""
-                    UPDATE {self.tabla}
-                    SET {columnas} = %s
-                    WHERE id = %s      
-                    """
-            
-            valores_: list[Any] = valores.copy()
-            valores_.append(id)
-
-            self.db_manager.execute(query, valores_)
-
-            if self.db_manager.obtener_cursor().rowcount == 1:
-                print("Fila agregada correctamente.\n")
-                self.db_manager.commit()
-            else:
-                print("Hubo un error.\n")
-                self.db_manager.rollback()
-
-        else:
-            # optimizar esto con .executemany
-            for i in range(len(datos)):
-                columnas_lista: list[str] = columnas.split(", ")
-                query = f"""
+        query: str =    f"""
                         UPDATE {self.tabla}
-                        SET {columnas_lista[i]} = %s
-                        WHERE id = %s
+                        SET {campo} = %s
+                        WHERE id = %s      
                         """
+        
+        valores = (valor, id)
+        self.db_manager.execute(query, valores)
 
-                valores__: tuple[Any, int] = (valores[i], id)
-
-                self.db_manager.execute(query, valores__)
-
-                if self.db_manager.obtener_cursor().rowcount == 1:
-                    print("Fila agregada correctamente.\n")
-                    self.db_manager.commit()
-                else:
-                    print("Hubo un error.\n")
-                    self.db_manager.rollback()
+        if self.db_manager.obtener_cursor().rowcount == 1:
+            print("Fila agregada correctamente.\n")
+            self.db_manager.commit()
+        else:
+            print("Hubo un error.\n")
+            self.db_manager.rollback()
 
     def _verificar_id_a_modificar(self, id: int) -> bool:
         query = f"SELECT 1 FROM {self.tabla} WHERE id = %s LIMIT 1"

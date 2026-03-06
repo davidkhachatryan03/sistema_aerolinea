@@ -59,7 +59,8 @@ class VuelosManager(TablaManager):
         if not self._verificar_avion(vuelo.id_avion, vuelo.id_ruta, fecha_partida_programada, fecha_arribo_programada):
             raise Exception("Error: las fechas no son compatibles con el avión asignado.")
 
-        super().modificar_fila(id_vuelo, id_staff, fecha_partida_programada=fecha_partida_programada, fecha_arribo_programada=fecha_arribo_programada)
+        super().modificar_fila(id_vuelo, id_staff, "fecha_partida_programada", fecha_partida_programada)
+        super().modificar_fila(id_vuelo, id_staff, "fecha_arribo_programada", fecha_arribo_programada)
     
     def modificar_avion(self, id_vuelo: int, id_staff: int, id_avion: int) -> None:
         vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
@@ -76,7 +77,7 @@ class VuelosManager(TablaManager):
         if not self._verificar_avion(vuelo.id_avion, vuelo.id_ruta, vuelo.fecha_partida_programada, vuelo.fecha_arribo_programada):
             raise Exception("Error: no es posible asignar el avión seleccionado.")
         
-        super().modificar_fila(id_vuelo, id_staff, id_avion=id_avion)
+        super().modificar_fila(id_vuelo, id_staff, "id_avion", id_avion)
 
     def modificar_ruta(self, id_vuelo: int, id_staff: int, id_ruta: int) -> None:
         vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
@@ -93,7 +94,7 @@ class VuelosManager(TablaManager):
         if not self._verificar_avion(vuelo.id_avion, vuelo.id_ruta, vuelo.fecha_partida_programada, vuelo.fecha_arribo_programada):
             raise Exception("Error: no es posible cambiar la ruta.")
         
-        super().modificar_fila(id_vuelo, id_staff, id_ruta=id_ruta)
+        super().modificar_fila(id_vuelo, id_staff, "id_ruta", id_ruta)
 
     def modificar_estado(self, id_vuelo: int, id_staff: int, id_estado_actual: int) -> None:
         vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
@@ -109,10 +110,12 @@ class VuelosManager(TablaManager):
 
         if self.estados_posibles[id_estado_actual] == "En vuelo":
             fecha_partida_real: str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            super().modificar_fila(id_vuelo, id_staff, id_estado_actual=id_estado_actual, fecha_partida_real=fecha_partida_real)
+            super().modificar_fila(id_vuelo, id_staff, "id_estado_actual", id_estado_actual)
+            super().modificar_fila(id_vuelo, id_staff, "fecha_partida_real", fecha_partida_real)
         elif self.estados_posibles[id_estado_actual] == "Aterrizado":
             fecha_arribo_real: str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            super().modificar_fila(id_vuelo, id_staff, id_estado_actual=id_estado_actual, fecha_arribo_real=fecha_arribo_real)
+            super().modificar_fila(id_vuelo, id_staff, "id_estado_actual", id_estado_actual)
+            super().modificar_fila(id_vuelo, id_staff, "fecha_arribo_real", fecha_arribo_real)
 
     def _obtener_aviones_disponibles(self, id_ruta: int, fecha_partida_programada: datetime, fecha_arribo_programada: datetime) -> list[int]:
         query = OBTENER_AVIONES

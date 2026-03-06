@@ -48,7 +48,7 @@ class VentasManager(TablaManager):
         
         num_reserva: str = self._generar_num_reserva()
 
-        super().modificar_fila(id_venta, id_staff, num_reserva=num_reserva)
+        super().modificar_fila(id_venta, id_staff, "num_reserva", num_reserva)
 
     def modificar_estado(self, id_venta: int, id_staff: int, id_estado_actual: int) -> None:
         venta: VentaDesdeDB = self._obtener_venta(id_venta)
@@ -65,7 +65,7 @@ class VentasManager(TablaManager):
         if venta.id_estado_actual == id_estado_actual:
             return
         
-        super().modificar_fila(id_venta, id_staff, id_estado_actual=id_estado_actual)
+        super().modificar_fila(id_venta, id_staff, "id_estado_actual", id_estado_actual)
     
     def cambiar_vuelo(self, id_venta: int, id_staff: int, id_vuelo: int) -> None:
         venta: VentaDesdeDB = self._obtener_venta(id_venta)
@@ -82,9 +82,7 @@ class VentasManager(TablaManager):
         if venta.id_vuelo == id_vuelo:
             return
         
-        precio_pagado_usd = self._obtener_precio_pagado_usd(id_vuelo)
-        
-        super().modificar_fila(id_venta, id_staff, id_vuelo=id_vuelo, precio_pagado_usd = precio_pagado_usd)
+        super().modificar_fila(id_venta, id_staff, "id_vuelo", id_vuelo)
     
     def cambiar_pasajero(self, id_venta: int, id_staff: int, id_pasajero: int) -> None:
         venta: VentaDesdeDB = self._obtener_venta(id_venta)
@@ -100,6 +98,8 @@ class VentasManager(TablaManager):
         
         if venta.id_pasajero == id_pasajero:
             return
+        
+        super().modificar_fila(id_venta, id_staff, "id_pasajero", id_pasajero)
     
     def _obtener_precio_pagado_usd(self, id_vuelo: int) -> Decimal:
         query = "SELECT precio_venta_usd FROM vuelos WHERE id = %s"

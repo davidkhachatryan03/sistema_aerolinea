@@ -34,7 +34,7 @@ class DocumentosManager(TablaManager):
         if documento.num_documento == num_documento:
             return
         
-        super().modificar_fila(id_documento, id_staff, num_documento=num_documento)
+        super().modificar_fila(id_documento, id_staff, "num_documento", num_documento)
     
     def modificar_fecha_vencimiento(self, id_documento: int, id_staff: int, fecha_vencimiento: datetime) -> None:
         if not super()._verificar_id_a_modificar(id_documento):
@@ -48,7 +48,7 @@ class DocumentosManager(TablaManager):
         if documento.fecha_vencimiento == fecha_vencimiento:
             return
         
-        super().modificar_fila(id_documento, id_staff, fecha_vencimiento=fecha_vencimiento)
+        super().modificar_fila(id_documento, id_staff, "fecha_vencimiento", fecha_vencimiento)
 
     def modificar_pais_emision(self, id_documento: int, id_staff: int, pais_emision: str) -> None:
         if not super()._verificar_id_a_modificar(id_documento):
@@ -62,7 +62,7 @@ class DocumentosManager(TablaManager):
         if documento.pais_emision == pais_emision:
             return
 
-        super().modificar_fila(id_documento, id_staff, pais_emision=pais_emision) 
+        super().modificar_fila(id_documento, id_staff, "pais_emision", pais_emision) 
 
     def modificar_id_pasajero(self, id_documento: int, id_staff: int, id_pasajero: int) -> None:
         if not super()._verificar_id_a_modificar(id_documento):
@@ -76,7 +76,7 @@ class DocumentosManager(TablaManager):
         if documento.id_pasajero == id_pasajero:
             return
 
-        super().modificar_fila(id_documento, id_staff, id_pasajero=id_pasajero)
+        super().modificar_fila(id_documento, id_staff, "id_pasajero", id_pasajero)
 
     def modificar_id_tipo_documento(self, id_documento: int, id_staff: int, id_tipo_documento: int) -> None:
         if not super()._verificar_id_a_modificar(id_documento):
@@ -90,7 +90,7 @@ class DocumentosManager(TablaManager):
         if documento.id_tipo_documento == id_tipo_documento:
             return
 
-        super().modificar_fila(id_documento, id_staff, id_tipo_documento=id_tipo_documento)
+        super().modificar_fila(id_documento, id_staff, "id_tipo_documento", id_tipo_documento)
 
     def _obtener_documento(self, id_documento: int) -> DocumentoDesdeDB:
         query = OBTENER_DOCUMENTO
