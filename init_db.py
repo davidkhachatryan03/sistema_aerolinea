@@ -12,12 +12,13 @@ def main() -> None:
         generador_datos = GeneradorDatos(db_manager)
 
         db_manager.conectar()
-        db_manager.borrar_db()
 
         dir_actual: str = os.getcwd()
         dir_sql: str = os.path.join(dir_actual, "sql")
 
         db_manager.ejecutar_archivo_sql(os.path.join(dir_sql, "crear_db.sql"))
+
+        db_manager.execute("USE aerolinea")
 
         tablas: list[str] = _obtener_tablas(db_manager)
 
@@ -137,13 +138,21 @@ def _poblar_documentos(db_manager: DBManager, documentos: list[DocumentoBase]) -
 
 def _poblar_vuelos(db_manager: DBManager, vuelos: list[VueloBase]) -> None:
     vuelos_manager = VuelosManager(db_manager)
+    
     for vuelo in vuelos:
-        vuelos_manager.registrar_vuelo(9, vuelo)
+        try:
+            vuelos_manager.registrar_vuelo(9, vuelo)
+        except Exception:
+            continue
 
 def _poblar_ventas(db_manager: DBManager, ventas: list[VentaBase]) -> None:
     ventas_manager = VentasManager(db_manager)
+
     for venta in ventas:
-        ventas_manager.registrar_venta(9, venta)
+        try:
+            ventas_manager.registrar_venta(9, venta)
+        except Exception:
+            continue 
 
 def _poblar_tarjetas_embarque(db_manager: DBManager, tarjetas_embarque: list[TarjetaEmbarqueBase]) -> None:
     tarjetas_embarque_manager = TarjetasEmbarqueManager(db_manager)
