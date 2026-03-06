@@ -247,6 +247,7 @@ OBTENER_CAPACIDAD = """
                     JOIN    aviones a
                     ON      vu.id_avion = a.id
                     WHERE   ve.id_vuelo = %s
+                    LIMIT 1
                     """
 
 OBTENER_NUM_VENTAS =    """
