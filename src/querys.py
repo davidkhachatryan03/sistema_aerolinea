@@ -228,13 +228,13 @@ OBTENER_TARJETA_EMBARQUE =  """
                             """
 
 OBTENER_VENTA = """
-                SELECT  id_pasajero,
-                        id_vuelo,
-                        id,
+                SELECT  id,
                         num_reserva,
                         fecha_venta,
                         precio_pagado_usd,
-                        id_estado_actual
+                        id_vuelo,
+                        id_estado_actual,
+                        id_pasajero
                 FROM    ventas
                 WHERE   id = %s
                 """
