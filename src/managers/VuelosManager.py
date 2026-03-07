@@ -20,9 +20,6 @@ class VuelosManager(TablaManager):
         }
     
     def registrar_vuelo(self, id_staff: int, vuelo: VueloBase) -> None:
-        if not self._verificar_campos_requeridos(vuelo):
-            raise Exception("Error: no se ingresaron todos los campos requeridos.")
-
         if not self._verificar_fechas(vuelo.fecha_partida_programada, vuelo.fecha_arribo_programada):
             raise Exception("Error: la fecha de llegada debe ser posterior a la de partida.")
 
@@ -172,10 +169,3 @@ class VuelosManager(TablaManager):
             raise Exception("Error: no se encontró ningún resultado al consultar.")
 
         return vuelo
-    
-    def _verificar_campos_requeridos(self, vuelo: VueloBase) -> bool:
-        for campo in self.campos_requeridos:
-            if getattr(vuelo, campo) == None:
-                return False
-        
-        return True

@@ -24,6 +24,14 @@ def elegir_vuelo_valido(db_conectada: DBManager, ventas_manager: VentasManager):
     
     return id_vuelo
 
+def elegir_avion_valido(db_conectada: DBManager, id_ruta: int, fecha_partida_programada: datetime, fecha_arribo_programada: datetime, vuelos_manager: VuelosManager):
+    id_avion = random.choice(db_conectada.consultar_columna_unica("SELECT id FROM aviones LIMIT 10"))
+
+    while not vuelos_manager._verificar_avion(id_avion, id_ruta, fecha_partida_programada, fecha_arribo_programada):
+        id_avion = random.choice(db_conectada.consultar_columna_unica("SELECT id FROM aviones LIMIT 10"))
+
+    return id_avion
+
 def test_registrar_venta_correcta(db_conectada: DBManager):
         ventas_manager = VentasManager(db_conectada)
         ID_STAFF = 25
@@ -226,3 +234,30 @@ def test_modificar_venta_id_pasajero(db_conectada: DBManager):
     assert len(venta.num_reserva) == 6 and type(venta.num_reserva) == str # solo reviso que el formato sea correcto
     assert venta.precio_pagado_usd == precio_pagado_usd
     assert venta.id_estado_actual == id_estado_actual
+
+def test_registrar_vuelo_correcto(db_conectada: DBManager):
+    vuelos_manager = VuelosManager(db_conectada)
+    ID_STAFF = 25
+
+    fecha_partida_programada = datetime(2026, 1, 1)
+    fecha_arribo_programada = datetime(2026, 1, 2)
+    id_ruta = random.choice(db_conectada.consultar_columna_unica("SELECT id FROM rutas LIMIT 10"))
+    id_avion = elegir_avion_valido(db_conectada, id_ruta, fecha_partida_programada, fecha_arribo_programada, vuelos_manager)
+    id_estado_actual = 1 # siempre se asigna este valor al registar un vuelo
+    costo_operativo_usd = vuelos_manager._calcular_costo_operativo_usd(id_ruta, id_avion)
+    precio_venta_usd = costo_operativo_usd * Decimal("1.3")
+    precio_venta_usd = precio_venta_usd.quantize(Decimal("0.01"))
+
+    vuelo = VueloBase(id_ruta, id_avion, id_estado_actual, fecha_partida_programada, fecha_arribo_programada, costo_operativo_usd, precio_venta_usd)
+    vuelos_manager.registrar_vuelo(ID_STAFF, vuelo)
+
+    consulta_vuelo: list[FilaVuelo] = db_conectada.consultar("SELECT id, fecha_partida_programada, fecha_arribo_programada, fecha_partida_real, fecha_arribo_real, costo_operativo_usd, precio_venta_usd, id_ruta, id_avion, id_estado_actual FROM vuelos ORDER BY id DESC LIMIT 1")
+    vuelo = VueloDesdeDB(*consulta_vuelo[0])
+
+    assert vuelo.id_ruta == id_ruta
+    assert vuelo.id_avion == id_avion
+    assert vuelo.id_estado_actual == id_estado_actual
+    assert vuelo.fecha_partida_programada == fecha_partida_programada
+    assert vuelo.fecha_arribo_programada == fecha_arribo_programada
+    assert vuelo.costo_operativo_usd == costo_operativo_usd
+    assert vuelo.precio_venta_usd == precio_venta_usd
