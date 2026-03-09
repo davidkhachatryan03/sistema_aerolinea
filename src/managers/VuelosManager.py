@@ -41,7 +41,7 @@ class VuelosManager(TablaManager):
     def modificar_fechas(self, id_vuelo: int, id_staff: int, fecha_partida_programada: datetime, fecha_arribo_programada: datetime) -> None:
         vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
 
-        if vuelo.fecha_partida_programada == fecha_partida_programada or vuelo.fecha_arribo_programada == fecha_arribo_programada:
+        if vuelo.fecha_partida_programada == fecha_partida_programada and vuelo.fecha_arribo_programada == fecha_arribo_programada:
             return
 
         if not super()._verificar_id_a_modificar(id_vuelo):
