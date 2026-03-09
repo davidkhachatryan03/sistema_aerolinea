@@ -1,6 +1,6 @@
 from typing import Any, cast
 from datetime import datetime
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 from src.tipos import FilaVuelo
 from src.managers.DBManager import DBManager
 from src.managers.TablaManager import TablaManager
@@ -27,11 +27,11 @@ class VuelosManager(TablaManager):
             raise Exception("Error: la ruta y avión seleccionados no son compatibles.")
 
         costo_operativo_usd: Decimal = self._calcular_costo_operativo_usd(vuelo.id_ruta, vuelo.id_avion)
-        
-        precio_venta_usd: Decimal = costo_operativo_usd * Decimal("1.3")
+
+        precio_venta_usd: Decimal = self._calcular_precio_venta_usd(costo_operativo_usd)
 
         vuelo.costo_operativo_usd = costo_operativo_usd
-        vuelo.precio_venta_usd = precio_venta_usd.quantize(Decimal("0.01"))
+        vuelo.precio_venta_usd = precio_venta_usd
         vuelo.id_estado_actual = 1
 
         datos: dict[str, Any] = vuelo.to_dict()
@@ -39,11 +39,6 @@ class VuelosManager(TablaManager):
         super().agregar_fila(id_staff, datos)
 
     def modificar_fechas(self, id_vuelo: int, id_staff: int, fecha_partida_programada: datetime, fecha_arribo_programada: datetime) -> None:
-        vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
-
-        if vuelo.fecha_partida_programada == fecha_partida_programada and vuelo.fecha_arribo_programada == fecha_arribo_programada:
-            return
-
         if not super()._verificar_id_a_modificar(id_vuelo):
             raise Exception("Error: el id a modificar no existe.")
 
@@ -52,55 +47,60 @@ class VuelosManager(TablaManager):
 
         if not self._verificar_fechas(fecha_partida_programada, fecha_arribo_programada):
             raise Exception("Error: la fecha de partida no puede ser mayor o igual a la fecha de llegada.")
+        
+        vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
 
         if not self._verificar_avion(vuelo.id_avion, vuelo.id_ruta, fecha_partida_programada, fecha_arribo_programada):
             raise Exception("Error: las fechas no son compatibles con el avión asignado.")
+        
+        if vuelo.fecha_partida_programada == fecha_partida_programada and vuelo.fecha_arribo_programada == fecha_arribo_programada:
+            return
 
         super().modificar_fila(id_vuelo, id_staff, "fecha_partida_programada", fecha_partida_programada)
         super().modificar_fila(id_vuelo, id_staff, "fecha_arribo_programada", fecha_arribo_programada)
     
     def modificar_avion(self, id_vuelo: int, id_staff: int, id_avion: int) -> None:
-        vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
-
-        if vuelo.id_avion == id_avion:
-            return
-        
         if not super()._verificar_id_a_modificar(id_vuelo):
             raise Exception("Error: el id a modificaro no existe.")
 
         if not super()._verificar_id_staff(id_staff):
             raise Exception("Error: el staff ingresado no es válido.")
+        
+        vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
 
         if not self._verificar_avion(vuelo.id_avion, vuelo.id_ruta, vuelo.fecha_partida_programada, vuelo.fecha_arribo_programada):
             raise Exception("Error: no es posible asignar el avión seleccionado.")
         
+        if vuelo.id_avion == id_avion:
+            return
+        
         super().modificar_fila(id_vuelo, id_staff, "id_avion", id_avion)
 
     def modificar_ruta(self, id_vuelo: int, id_staff: int, id_ruta: int) -> None:
-        vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
-
-        if vuelo.id_ruta == id_ruta:
-            return
-        
         if not super()._verificar_id_a_modificar(id_vuelo):
             raise Exception("Error: el id a modificaro no existe.")
 
         if not super()._verificar_id_staff(id_staff):
             raise Exception("Error: el staff ingresado no es válido.")
+        
+        vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
 
         if not self._verificar_avion(vuelo.id_avion, vuelo.id_ruta, vuelo.fecha_partida_programada, vuelo.fecha_arribo_programada):
             raise Exception("Error: no es posible cambiar la ruta.")
         
+        if vuelo.id_ruta == id_ruta:
+            return
+        
         super().modificar_fila(id_vuelo, id_staff, "id_ruta", id_ruta)
 
     def modificar_estado(self, id_vuelo: int, id_staff: int, id_estado_actual: int) -> None:
-        vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
-
         if not super()._verificar_id_a_modificar(id_vuelo):
             raise Exception("Error: el id a modificaro no existe.")
 
         if not super()._verificar_id_staff(id_staff):
             raise Exception("Error: el staff ingresado no es válido.")
+        
+        vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
 
         if vuelo.id_estado_actual == id_estado_actual:
             return
@@ -109,6 +109,7 @@ class VuelosManager(TablaManager):
             fecha_partida_real: str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             super().modificar_fila(id_vuelo, id_staff, "id_estado_actual", id_estado_actual)
             super().modificar_fila(id_vuelo, id_staff, "fecha_partida_real", fecha_partida_real)
+            
         elif self.estados_posibles[id_estado_actual] == "Aterrizado":
             fecha_arribo_real: str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             super().modificar_fila(id_vuelo, id_staff, "id_estado_actual", id_estado_actual)
@@ -155,7 +156,14 @@ class VuelosManager(TablaManager):
         
         costo_hora_vuelo: int = consulta_costo_hora_vuelo[0]
 
-        return (duracion_min / Decimal("60")) * costo_hora_vuelo
+        costo_operativo_usd: Decimal = ((duracion_min / Decimal("60")) * costo_hora_vuelo).quantize(Decimal("0.01"), ROUND_HALF_UP)
+
+        return costo_operativo_usd
+    
+    def _calcular_precio_venta_usd(self, costo_operativo_usd: Decimal) -> Decimal:
+        precio_venta_usd: Decimal = (costo_operativo_usd * Decimal("1.3")).quantize(Decimal("0.01"), ROUND_HALF_UP)
+
+        return precio_venta_usd
 
     def _obtener_vuelo(self, id_vuelo: int) -> VueloDesdeDB:
         query = OBTENER_VUELO

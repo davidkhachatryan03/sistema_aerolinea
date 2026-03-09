@@ -51,14 +51,14 @@ class VentasManager(TablaManager):
         super().modificar_fila(id_venta, id_staff, "num_reserva", num_reserva)
 
     def modificar_estado(self, id_venta: int, id_staff: int, id_estado_actual: int) -> None:
-        venta: VentaDesdeDB = self._obtener_venta(id_venta)
-
         if not super()._verificar_id_a_modificar(id_venta):
             raise Exception("Error: el id a modificar no existe.")
 
         if not super()._verificar_id_staff(id_staff):
             raise Exception("Error: el staff ingresado no es válido.")
         
+        venta: VentaDesdeDB = self._obtener_venta(id_venta)
+
         if id_estado_actual not in self.estados_posibles:
             raise Exception("Error: el estado ingresado no existe.")
         
@@ -68,7 +68,6 @@ class VentasManager(TablaManager):
         super().modificar_fila(id_venta, id_staff, "id_estado_actual", id_estado_actual)
     
     def cambiar_vuelo(self, id_venta: int, id_staff: int, id_vuelo: int) -> None:
-        venta: VentaDesdeDB = self._obtener_venta(id_venta)
 
         if not super()._verificar_id_a_modificar(id_venta):
             raise Exception("Error: el id a modificar no existe.")
@@ -76,7 +75,9 @@ class VentasManager(TablaManager):
         if not super()._verificar_id_staff(id_staff):
             raise Exception("Error: el staff ingresado no es válido.")
         
-        if not self._verificar_vuelo(venta.id_vuelo):
+        venta: VentaDesdeDB = self._obtener_venta(id_venta)
+        
+        if not self._verificar_vuelo(id_vuelo):
             raise Exception("Error: el vuelo no se encuentra registrado.")
         
         if venta.id_vuelo == id_vuelo:
@@ -85,13 +86,13 @@ class VentasManager(TablaManager):
         super().modificar_fila(id_venta, id_staff, "id_vuelo", id_vuelo)
     
     def cambiar_pasajero(self, id_venta: int, id_staff: int, id_pasajero: int) -> None:
-        venta: VentaDesdeDB = self._obtener_venta(id_venta)
-        
         if not super()._verificar_id_a_modificar(id_venta):
             raise Exception("Error: el id a modificar no existe.")
 
         if not super()._verificar_id_staff(id_staff):
             raise Exception("Error: el staff ingresado no es válido.")
+        
+        venta: VentaDesdeDB = self._obtener_venta(id_venta)
         
         if not self._verificar_pasajero(id_pasajero):
             raise Exception("Error: el pasajero ingresado no existe.")
