@@ -4,6 +4,7 @@ from src.tipos import FilaTarjetaEmbarque
 from src.managers.TablaManager import TablaManager
 from src.entidades import TarjetaEmbarqueBase, TarjetaEmbarqueDesdeDB
 from src.querys import OBTENER_TARJETA_EMBARQUE
+from src.errores import *
 
 class TarjetasEmbarqueManager(TablaManager):
 
@@ -19,8 +20,9 @@ class TarjetasEmbarqueManager(TablaManager):
 
     def registrar_tarjeta_embarque(self, id_staff: int, tarjeta_embarque: TarjetaEmbarqueBase) -> None:
         if not super()._verificar_id_staff(id_staff):
-            raise Exception("Error: el staff ingresado no es válido.")
+            raise Exception(ERROR_STAFF_INVALIDO)
         
+        # a futuro este método será eliminado
         if not self._verificar_campos_requeridos(tarjeta_embarque):
             raise Exception("Error: no se ingresaron todos los campos requeridos.")
 
@@ -30,10 +32,10 @@ class TarjetasEmbarqueManager(TablaManager):
     
     def registrar_fecha_embarque(self, id_tarjeta_embarque: int, id_staff: int, fecha_emision: datetime) -> None:
         if not super()._verificar_id_a_modificar(id_tarjeta_embarque):
-            raise Exception("Error: el id a modificar no existe.")
+            raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
-            raise Exception("Error: el staff ingresado no es válido.")
+            raise Exception(ERROR_STAFF_INVALIDO)
         
         super().modificar_fila(id_tarjeta_embarque, id_staff, "fecha_emision", fecha_emision)
     
@@ -41,10 +43,10 @@ class TarjetasEmbarqueManager(TablaManager):
         tarjeta_embarque: TarjetaEmbarqueDesdeDB = self._obtener_tarjeta_embarque(id_tarjeta_embarque)
 
         if not super()._verificar_id_a_modificar(id_tarjeta_embarque):
-            raise Exception("Error: el id a modificar no existe.")
+            raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
-            raise Exception("Error: el staff ingresado no es válido.")
+            raise Exception(ERROR_STAFF_INVALIDO)
         
         if tarjeta_embarque.id_estado_actual == id_estado_actual:
             return
@@ -62,11 +64,7 @@ class TarjetasEmbarqueManager(TablaManager):
         query = OBTENER_TARJETA_EMBARQUE
         
         consulta_tarjeta_embarque: list[tuple] = self.db_manager.consultar(query, (id_tarjeta_embarque,))
+        fila_tarjeta_embarque: FilaTarjetaEmbarque = consulta_tarjeta_embarque[0]
+        tarjeta_embarque = TarjetaEmbarqueDesdeDB(*fila_tarjeta_embarque)
 
-        if consulta_tarjeta_embarque:
-            fila_tarjeta_embarque: FilaTarjetaEmbarque = consulta_tarjeta_embarque[0]
-            tarjeta_embarque = TarjetaEmbarqueDesdeDB(*fila_tarjeta_embarque)
-        else:
-            raise Exception("Error: no existe tarjeta de embarque con el id ingresado.")
-    
         return tarjeta_embarque

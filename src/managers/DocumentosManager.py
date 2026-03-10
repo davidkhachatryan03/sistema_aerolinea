@@ -4,6 +4,7 @@ from src.tipos import FilaDocumento
 from src.managers.TablaManager import TablaManager
 from src.entidades import DocumentoBase, DocumentoDesdeDB
 from src.querys import OBTENER_DOCUMENTO
+from src.errores import *
 
 class DocumentosManager(TablaManager):
 
@@ -13,8 +14,9 @@ class DocumentosManager(TablaManager):
 
     def registrar_documento(self, id_staff: int, documento: DocumentoBase) -> None:
         if not super()._verificar_id_staff(id_staff):
-            raise Exception("Error: el staff ingresado no es válido.")
+            raise Exception(ERROR_STAFF_INVALIDO)
         
+        # a futuro este método será eliminado
         if not self._verificar_campos_requeridos(documento):
             raise Exception("Error: no se ingresaron todos los campos requeridos.")
         
@@ -24,10 +26,10 @@ class DocumentosManager(TablaManager):
 
     def modificar_num_documento(self, id_documento: int, id_staff: int, num_documento: str) -> None:
         if not super()._verificar_id_a_modificar(id_documento):
-            raise Exception("Error: el id a modificar no existe.")
+            raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
-            raise Exception("Error: el staff ingresado no es válido.")
+            raise Exception(ERROR_STAFF_INVALIDO)
         
         documento: DocumentoDesdeDB = self._obtener_documento(id_documento)
 
@@ -38,10 +40,10 @@ class DocumentosManager(TablaManager):
     
     def modificar_fecha_vencimiento(self, id_documento: int, id_staff: int, fecha_vencimiento: datetime) -> None:
         if not super()._verificar_id_a_modificar(id_documento):
-            raise Exception("Error: el id a modificar no existe.")
+            raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
-            raise Exception("Error: el staff ingresado no es válido.")
+            raise Exception(ERROR_STAFF_INVALIDO)
         
         documento: DocumentoDesdeDB = self._obtener_documento(id_documento)
         
@@ -52,10 +54,10 @@ class DocumentosManager(TablaManager):
 
     def modificar_pais_emision(self, id_documento: int, id_staff: int, pais_emision: str) -> None:
         if not super()._verificar_id_a_modificar(id_documento):
-            raise Exception("Error: el id a modificar no existe.")
+            raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
-            raise Exception("Error: el staff ingresado no es válido.")
+            raise Exception(ERROR_STAFF_INVALIDO)
         
         documento: DocumentoDesdeDB = self._obtener_documento(id_documento)
 
@@ -66,10 +68,10 @@ class DocumentosManager(TablaManager):
 
     def modificar_id_pasajero(self, id_documento: int, id_staff: int, id_pasajero: int) -> None:
         if not super()._verificar_id_a_modificar(id_documento):
-            raise Exception("Error: el id a modificar no existe.")
+            raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
-            raise Exception("Error: el staff ingresado no es válido.")
+            raise Exception(ERROR_STAFF_INVALIDO)
         
         documento: DocumentoDesdeDB = self._obtener_documento(id_documento)
 
@@ -80,10 +82,10 @@ class DocumentosManager(TablaManager):
 
     def modificar_id_tipo_documento(self, id_documento: int, id_staff: int, id_tipo_documento: int) -> None:
         if not super()._verificar_id_a_modificar(id_documento):
-            raise Exception("Error: el id a modificar no existe.")
+            raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
-            raise Exception("Error: el staff ingresado no es válido.")
+            raise Exception(ERROR_STAFF_INVALIDO)
         
         documento: DocumentoDesdeDB = self._obtener_documento(id_documento)
         
@@ -96,12 +98,8 @@ class DocumentosManager(TablaManager):
         query = OBTENER_DOCUMENTO
 
         consulta_documento: list[FilaDocumento] = self.db_manager.consultar(query, (id_documento, ))
-
-        if consulta_documento:
-            fila_documento: FilaDocumento = consulta_documento[0]
-            documento = DocumentoDesdeDB(*fila_documento)
-        else:
-            raise Exception("Error: el id ingresado no existe.")
+        fila_documento: FilaDocumento = consulta_documento[0]
+        documento = DocumentoDesdeDB(*fila_documento)
 
         return documento
     

@@ -2,7 +2,8 @@ from datetime import datetime
 from src.managers.DBManager import DBManager
 from src.managers.TablaManager import TablaManager
 from src.entidades import AsignacionVueloBase
-from src.querys import OBTENER_SUPERVISORES_AGENTES, OBTENER_AGENTES, OBTENER_AUXILIARES_VUELO, OBTENER_COMANDANTES, OBTENER_COPILOTOS, OBTENER_INSPECTORES, OBTENER_MECANICOS, OBTENER_SUPERVISORES_CABINA
+from src.querys import *
+from src.errores import *
 
 class AsignacionesVuelosManager(TablaManager):
 
@@ -13,7 +14,7 @@ class AsignacionesVuelosManager(TablaManager):
         comandantes_disponibles: list[int] = self._obtener_comandantes_disponibles(fecha_inicio, fecha_fin)
 
         if id_comandante not in comandantes_disponibles:
-            raise Exception("Error: el comandante ingresado no es válido.")
+            raise Exception(ERROR_COMANDANTE_INVALIDO)
         
         asignacion = AsignacionVueloBase(fecha_inicio, fecha_fin, 1, id_vuelo, id_comandante)
 
@@ -23,7 +24,7 @@ class AsignacionesVuelosManager(TablaManager):
         copilotos_disponibles: list[int] = self._obtener_copilotos_disponibles(fecha_inicio, fecha_fin)
 
         if id_copiloto not in copilotos_disponibles:
-            raise Exception("Error: el copiloto ingresado no es válido.")
+            raise Exception(ERROR_COPILOTO_INVALIDO)
         
         asignacion = AsignacionVueloBase(fecha_inicio, fecha_fin, 2, id_vuelo, id_copiloto)
 
@@ -33,7 +34,7 @@ class AsignacionesVuelosManager(TablaManager):
         auxiliares_vuelo_disponibles: list[int] = self._obtener_auxiliares_vuelo_disponibles(fecha_inicio, fecha_fin)
 
         if id_auxiliar_vuelo not in auxiliares_vuelo_disponibles:
-            raise Exception("Error: el tripulante de cabina ingresado no es válido.")
+            raise Exception(ERROR_AUXILIAR_VUELO_INVALIDO)
         
         asignacion = AsignacionVueloBase(fecha_inicio, fecha_fin, 3, id_vuelo, id_auxiliar_vuelo)
 
@@ -43,7 +44,7 @@ class AsignacionesVuelosManager(TablaManager):
         supervisores_cabina_disponibles: list[int] = self._obtener_supervisores_cabina_disponibles(fecha_inicio, fecha_fin)
 
         if id_supervisor_cabina not in supervisores_cabina_disponibles:
-            raise Exception("Error: el supervisor de cabina ingresado no es válido.")
+            raise Exception(ERROR_SUPERVISOR_CABINA_INVALIDO)
 
         asignacion = AsignacionVueloBase(fecha_inicio, fecha_fin, 4, id_vuelo, id_supervisor_cabina)
 
@@ -53,7 +54,7 @@ class AsignacionesVuelosManager(TablaManager):
         mecanicos_disponibles: list[int] = self._obtener_mecanicos_disponibles(fecha_inicio, fecha_fin)
 
         if id_mecanico not in mecanicos_disponibles:
-            raise Exception("Error: el mecánico ingresado no es válido.")
+            raise Exception(ERROR_MECANICO_INVALIDO)
         
         asignacion = AsignacionVueloBase(fecha_inicio, fecha_fin, 8, id_vuelo, id_staff)
 
@@ -63,7 +64,7 @@ class AsignacionesVuelosManager(TablaManager):
         inspectores_disponibles: list[int] = []
 
         if id_inspector not in inspectores_disponibles:
-            raise Exception("Error: el inspector ingresado no es válido.")
+            raise Exception(ERROR_INSPECTOR_INVALIDO)
         
         asignacion = AsignacionVueloBase(fecha_inicio, fecha_fin, 10, id_vuelo, id_inspector)
 
@@ -73,7 +74,7 @@ class AsignacionesVuelosManager(TablaManager):
         agentes_disponibles: list[int] = self._obtener_agentes_disponibles(fecha_inicio, fecha_fin)
 
         if id_agente not in agentes_disponibles:
-            raise Exception("Error: el agente ingresado no es válido.")
+            raise Exception(ERROR_AGENTE_INVALIDO)
         
         asignacion = AsignacionVueloBase(fecha_inicio, fecha_fin, 5, id_vuelo, id_staff)
 
@@ -83,7 +84,7 @@ class AsignacionesVuelosManager(TablaManager):
         agentes_disponibles: list[int] = self._obtener_agentes_disponibles(fecha_inicio, fecha_fin)
 
         if id_agente not in agentes_disponibles:
-            raise Exception("Error: el agente ingresado no es válido.")
+            raise Exception(ERROR_AGENTE_INVALIDO)
         
         asignacion = AsignacionVueloBase(fecha_inicio, fecha_fin, 6, id_vuelo, id_staff)
 
@@ -93,7 +94,7 @@ class AsignacionesVuelosManager(TablaManager):
         supervisores_agentes_disponibles: list[int] = self._obtener_supervisores_agentes_disponibles(fecha_inicio, fecha_fin)
 
         if id_supervisor not in supervisores_agentes_disponibles:
-            raise Exception("Error: el supervisor ingresado no es válido.")
+            raise Exception(ERROR_SUVERVISOR_AGENTE_INVALIDO)
 
         asignacion = AsignacionVueloBase(fecha_inicio, fecha_fin, 7, id_vuelo, id_supervisor)
 

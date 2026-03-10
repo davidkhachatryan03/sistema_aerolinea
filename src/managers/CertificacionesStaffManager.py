@@ -4,6 +4,7 @@ from src.tipos import FilaCertificacion
 from src.managers.TablaManager import TablaManager
 from src.entidades import CertificacionStaffBase, CertificacionStaffDesdeDB
 from src.querys import OBTENER_CERTIFICACION
+from src.errores import *
 
 class CertificacionesStaffManager(TablaManager):
 
@@ -13,8 +14,9 @@ class CertificacionesStaffManager(TablaManager):
 
     def registrar_certificacion(self, id_staff: int, certificacion: CertificacionStaffBase) -> None:
         if not super()._verificar_id_staff(id_staff):
-            raise Exception("Error: el staff ingresado no es válido.")
+            raise Exception(ERROR_STAFF_INVALIDO)
         
+        # a futuro este método será eliminado
         if not self._verificar_campos_requeridos(certificacion):
             raise Exception("Error: no se ingresaron todos los campos requeridos.")
         
@@ -24,13 +26,10 @@ class CertificacionesStaffManager(TablaManager):
 
     def modificar_id_staff(self, id_certificacion: int, id_staff_modifica: int, id_staff_nuevo: int) -> None:
         if not super()._verificar_id_a_modificar(id_certificacion):
-            raise Exception("Error: el id a modificar no existe.")
+            raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff_modifica):
-            raise Exception("Error: el staff ingresado no es válido.")
-        
-        if not super()._verificar_id_staff(id_staff_nuevo):
-            raise Exception("Error: el staff ingresado no es válido.")
+            raise Exception(ERROR_STAFF_INVALIDO)
         
         certificacion: CertificacionStaffDesdeDB = self._obtener_certificacion(id_certificacion)
 
@@ -41,10 +40,10 @@ class CertificacionesStaffManager(TablaManager):
 
     def modificar_descripcion(self, id_certificacion: int, id_staff: int, descripcion: str) -> None:
         if not super()._verificar_id_a_modificar(id_certificacion):
-            raise Exception("Error: el id a modificar no existe.")
+            raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
-            raise Exception("Error: el staff ingresado no es válido.")
+            raise Exception(ERROR_STAFF_INVALIDO)
         
         certificacion: CertificacionStaffDesdeDB = self._obtener_certificacion(id_certificacion)
 
@@ -55,10 +54,10 @@ class CertificacionesStaffManager(TablaManager):
         
     def modificar_vencimiento(self, id_certificacion: int, id_staff: int, licencia_hasta: datetime) -> None:
         if not super()._verificar_id_a_modificar(id_certificacion):
-            raise Exception("Error: el id a modificar no existe.")
+            raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
-            raise Exception("Error: el staff ingresado no es válido.")
+            raise Exception(ERROR_STAFF_INVALIDO)
         
         certificacion: CertificacionStaffDesdeDB = self._obtener_certificacion(id_certificacion)
 

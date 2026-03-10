@@ -6,6 +6,7 @@ from src.managers.DBManager import DBManager
 from src.managers.TablaManager import TablaManager
 from src.entidades import VueloBase, VueloDesdeDB
 from src.querys import OBTENER_VUELO, OBTENER_AVIONES
+from src.errores import *
 
 class VuelosManager(TablaManager):
 
@@ -21,10 +22,10 @@ class VuelosManager(TablaManager):
     
     def registrar_vuelo(self, id_staff: int, vuelo: VueloBase) -> None:
         if not self._verificar_fechas(vuelo.fecha_partida_programada, vuelo.fecha_arribo_programada):
-            raise Exception("Error: la fecha de llegada debe ser posterior a la de partida.")
+            raise Exception(ERROR_FECHAS_INVALIDAS)
 
         if not self._verificar_avion(vuelo.id_avion, vuelo.id_ruta, vuelo.fecha_partida_programada, vuelo.fecha_arribo_programada):
-            raise Exception("Error: la ruta y avión seleccionados no son compatibles.")
+            raise Exception(ERROR_AVION_Y_RUTA_INVALIDAS)
 
         costo_operativo_usd: Decimal = self._calcular_costo_operativo_usd(vuelo.id_ruta, vuelo.id_avion)
 
@@ -40,18 +41,18 @@ class VuelosManager(TablaManager):
 
     def modificar_fechas(self, id_vuelo: int, id_staff: int, fecha_partida_programada: datetime, fecha_arribo_programada: datetime) -> None:
         if not super()._verificar_id_a_modificar(id_vuelo):
-            raise Exception("Error: el id a modificar no existe.")
+            raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
-            raise Exception("Error: el staff ingresado no es válido.")
+            raise Exception(ERROR_STAFF_INVALIDO)
 
         if not self._verificar_fechas(fecha_partida_programada, fecha_arribo_programada):
-            raise Exception("Error: la fecha de partida no puede ser mayor o igual a la fecha de llegada.")
+            raise Exception(ERROR_FECHAS_INVALIDAS)
         
         vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
 
         if not self._verificar_avion(vuelo.id_avion, vuelo.id_ruta, fecha_partida_programada, fecha_arribo_programada):
-            raise Exception("Error: las fechas no son compatibles con el avión asignado.")
+            raise Exception(ERROR_AVION_Y_FECHAS_INVALIDAS)
         
         if vuelo.fecha_partida_programada == fecha_partida_programada and vuelo.fecha_arribo_programada == fecha_arribo_programada:
             return
@@ -61,15 +62,15 @@ class VuelosManager(TablaManager):
     
     def modificar_avion(self, id_vuelo: int, id_staff: int, id_avion: int) -> None:
         if not super()._verificar_id_a_modificar(id_vuelo):
-            raise Exception("Error: el id a modificaro no existe.")
+            raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
-            raise Exception("Error: el staff ingresado no es válido.")
+            raise Exception(ERROR_STAFF_INVALIDO)
         
         vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
 
         if not self._verificar_avion(vuelo.id_avion, vuelo.id_ruta, vuelo.fecha_partida_programada, vuelo.fecha_arribo_programada):
-            raise Exception("Error: no es posible asignar el avión seleccionado.")
+            raise Exception(ERROR_AVION_INVALIDO)
         
         if vuelo.id_avion == id_avion:
             return
@@ -78,15 +79,15 @@ class VuelosManager(TablaManager):
 
     def modificar_ruta(self, id_vuelo: int, id_staff: int, id_ruta: int) -> None:
         if not super()._verificar_id_a_modificar(id_vuelo):
-            raise Exception("Error: el id a modificaro no existe.")
+            raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
-            raise Exception("Error: el staff ingresado no es válido.")
+            raise Exception(ERROR_STAFF_INVALIDO)
         
         vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
 
         if not self._verificar_avion(vuelo.id_avion, vuelo.id_ruta, vuelo.fecha_partida_programada, vuelo.fecha_arribo_programada):
-            raise Exception("Error: no es posible cambiar la ruta.")
+            raise Exception(ERROR_RUTA_INVALIDA)
         
         if vuelo.id_ruta == id_ruta:
             return
@@ -95,10 +96,10 @@ class VuelosManager(TablaManager):
 
     def modificar_estado(self, id_vuelo: int, id_staff: int, id_estado_actual: int) -> None:
         if not super()._verificar_id_a_modificar(id_vuelo):
-            raise Exception("Error: el id a modificaro no existe.")
+            raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
-            raise Exception("Error: el staff ingresado no es válido.")
+            raise Exception(ERROR_STAFF_INVALIDO)
         
         vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
 
@@ -143,17 +144,11 @@ class VuelosManager(TablaManager):
         query: str = "SELECT duracion_min FROM rutas WHERE id = %s"
         consulta_duracion_min: list[int] = self.db_manager.consultar_columna_unica(query, (id_ruta,))
         
-        if not consulta_duracion_min:
-            raise Exception("Error: no se encontró ningún resultado al consultar.")
-        
         duracion_min: int = consulta_duracion_min[0]
 
         query = "SELECT costo_hora_vuelo FROM aviones WHERE id = %s"
         consulta_costo_hora_vuelo: list[int] = self.db_manager.consultar_columna_unica(query, (id_avion,))
 
-        if not consulta_costo_hora_vuelo:
-            raise Exception("Error: no se encontró ningún resultado al consultar.")
-        
         costo_hora_vuelo: int = consulta_costo_hora_vuelo[0]
 
         costo_operativo_usd: Decimal = ((duracion_min / Decimal("60")) * costo_hora_vuelo).quantize(Decimal("0.01"), ROUND_HALF_UP)
@@ -169,11 +164,7 @@ class VuelosManager(TablaManager):
         query = OBTENER_VUELO
 
         consulta_vuelo: list[tuple] = self.db_manager.consultar(query, (id_vuelo,))
-
-        if consulta_vuelo:
-            fila_vuelo: FilaVuelo = consulta_vuelo[0]
-            vuelo = VueloDesdeDB(*fila_vuelo)
-        else:
-            raise Exception("Error: no se encontró ningún resultado al consultar.")
+        fila_vuelo: FilaVuelo = consulta_vuelo[0]
+        vuelo = VueloDesdeDB(*fila_vuelo)
 
         return vuelo

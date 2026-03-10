@@ -6,6 +6,7 @@ from src.tipos import FilaVenta
 from src.managers.TablaManager import TablaManager
 from src.entidades import VentaBase, VentaDesdeDB
 from src.querys import OBTENER_VENTA, OBTENER_CAPACIDAD, OBTENER_NUM_VENTAS
+from src.errores import *
 
 class VentasManager(TablaManager):
 
@@ -20,16 +21,16 @@ class VentasManager(TablaManager):
     
     def registrar_venta(self, id_staff: int, venta: VentaBase) -> None:
         if not super()._verificar_id_staff(id_staff):
-            raise Exception("Error: el staff ingresado no es válido.")
+            raise Exception(ERROR_STAFF_INVALIDO)
         
         if not self._verificar_pasajero(venta.id_pasajero):
-            raise Exception("Error: el pasajero no se encuentra registrado.")
+            raise Exception(ERROR_PASAJERO_INVALIDO)
         
         if not self._verificar_vuelo(venta.id_vuelo):
-            raise Exception("Error: el vuelo no se encuentra registrado.")
+            raise Exception(ERROR_VUELO_INVALIDO)
         
         if not self._verificar_capacidad(venta.id_vuelo):
-            raise Exception("Error: no hay más asientos disponibles.")
+            raise Exception(ERROR_SIN_ASIENTOS)
         
         venta.num_reserva = self._generar_num_reserva()
         venta.precio_pagado_usd = self._obtener_precio_pagado_usd(venta.id_vuelo)
@@ -41,10 +42,10 @@ class VentasManager(TablaManager):
     
     def modificar_num_reserva(self, id_staff: int, id_venta: int) -> None:
         if not super()._verificar_id_a_modificar(id_venta):
-            raise Exception("Error: el id a modificar no existe.")
+            raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
-            raise Exception("Error: el staff ingresado no es válido.")
+            raise Exception(ERROR_STAFF_INVALIDO)
         
         num_reserva: str = self._generar_num_reserva()
 
@@ -52,15 +53,15 @@ class VentasManager(TablaManager):
 
     def modificar_estado(self, id_venta: int, id_staff: int, id_estado_actual: int) -> None:
         if not super()._verificar_id_a_modificar(id_venta):
-            raise Exception("Error: el id a modificar no existe.")
+            raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
-            raise Exception("Error: el staff ingresado no es válido.")
+            raise Exception(ERROR_STAFF_INVALIDO)
         
         venta: VentaDesdeDB = self._obtener_venta(id_venta)
 
         if id_estado_actual not in self.estados_posibles:
-            raise Exception("Error: el estado ingresado no existe.")
+            raise Exception(ERROR_ESTADO_INVALIDO)
         
         if venta.id_estado_actual == id_estado_actual:
             return
@@ -70,15 +71,15 @@ class VentasManager(TablaManager):
     def cambiar_vuelo(self, id_venta: int, id_staff: int, id_vuelo: int) -> None:
 
         if not super()._verificar_id_a_modificar(id_venta):
-            raise Exception("Error: el id a modificar no existe.")
+            raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
-            raise Exception("Error: el staff ingresado no es válido.")
+            raise Exception(ERROR_STAFF_INVALIDO)
         
         venta: VentaDesdeDB = self._obtener_venta(id_venta)
         
         if not self._verificar_vuelo(id_vuelo):
-            raise Exception("Error: el vuelo no se encuentra registrado.")
+            raise Exception(ERROR_VUELO_INVALIDO)
         
         if venta.id_vuelo == id_vuelo:
             return
@@ -87,15 +88,15 @@ class VentasManager(TablaManager):
     
     def cambiar_pasajero(self, id_venta: int, id_staff: int, id_pasajero: int) -> None:
         if not super()._verificar_id_a_modificar(id_venta):
-            raise Exception("Error: el id a modificar no existe.")
+            raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
-            raise Exception("Error: el staff ingresado no es válido.")
+            raise Exception(ERROR_STAFF_INVALIDO)
         
         venta: VentaDesdeDB = self._obtener_venta(id_venta)
         
         if not self._verificar_pasajero(id_pasajero):
-            raise Exception("Error: el pasajero ingresado no existe.")
+            raise Exception(ERROR_PASAJERO_INVALIDO)
         
         if venta.id_pasajero == id_pasajero:
             return
@@ -106,11 +107,7 @@ class VentasManager(TablaManager):
         query = "SELECT precio_venta_usd FROM vuelos WHERE id = %s"
 
         consulta: list[tuple] = self.db_manager.consultar(query, (id_vuelo,))
-
-        if consulta:
-            precio_venta_usd: Decimal = consulta[0][0]
-        else:
-            raise Exception("Error: no se encontró ningún resultado al consultar.")
+        precio_venta_usd: Decimal = consulta[0][0]
 
         return precio_venta_usd
     
@@ -174,12 +171,8 @@ class VentasManager(TablaManager):
         query = OBTENER_CAPACIDAD
 
         consulta: list[tuple] = self.db_manager.consultar(query, (id_vuelo,))
+        capacidad: int = consulta[0][0]
 
-        if consulta:
-            capacidad: int = consulta[0][0]
-        else:
-            raise Exception("Error: el avión seleccionado no existe.")
-        
         return capacidad
     
     def _obtener_num_ventas(self, id_vuelo: int) -> int:
