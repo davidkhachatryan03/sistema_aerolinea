@@ -276,15 +276,15 @@ OBTENER_AVIONES =   """
 
 OBTENER_VUELO = """
                 SELECT  id,
-                        id_ruta,
-                        id_avion,
-                        id_estado_actual,
                         fecha_partida_programada,
                         fecha_arribo_programada,
+                        fecha_partida_real,
+                        fecha_arribo_real,
                         costo_operativo_usd,
                         precio_venta_usd,
-                        fecha_partida_real,
-                        fecha_arribo_real
+                        id_ruta,
+                        id_avion,
+                        id_estado_actual
                 FROM    vuelos 
                 WHERE   id = %s
                 """
