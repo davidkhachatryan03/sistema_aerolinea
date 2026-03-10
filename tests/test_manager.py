@@ -1,10 +1,11 @@
 import pytest, os, random
 from init_db import main
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 from datetime import datetime, date
 from src.entidades import *
 from src.managers import *
 from src.tipos import *
+from src.errores import *
 
 main()
 
@@ -66,7 +67,7 @@ def test_registrar_venta_id_staff_invalido(db_conectada: DBManager):
 
     venta = VentaBase(id_pasajero, id_vuelo, num_reserva, precio_pagado_usd, id_estado_actual)
 
-    with pytest.raises(Exception, match="Error: el staff ingresado no es válido."):
+    with pytest.raises(Exception, match=ERROR_STAFF_INVALIDO):
         ventas_manager.registrar_venta(ID_STAFF, venta)
     
 def test_registrar_venta_pasajero_invalido(db_conectada: DBManager):
@@ -81,7 +82,7 @@ def test_registrar_venta_pasajero_invalido(db_conectada: DBManager):
 
     venta = VentaBase(id_pasajero, id_vuelo, num_reserva, precio_pagado_usd, id_estado_actual)
 
-    with pytest.raises(Exception, match="Error: el pasajero no se encuentra registrado."):
+    with pytest.raises(Exception, match=ERROR_PASAJERO_INVALIDO):
         ventas_manager.registrar_venta(ID_STAFF, venta)
 
 def test_registrar_venta_vuelo_invalido(db_conectada: DBManager):
@@ -96,7 +97,7 @@ def test_registrar_venta_vuelo_invalido(db_conectada: DBManager):
 
     venta = VentaBase(id_pasajero, id_vuelo, num_reserva, precio_pagado_usd, id_estado_actual)
 
-    with pytest.raises(Exception, match="Error: el vuelo no se encuentra registrado."):
+    with pytest.raises(Exception, match=ERROR_VUELO_INVALIDO):
         ventas_manager.registrar_venta(ID_STAFF, venta)
 
 def test_registrar_venta_vuelo_lleno(db_conectada: DBManager):
@@ -114,7 +115,7 @@ def test_registrar_venta_vuelo_lleno(db_conectada: DBManager):
     while ventas_manager._verificar_capacidad(id_vuelo):
         ventas_manager.registrar_venta(ID_STAFF, venta)
 
-    with pytest.raises(Exception, match="Error: no hay más asientos disponibles."):
+    with pytest.raises(Exception, match=ERROR_SIN_ASIENTOS):
         ventas_manager.registrar_venta(ID_STAFF, venta)
 
 def test_modificar_venta_id_estado_actual(db_conectada: DBManager):
@@ -235,6 +236,17 @@ def test_modificar_venta_id_pasajero(db_conectada: DBManager):
     assert venta.precio_pagado_usd == precio_pagado_usd
     assert venta.id_estado_actual == id_estado_actual
 
+def test_modificar_venta_id_incorrecto(db_conectada: DBManager):
+    ventas_manager = VentasManager(db_conectada)
+    ID_STAFF = 25
+
+    id_venta = 999
+
+    nuevo_id_pasajero = random.choice(db_conectada.consultar_columna_unica("SELECT id FROM pasajeros LIMIT 10"))
+
+    with pytest.raises(Exception, match=ERROR_ID_INVALIDO):
+        ventas_manager.cambiar_pasajero(id_venta, ID_STAFF, nuevo_id_pasajero)
+
 def test_registrar_vuelo_correcto(db_conectada: DBManager):
     vuelos_manager = VuelosManager(db_conectada)
     ID_STAFF = 25
@@ -245,8 +257,7 @@ def test_registrar_vuelo_correcto(db_conectada: DBManager):
     id_avion = elegir_avion_valido(db_conectada, id_ruta, fecha_partida_programada, fecha_arribo_programada, vuelos_manager)
     id_estado_actual = 1 # siempre se asigna este valor al registar un vuelo
     costo_operativo_usd = vuelos_manager._calcular_costo_operativo_usd(id_ruta, id_avion)
-    precio_venta_usd = costo_operativo_usd * Decimal("1.3")
-    precio_venta_usd = precio_venta_usd.quantize(Decimal("0.01"))
+    precio_venta_usd = vuelos_manager._calcular_precio_venta_usd(costo_operativo_usd)
 
     vuelo = VueloBase(id_ruta, id_avion, id_estado_actual, fecha_partida_programada, fecha_arribo_programada, costo_operativo_usd, precio_venta_usd)
     vuelos_manager.registrar_vuelo(ID_STAFF, vuelo)
@@ -261,3 +272,78 @@ def test_registrar_vuelo_correcto(db_conectada: DBManager):
     assert vuelo.fecha_arribo_programada == fecha_arribo_programada
     assert vuelo.costo_operativo_usd == costo_operativo_usd
     assert vuelo.precio_venta_usd == precio_venta_usd
+
+def test_registrar_vuelo_fechas_incorrectas(db_conectada: DBManager):
+    vuelos_manager = VuelosManager(db_conectada)
+    ID_STAFF = 25
+
+    fecha_partida_programada = datetime(2026, 1, 10)
+    fecha_arribo_programada = datetime(2026, 1, 2)
+    id_ruta = random.choice(db_conectada.consultar_columna_unica("SELECT id FROM rutas LIMIT 10"))
+    id_avion = elegir_avion_valido(db_conectada, id_ruta, fecha_partida_programada, fecha_arribo_programada, vuelos_manager)
+    id_estado_actual = 1 # siempre se asigna este valor al registar un vuelo
+    costo_operativo_usd = vuelos_manager._calcular_costo_operativo_usd(id_ruta, id_avion)
+    precio_venta_usd = vuelos_manager._calcular_precio_venta_usd(costo_operativo_usd)
+
+    vuelo = VueloBase(id_ruta, id_avion, id_estado_actual, fecha_partida_programada, fecha_arribo_programada, costo_operativo_usd, precio_venta_usd)
+
+    with pytest.raises(Exception, match=ERROR_FECHAS_INVALIDAS):
+        vuelos_manager.registrar_vuelo(ID_STAFF, vuelo)
+
+def test_registrar_vuelo_avion_incorrecto(db_conectada: DBManager):
+    vuelos_manager = VuelosManager(db_conectada)
+    ID_STAFF = 25
+
+    fecha_partida_programada = datetime(2026, 1, 1)
+    fecha_arribo_programada = datetime(2026, 1, 2)
+    id_ruta = random.choice(db_conectada.consultar_columna_unica("SELECT id FROM rutas LIMIT 10"))
+
+    id_aviones_disponibles = vuelos_manager._obtener_aviones_disponibles(id_ruta, fecha_arribo_programada, fecha_arribo_programada)
+    id_aviones_registrados = db_conectada.consultar_columna_unica("SELECT id FROM aviones")
+
+    for id in id_aviones_registrados:
+        if id not in id_aviones_disponibles:
+            id_avion = id
+
+    id_estado_actual = 1 # siempre se asigna este valor al registar un vuelo
+    costo_operativo_usd = vuelos_manager._calcular_costo_operativo_usd(id_ruta, id_avion)
+    precio_venta_usd = vuelos_manager._calcular_precio_venta_usd(costo_operativo_usd)
+
+    vuelo = VueloBase(id_ruta, id_avion, id_estado_actual, fecha_partida_programada, fecha_arribo_programada, costo_operativo_usd, precio_venta_usd)
+
+    with pytest.raises(Exception, match=ERROR_AVION_Y_RUTA_INVALIDAS):
+        vuelos_manager.registrar_vuelo(ID_STAFF, vuelo)
+
+def test_modificar_vuelo_fechas(db_conectada: DBManager):
+    vuelos_manager = VuelosManager(db_conectada)
+    ID_STAFF = 25
+
+    fecha_partida_programada = datetime(2026, 1, 1)
+    fecha_arribo_programada = datetime(2026, 1, 2)
+    id_ruta = random.choice(db_conectada.consultar_columna_unica("SELECT id FROM rutas LIMIT 10"))
+    id_avion = elegir_avion_valido(db_conectada, id_ruta, fecha_partida_programada, fecha_arribo_programada, vuelos_manager)
+    id_estado_actual = 1 # siempre se asigna este valor al registar un vuelo
+    costo_operativo_usd = vuelos_manager._calcular_costo_operativo_usd(id_ruta, id_avion)
+    precio_venta_usd = vuelos_manager._calcular_precio_venta_usd(costo_operativo_usd)
+
+    vuelo = VueloBase(id_ruta, id_avion, id_estado_actual, fecha_partida_programada, fecha_arribo_programada, costo_operativo_usd, precio_venta_usd)
+    vuelos_manager.registrar_vuelo(ID_STAFF, vuelo)
+
+    consulta_id_vuelo: list[int] = db_conectada.consultar_columna_unica("SELECT id FROM vuelos ORDER BY id DESC LIMIT 1")
+    id_vuelo = consulta_id_vuelo[0]
+
+    nueva_fecha_partida_programada = datetime(2028, 1, 10)
+    nueva_fecha_arribo_programada = datetime(2028, 1, 11)
+
+    vuelos_manager.modificar_fechas(id_vuelo, ID_STAFF, nueva_fecha_partida_programada, nueva_fecha_arribo_programada)
+
+    consulta_vuelo: list[FilaVuelo] = db_conectada.consultar("SELECT id, fecha_partida_programada, fecha_arribo_programada, fecha_partida_real, fecha_arribo_real, costo_operativo_usd, precio_venta_usd, id_ruta, id_avion, id_estado_actual FROM vuelos ORDER BY id DESC LIMIT 1")
+    vuelo = VueloDesdeDB(*consulta_vuelo[0])
+
+    assert vuelo.fecha_partida_programada == nueva_fecha_partida_programada
+    assert vuelo.fecha_arribo_programada == nueva_fecha_arribo_programada
+    assert vuelo.costo_operativo_usd == costo_operativo_usd
+    assert vuelo.precio_venta_usd == precio_venta_usd
+    assert vuelo.id_ruta == id_ruta
+    assert vuelo.id_avion == id_avion
+    assert vuelo.id_estado_actual == id_estado_actual
