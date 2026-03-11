@@ -69,7 +69,7 @@ class VuelosManager(TablaManager):
         
         vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
 
-        if not self._verificar_avion(vuelo.id_avion, vuelo.id_ruta, vuelo.fecha_partida_programada, vuelo.fecha_arribo_programada):
+        if not self._verificar_avion(id_avion, vuelo.id_ruta, vuelo.fecha_partida_programada, vuelo.fecha_arribo_programada):
             raise Exception(ERROR_AVION_INVALIDO)
         
         if vuelo.id_avion == id_avion:
