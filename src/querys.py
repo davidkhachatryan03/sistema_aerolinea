@@ -274,6 +274,12 @@ OBTENER_AVIONES =   """
                     AND     a.id_estado_actual <> 3;
                     """
 
+OBTENER_RUTAS = """
+                SELECT  id
+                FROM    rutas 
+                WHERE   distancia_km < (SELECT autonomia_km FROM aviones WHERE id = %s)
+                """
+
 OBTENER_VUELO = """
                 SELECT  id,
                         fecha_partida_programada,

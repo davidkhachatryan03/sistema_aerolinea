@@ -5,7 +5,7 @@ from src.tipos import FilaVuelo
 from src.managers.DBManager import DBManager
 from src.managers.TablaManager import TablaManager
 from src.entidades import VueloBase, VueloDesdeDB
-from src.querys import OBTENER_VUELO, OBTENER_AVIONES
+from src.querys import OBTENER_VUELO, OBTENER_AVIONES, OBTENER_RUTAS
 from src.errores import *
 
 class VuelosManager(TablaManager):
@@ -86,7 +86,7 @@ class VuelosManager(TablaManager):
         
         vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
 
-        if not self._verificar_avion(vuelo.id_avion, vuelo.id_ruta, vuelo.fecha_partida_programada, vuelo.fecha_arribo_programada):
+        if not self._verificar_ruta(vuelo.id_avion, id_ruta):
             raise Exception(ERROR_RUTA_INVALIDA)
         
         if vuelo.id_ruta == id_ruta:
@@ -124,6 +124,15 @@ class VuelosManager(TablaManager):
         aviones_disponibles: list[int] = self.db_manager.consultar_columna_unica(query, valores)
 
         return aviones_disponibles
+    
+    def _obtener_rutas_disponibles(self, id_avion: int) -> list[int]:
+        query = OBTENER_RUTAS
+
+        valores = (id_avion, )
+
+        rutas_disponibles: list[int] = self.db_manager.consultar_columna_unica(query, valores)
+
+        return rutas_disponibles
 
     def _verificar_fechas(self, fecha_partida_programada: datetime, fecha_arribo_programada: datetime) -> bool:
         if fecha_partida_programada < fecha_arribo_programada:
@@ -138,6 +147,15 @@ class VuelosManager(TablaManager):
             if id_avion_disponible == id_avion:
                 return True
 
+        return False
+    
+    def _verificar_ruta(self, id_avion: int, id_ruta: int) -> bool:
+        id_rutas_disponibles: list[int] = self._obtener_rutas_disponibles(id_avion)
+
+        for id_ruta_disponible in id_rutas_disponibles:
+            if id_ruta_disponible == id_ruta:
+                return True
+        
         return False
 
     def _calcular_costo_operativo_usd(self, id_ruta: int, id_avion: int) -> Decimal:
