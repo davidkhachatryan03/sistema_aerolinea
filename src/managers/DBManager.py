@@ -42,7 +42,7 @@ class DBManager:
         if self.obtener_cursor() == None:
             raise Exception("Error: no hay cursor disponible.")
         
-        with open(ruta_archivo, "r") as f:
+        with open(ruta_archivo, "r", encoding="utf-8") as f:
             comandos = f.read().split(";")
             
             for comando in comandos:
