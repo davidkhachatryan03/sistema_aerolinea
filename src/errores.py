@@ -37,3 +37,5 @@ ERROR_AVION_Y_FECHAS_INVALIDAS = "Error: las fechas no son compatibles con el av
 ERROR_AVION_INVALIDO = "Error: no es posible asignar el avión seleccionado."
 
 ERROR_RUTA_INVALIDA = "Error: no es posible asignar la ruta seleccionada."
+
+ERROR_FORMATO_DATOS = "Error: el formato de los datos no es correcto."
