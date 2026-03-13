@@ -178,6 +178,18 @@ OBTENER_DOCUMENTO = """
                     WHERE   id = %s
                     """
 
+OBTENER_ULTIMO_DOCUMENTO_REGISTRADO =   """
+                                        SELECT  id,
+                                                num_documento,
+                                                fecha_vencimiento,
+                                                pais_emision,
+                                                id_pasajero,
+                                                id_tipo_documento
+                                        FROM    documentos
+                                        ORDER BY id DESC
+                                        LIMIT 1
+                                        """
+
 OBTENER_PERSONAL_AVION =    """
                             SELECT  s.id
                             FROM    staff s
@@ -239,6 +251,19 @@ OBTENER_VENTA = """
                 WHERE   id = %s
                 """
 
+OBTENER_ULTIMA_VENTA_REGISTRADA =   """
+                                    SELECT  id,
+                                            num_reserva,
+                                            fecha_venta,
+                                            precio_pagado_usd,
+                                            id_vuelo,
+                                            id_estado_actual,
+                                            id_pasajero
+                                    FROM    ventas
+                                    ORDER BY id DESC
+                                    LIMIT 1
+                                    """
+
 OBTENER_CAPACIDAD = """
                     SELECT  a.capacidad
                     FROM    ventas ve
@@ -294,3 +319,31 @@ OBTENER_VUELO = """
                 FROM    vuelos 
                 WHERE   id = %s
                 """
+
+OBTENER_ULTIMO_VUELO_REGISTRADO =   """
+                                    SELECT  id, 
+                                            fecha_partida_programada, 
+                                            fecha_arribo_programada, 
+                                            fecha_partida_real, 
+                                            fecha_arribo_real, 
+                                            costo_operativo_usd, 
+                                            precio_venta_usd, 
+                                            id_ruta, 
+                                            id_avion, 
+                                            id_estado_actual 
+                                    FROM    vuelos 
+                                    ORDER BY id DESC 
+                                    LIMIT 1
+                                    """
+
+OBTENER_ULTIMO_PASAJERO_REGISTRADO =    """
+                                        SELECT  id,
+                                                nombre_completo,
+                                                email,
+                                                telefono,
+                                                esta_en_lista_negra,
+                                                es_vip
+                                        FROM    pasajeros
+                                        ORDER BY id DESC
+                                        LIMIT 1
+                                        """
