@@ -4,7 +4,7 @@ from src.managers import AsignacionesVuelosManager, DBManager, DocumentosManager
 from mysql.connector import Error
 import os
 
-def main() -> None:
+def main(test: bool = False) -> None:
 
     db_manager = DBManager()
 
@@ -29,34 +29,36 @@ def main() -> None:
 
         for archivo in archivos_dir_sql_inserts:
             db_manager.ejecutar_archivo_sql(os.path.join(dir_sql_inserts, archivo))
+
+        if not test:
         
-        aviones_desde_db: list[AvionDesdeDB] = _obtener_aviones(db_manager)
-        
-        rutas_desde_db: list[RutaDesdeDB] = _obtener_rutas(db_manager)
+            aviones_desde_db: list[AvionDesdeDB] = _obtener_aviones(db_manager)
+            
+            rutas_desde_db: list[RutaDesdeDB] = _obtener_rutas(db_manager)
 
-        pasajeros: list[PasajeroBase] = generador_datos.generar_pasajeros(100)
-        _poblar_pasajeros(db_manager, pasajeros)
+            pasajeros: list[PasajeroBase] = generador_datos.generar_pasajeros(100)
+            _poblar_pasajeros(db_manager, pasajeros)
 
-        pasajeros_desde_db: list[PasajeroDesdeDB] = _obtener_pasajeros(db_manager)
+            pasajeros_desde_db: list[PasajeroDesdeDB] = _obtener_pasajeros(db_manager)
 
-        documentos: list[DocumentoBase] = generador_datos.generar_documentos(pasajeros_desde_db)
-        _poblar_documentos(db_manager, documentos)
+            documentos: list[DocumentoBase] = generador_datos.generar_documentos(pasajeros_desde_db)
+            _poblar_documentos(db_manager, documentos)
 
-        vuelos: list[VueloBase] = generador_datos.generar_vuelos(100, rutas_desde_db, aviones_desde_db)
-        _poblar_vuelos(db_manager, vuelos)
+            vuelos: list[VueloBase] = generador_datos.generar_vuelos(100, rutas_desde_db, aviones_desde_db)
+            _poblar_vuelos(db_manager, vuelos)
 
-        vuelos_desde_db: list[VueloDesdeDB] = _obtener_vuelos(db_manager)
+            vuelos_desde_db: list[VueloDesdeDB] = _obtener_vuelos(db_manager)
 
-        ventas: list[VentaBase] = generador_datos.generar_ventas(200, vuelos_desde_db, pasajeros_desde_db)
-        _poblar_ventas(db_manager, ventas)
+            ventas: list[VentaBase] = generador_datos.generar_ventas(200, vuelos_desde_db, pasajeros_desde_db)
+            _poblar_ventas(db_manager, ventas)
 
-        ventas_desde_db: list[VentaDesdeDB] = _obtener_ventas(db_manager)
+            ventas_desde_db: list[VentaDesdeDB] = _obtener_ventas(db_manager)
 
-        tarjetas_embarque: list[TarjetaEmbarqueBase] = generador_datos.generar_tarjetas_embarque(ventas_desde_db)
-        _poblar_tarjetas_embarque(db_manager, tarjetas_embarque)
+            tarjetas_embarque: list[TarjetaEmbarqueBase] = generador_datos.generar_tarjetas_embarque(ventas_desde_db)
+            _poblar_tarjetas_embarque(db_manager, tarjetas_embarque)
 
-        asignaciones_vuelos: list[AsignacionVueloBase] = generador_datos.generar_asignaciones_vuelos(vuelos_desde_db)
-        _poblar_asignaciones_vuelos(db_manager, asignaciones_vuelos)
+            asignaciones_vuelos: list[AsignacionVueloBase] = generador_datos.generar_asignaciones_vuelos(vuelos_desde_db)
+            _poblar_asignaciones_vuelos(db_manager, asignaciones_vuelos)
 
         db_manager.commit()
 
