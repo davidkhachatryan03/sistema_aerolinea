@@ -5,7 +5,7 @@ import re
 class RutaBase:
 
     def __init__(self, num_vuelo: str, origen: str, destino: str, distancia_km: int, duracion_min: int) -> None:
-        if not self._verificar_num_vuelo(num_vuelo) or type(origen) != str or type(destino) != str or not self._verificar_distancia_km(distancia_km) or not self._verificar_duracion_min(duracion_min):
+        if not self._verificar_num_vuelo(num_vuelo) or not self._verificar_origen_y_destino(origen, destino) or not self._verificar_distancia_km(distancia_km) or not self._verificar_duracion_min(duracion_min):
             raise Exception(ERROR_FORMATO_DATOS)
 
         self.num_vuelo = num_vuelo
@@ -50,6 +50,21 @@ class RutaBase:
             return False
         
         if duracion_min <= 0:
+            return False
+        
+        return True
+    
+    def _verificar_origen_y_destino(self, origen: str, destino: str) -> bool:
+        if type(origen) != str:
+            return False
+        
+        if type(destino) != str:
+            return False
+        
+        if origen == destino:
+            return False
+        
+        if len(origen) != 3 or len(destino) != 3:
             return False
         
         return True

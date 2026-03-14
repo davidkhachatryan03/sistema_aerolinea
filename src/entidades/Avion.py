@@ -64,7 +64,7 @@ class AvionBase:
             return False
         
         return True
-
+    
 class AvionDesdeDB(AvionBase):
 
     def __init__(self, id: int, matricula: str, marca: str, modelo: str, capacidad: int, autonomia_km: int, costo_hora_vuelo: Decimal, id_estado_actual: int) -> None:

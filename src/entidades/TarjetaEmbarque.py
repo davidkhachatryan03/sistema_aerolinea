@@ -5,7 +5,7 @@ from src.errores import ERROR_FORMATO_DATOS
 class TarjetaEmbarqueBase:
 
     def __init__(self, id_estado_actual: int, id_venta: int) -> None:
-        if type(id_estado_actual) != int or type(id_venta) != int:
+        if not self._verificar_formato_id(id_estado_actual) or not self._verificar_formato_id(id_venta):
             raise Exception(ERROR_FORMATO_DATOS)
 
         self.id_estado_actual = id_estado_actual
@@ -18,6 +18,15 @@ class TarjetaEmbarqueBase:
         }
 
         return datos
+    
+    def _verificar_formato_id(self, id: int) -> bool:
+        if type(id) != int:
+            return False
+        
+        if id <= 0:
+            return False
+
+        return True
 
 class TarjetaEmbarqueDesdeDB(TarjetaEmbarqueBase):
 

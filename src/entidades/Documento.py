@@ -5,7 +5,7 @@ from datetime import date
 class DocumentoBase:
 
     def __init__(self, num_documento: str, fecha_vencimiento: date, pais_emision: str, id_pasajero: int, id_tipo_documento: int) -> None:
-        if type(num_documento) != str or type(fecha_vencimiento) != date or type(pais_emision) != str or type(id_pasajero) != int or type(id_tipo_documento) != int:
+        if type(num_documento) != str or type(fecha_vencimiento) != date or type(pais_emision) != str or not self._verificar_formato_id(id_pasajero) or not self._verificar_formato_id(id_tipo_documento):
             raise Exception(ERROR_FORMATO_DATOS)
 
         self.num_documento = num_documento
