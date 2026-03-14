@@ -1,13 +1,14 @@
 from typing import Any
 from datetime import datetime
 from decimal import Decimal
+from src.errores import ERROR_FORMATO_DATOS
 import re
 
 class VentaBase:
 
     def __init__(self, id_pasajero: int, id_vuelo: int, num_reserva: str, precio_pagado_usd: Decimal, id_estado_actual: int) -> None:
         if not self._verificar_formato_id(id_pasajero) or not self._verificar_formato_id(id_vuelo) or not self._verificar_formato_id(id_estado_actual) or not self._verificar_formato_num_reserva(num_reserva) or not self._verificar_formato_precio_pagado_usd(precio_pagado_usd):
-            raise Exception("Error: el formato de los datos es incorrecto.")
+            raise Exception(ERROR_FORMATO_DATOS)
 
         self.id_pasajero = id_pasajero
         self.id_vuelo = id_vuelo

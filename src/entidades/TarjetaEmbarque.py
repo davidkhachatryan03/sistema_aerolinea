@@ -1,11 +1,12 @@
 from typing import Any
 from datetime import datetime
+from src.errores import ERROR_FORMATO_DATOS
 
 class TarjetaEmbarqueBase:
 
     def __init__(self, id_estado_actual: int, id_venta: int) -> None:
         if type(id_estado_actual) != int or type(id_venta) != int:
-            raise Exception("Error: el formato de los datos es incorrecto.")
+            raise Exception(ERROR_FORMATO_DATOS)
 
         self.id_estado_actual = id_estado_actual
         self.id_venta = id_venta

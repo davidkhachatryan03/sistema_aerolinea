@@ -1,12 +1,13 @@
 from typing import Any
 from datetime import datetime
 from decimal import Decimal
+from src.errores import ERROR_FORMATO_DATOS
 
 class VueloBase:
     
     def __init__(self, id_ruta: int, id_avion: int, id_estado_actual: int, fecha_partida_programada: datetime, fecha_arribo_programada: datetime, costo_operativo_usd: Decimal, precio_venta_usd: Decimal) -> None:
-        if type(id_ruta) != int or type(id_avion) != int or type(id_estado_actual) != int or type(fecha_partida_programada) != datetime or type(fecha_arribo_programada) != datetime or type(costo_operativo_usd) != Decimal or type(precio_venta_usd) != Decimal:
-            raise Exception("Error: el formato de los datos es incorrecto.")
+        if self._verificar_formato_id(id_ruta) and self._verificar_formato_id(id_avion) and self._verificar_formato_id(id_estado_actual) and self._verificar_fechas(fecha_partida_programada, fecha_arribo_programada) and self._verificar_costo_operativo_usd(costo_operativo_usd) and self._verificar_precio_venta_usd(precio_venta_usd):
+            raise Exception(ERROR_FORMATO_DATOS)
 
         self.id_ruta = id_ruta
         self.id_avion = id_avion
@@ -28,6 +29,45 @@ class VueloBase:
         }
 
         return datos
+    
+    def _verificar_formato_id(self, id: int) -> bool:
+        if type(id) != int:
+            return False
+        
+        if id <= 0:
+            return False
+
+        return True
+    
+    def _verificar_fechas(self, fecha_partida_programada: datetime, fecha_arribo_programada: datetime) -> bool:
+        if type(fecha_partida_programada) != datetime:
+            return False
+        
+        if type(fecha_arribo_programada) != datetime:
+            return False
+        
+        if fecha_partida_programada >= fecha_arribo_programada:
+            return False
+        
+        return True
+    
+    def _verificar_costo_operativo_usd(self, costo_operativo_usd: Decimal) -> bool:
+        if type(costo_operativo_usd) != Decimal:
+            return False
+        
+        if costo_operativo_usd <= 0:
+            return False
+        
+        return True
+    
+    def _verificar_precio_venta_usd(self, precio_venta_usd: Decimal) -> bool:
+        if type(precio_venta_usd) != Decimal:
+            return False
+        
+        if precio_venta_usd < 0:
+            return False
+        
+        return True
     
 class VueloDesdeDB(VueloBase):
 

@@ -1,11 +1,12 @@
 from typing import Any
+from src.errores import ERROR_FORMATO_DATOS
 from datetime import datetime
 
 class AsignacionVueloBase:
 
     def __init__(self, fecha_inicio: datetime, fecha_fin: datetime, id_rol: int, id_vuelo: int, id_staff: int) -> None:
-        if type(fecha_inicio) != datetime or type(fecha_fin) != datetime or type(id_rol) != int or type(id_vuelo) != int or type(id_staff) != int:
-            raise Exception("Error: el formato de los datos es incorrecto.")
+        if not self._verificar_fechas(fecha_inicio, fecha_fin) or not self._verificar_formato_id(id_rol) or not self._verificar_formato_id(id_vuelo) or not self._verificar_formato_id(id_staff):
+            raise Exception(ERROR_FORMATO_DATOS)
 
         self.fecha_inicio = fecha_inicio
         self.fecha_fin = fecha_fin
@@ -24,6 +25,26 @@ class AsignacionVueloBase:
 
         return datos
     
+    def _verificar_formato_id(self, id: int) -> bool:
+        if type(id) != int:
+            return False
+        
+        if id <= 0:
+            return False
+
+        return True
+    
+    def _verificar_fechas(self, fecha_partida_programada: datetime, fecha_arribo_programada: datetime) -> bool:
+        if type(fecha_partida_programada) != datetime:
+            return False
+        
+        if type(fecha_arribo_programada) != datetime:
+            return False
+        
+        if fecha_partida_programada >= fecha_arribo_programada:
+            return False
+        
+        return True
 
 class AsignacionVueloDesdeDB(AsignacionVueloBase):
 

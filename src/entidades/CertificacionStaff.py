@@ -1,11 +1,12 @@
 from typing import Any
+from src.errores import ERROR_FORMATO_DATOS
 from datetime import datetime
 
 class CertificacionStaffBase:
 
     def __init__(self, id_staff: int, descripcion: str, licencia_hasta: datetime) -> None:
-        if type(id_staff) != int or type(descripcion) != str or type(licencia_hasta) != datetime:
-            raise Exception("Error: el formato de los datos es incorrecto.")
+        if not self._verificar_formato_id(id_staff) or type(descripcion) != str or type(licencia_hasta) != datetime:
+            raise Exception(ERROR_FORMATO_DATOS)
         
         self.id_staff = id_staff
         self.descripcion = descripcion
@@ -19,6 +20,15 @@ class CertificacionStaffBase:
         }
 
         return datos
+    
+    def _verificar_formato_id(self, id: int) -> bool:
+        if type(id) != int:
+            return False
+        
+        if id <= 0:
+            return False
+
+        return True
     
 class CertificacionStaffDesdeDB(CertificacionStaffBase):
 

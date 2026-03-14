@@ -1,11 +1,12 @@
 from typing import Any
+from src.errores import ERROR_FORMATO_DATOS
 from datetime import date
 
 class DocumentoBase:
 
     def __init__(self, num_documento: str, fecha_vencimiento: date, pais_emision: str, id_pasajero: int, id_tipo_documento: int) -> None:
         if type(num_documento) != str or type(fecha_vencimiento) != date or type(pais_emision) != str or type(id_pasajero) != int or type(id_tipo_documento) != int:
-            raise Exception("Error: el formato de los datos es incorrecto.")
+            raise Exception(ERROR_FORMATO_DATOS)
 
         self.num_documento = num_documento
         self.fecha_vencimiento = fecha_vencimiento
@@ -23,6 +24,15 @@ class DocumentoBase:
         }
 
         return datos
+    
+    def _verificar_formato_id(self, id: int) -> bool:
+        if type(id) != int:
+            return False
+        
+        if id <= 0:
+            return False
+
+        return True
 
 class DocumentoDesdeDB(DocumentoBase):
 
