@@ -6,7 +6,7 @@ from src.errores import ERROR_FORMATO_DATOS
 class VueloBase:
     
     def __init__(self, id_ruta: int, id_avion: int, id_estado_actual: int, fecha_partida_programada: datetime, fecha_arribo_programada: datetime, costo_operativo_usd: Decimal, precio_venta_usd: Decimal) -> None:
-        if self._verificar_formato_id(id_ruta) and self._verificar_formato_id(id_avion) and self._verificar_formato_id(id_estado_actual) and self._verificar_fechas(fecha_partida_programada, fecha_arribo_programada) and self._verificar_costo_operativo_usd(costo_operativo_usd) and self._verificar_precio_venta_usd(precio_venta_usd):
+        if not self._verificar_formato_id(id_ruta) or not self._verificar_formato_id(id_avion) or not self._verificar_formato_id(id_estado_actual) or not self._verificar_fechas(fecha_partida_programada, fecha_arribo_programada) or not self._verificar_costo_operativo_usd(costo_operativo_usd) or not self._verificar_precio_venta_usd(precio_venta_usd):
             raise Exception(ERROR_FORMATO_DATOS)
 
         self.id_ruta = id_ruta

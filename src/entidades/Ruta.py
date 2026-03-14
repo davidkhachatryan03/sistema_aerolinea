@@ -45,11 +45,11 @@ class RutaBase:
         
         return True
     
-    def _verificar_duracion_min(self, durancion_min: int) -> bool:
-        if type(self.duracion_min != int):
+    def _verificar_duracion_min(self, duracion_min: int) -> bool:
+        if type(duracion_min) != int:
             return False
         
-        if self.duracion_min <= 0:
+        if duracion_min <= 0:
             return False
         
         return True
