@@ -4,6 +4,7 @@ import mysql.connector
 from mysql.connector.connection import MySQLConnection
 from mysql.connector.cursor import MySQLCursor
 from dotenv import load_dotenv 
+from src.errores import ERROR_CURSOR_INEXISTENTE
 
 load_dotenv()
 
@@ -40,7 +41,7 @@ class DBManager:
     
     def ejecutar_archivo_sql(self, ruta_archivo: str) -> None:
         if self.obtener_cursor() == None:
-            raise Exception("Error: no hay cursor disponible.")
+            raise Exception(ERROR_CURSOR_INEXISTENTE)
         
         with open(ruta_archivo, "r", encoding="utf-8") as f:
             comandos = f.read().split(";")

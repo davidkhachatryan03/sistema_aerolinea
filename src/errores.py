@@ -39,3 +39,5 @@ ERROR_AVION_INVALIDO = "Error: no es posible asignar el avión seleccionado."
 ERROR_RUTA_INVALIDA = "Error: no es posible asignar la ruta seleccionada."
 
 ERROR_FORMATO_DATOS = "Error: el formato de los datos no es correcto."
+
+ERROR_CURSOR_INEXISTENTE = "Error: no hay cursor disponible."
