@@ -51,7 +51,7 @@ class DBManager:
 
     def consultar(self, query: str, valores: tuple | list | None = None) -> list[tuple]:
         if self.obtener_cursor() == None:
-            raise Exception("Error: no hay cursor disponible.")
+            raise Exception(ERROR_CURSOR_INEXISTENTE)
         
         self.execute(query, valores)
         resultados: list[tuple] = cast(list[tuple], self.cursor.fetchall())
@@ -60,7 +60,7 @@ class DBManager:
     
     def consultar_columna_unica(self, query: str, valores: tuple | list | None = None) -> list[Any]:
         if self.cursor == None:
-            raise Exception("Error: no hay cursor disponible.")
+            raise Exception(ERROR_CURSOR_INEXISTENTE)
         
         self.cursor.execute(query, valores)
         resultados: list[Any] = [elemento[0] for elemento in self.cursor.fetchall()]
