@@ -67,6 +67,15 @@ class DBManager:
 
         return resultados
     
+    def consultar_ultima_fila(self, tabla: str, columnas: str):
+        if self.cursor == None:
+            raise Exception(ERROR_CURSOR_INEXISTENTE)
+        
+        self.cursor.execute("SELECT {} FROM {} ORDER BY id DESC LIMIT 1".format(columnas, tabla))
+        resultado: tuple = cast(tuple, self.cursor.fetchone())
+
+        return resultado
+    
     def commit(self) -> None:
         self.obtener_conexion().commit()
     
@@ -82,5 +91,8 @@ class DBManager:
     def borrar_db(self) -> None:
         self.execute("DROP DATABASE IF EXISTS aerolinea;")
 
-    def borrar_datos(self) -> None:
+    def borrar_todas_las_tablas(self) -> None:
         self.ejecutar_archivo_sql(os.path.join(self.dir_sql, "borrar_datos.sql"))
+
+    def borrar_tabla(self, tabla: str) -> None:
+        self.execute("DELETE FROM {}".format(tabla))
