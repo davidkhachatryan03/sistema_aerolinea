@@ -347,3 +347,25 @@ OBTENER_ULTIMO_PASAJERO_REGISTRADO =    """
                                         ORDER BY id DESC
                                         LIMIT 1
                                         """
+
+OBTENER_TODOS_LOS_AVIONES = """
+                            SELECT  id,
+                                    matricula, 
+                                    marca, 
+                                    modelo, 
+                                    capacidad, 
+                                    autonomia_km, 
+                                    costo_hora_vuelo, 
+                                    id_estado_actual 
+                            FROM    aviones
+                            """
+
+OBTENER_TODAS_LAS_RUTAS =   """
+                            SELECT  id,
+                                    num_vuelo,
+                                    origen,
+                                    destino,
+                                    distancia_km,
+                                    duracion_min
+                            FROM    rutas
+                            """
