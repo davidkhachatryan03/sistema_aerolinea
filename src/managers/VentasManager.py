@@ -1,16 +1,15 @@
 from typing import Any
-from datetime import datetime
 from decimal import Decimal
 import random
 from src.tipos import FilaVenta
-from src.managers.TablaManager import TablaManager
+from src.managers import TablaManager, DBManager
 from src.entidades import VentaBase, VentaDesdeDB
 from src.querys import OBTENER_VENTA, OBTENER_CAPACIDAD, OBTENER_NUM_VENTAS
 from src.errores import *
 
 class VentasManager(TablaManager):
 
-    def __init__(self, db_manager):
+    def __init__(self, db_manager: DBManager):
         super().__init__("ventas", db_manager)
         self.estados_posibles = {
             1: "Pagado",
@@ -137,7 +136,7 @@ class VentasManager(TablaManager):
         return venta
     
     def _verificar_vuelo(self, id_vuelo: int):
-        query = "SELECT 1 FROM pasajeros WHERE id = %s LIMIT 1"
+        query = "SELECT 1 FROM vuelos WHERE id = %s LIMIT 1"
         consulta: list[tuple] = self.db_manager.consultar(query, (id_vuelo,))
 
         if consulta:
