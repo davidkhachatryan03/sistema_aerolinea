@@ -16,9 +16,11 @@ def db_conectada():
     db_conectada.conectar()
     db_conectada.execute("USE aerolinea")
     yield db_conectada
+    db_conectada.borrar_tabla("documentos")
     db_conectada.borrar_tabla("ventas")
     db_conectada.borrar_tabla("vuelos")
     db_conectada.borrar_tabla("pasajeros")
+    db_conectada.commit()
     db_conectada.desconectar()
 
 @pytest.fixture
@@ -40,6 +42,11 @@ def pasajeros_manager(db_conectada: DBManager) -> TablaManager:
 def vuelos_manager(db_conectada: DBManager) -> VuelosManager:
     vuelos_manager = VuelosManager(db_conectada)
     return vuelos_manager
+
+@pytest.fixture
+def documentos_manager(db_conectada: DBManager) -> DocumentosManager:
+    documentos_manager = DocumentosManager(db_conectada)
+    return documentos_manager
 
 @pytest.fixture
 def id_staff(id: int=25) -> int:
