@@ -21,6 +21,9 @@ class VuelosManager(TablaManager):
         }
     
     def registrar_vuelo(self, id_staff: int, vuelo: VueloBase) -> None:
+        if not super()._verificar_id_staff(id_staff):
+            raise Exception(ERROR_STAFF_INVALIDO)
+        
         if not self._verificar_fechas(vuelo.fecha_partida_programada, vuelo.fecha_arribo_programada):
             raise Exception(ERROR_FECHAS_INVALIDAS)
 
@@ -100,6 +103,9 @@ class VuelosManager(TablaManager):
 
         if not super()._verificar_id_staff(id_staff):
             raise Exception(ERROR_STAFF_INVALIDO)
+        
+        if id_estado_actual not in self.estados_posibles:
+            raise Exception(ERROR_ESTADO_INVALIDO)
         
         vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
 
