@@ -66,7 +66,7 @@ class DocumentosManager(TablaManager):
 
         super().modificar_fila(id_documento, id_staff, "pais_emision", pais_emision) 
 
-    def modificar_id_pasajero(self, id_documento: int, id_staff: int, id_pasajero: int) -> None:
+    def modificar_pasajero(self, id_documento: int, id_staff: int, id_pasajero: int) -> None:
         if not super()._verificar_id_a_modificar(id_documento):
             raise Exception(ERROR_ID_INVALIDO)
 
@@ -80,7 +80,7 @@ class DocumentosManager(TablaManager):
 
         super().modificar_fila(id_documento, id_staff, "id_pasajero", id_pasajero)
 
-    def modificar_id_tipo_documento(self, id_documento: int, id_staff: int, id_tipo_documento: int) -> None:
+    def modificar_tipo_documento(self, id_documento: int, id_staff: int, id_tipo_documento: int) -> None:
         if not super()._verificar_id_a_modificar(id_documento):
             raise Exception(ERROR_ID_INVALIDO)
 
