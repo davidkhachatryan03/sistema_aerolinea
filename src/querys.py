@@ -369,3 +369,23 @@ OBTENER_TODAS_LAS_RUTAS =   """
                                     duracion_min
                             FROM    rutas
                             """
+
+OBTENER_TODOS_LOS_DOCUMENTOS =  """
+                                SELECT  id,
+                                        num_documento,
+                                        fecha_vencimiento,
+                                        pais_emision,
+                                        id_pasajero,
+                                        id_tipo_documento
+                                FROM    documentos
+                                """
+
+OBTENER_TODOS_LOS_PASAJEROS =   """
+                                SELECT  id,
+                                        nombre_completo,
+                                        email,
+                                        telefono,
+                                        esta_en_lista_negra,
+                                        es_vip
+                                FROM    pasajeros
+                                """
