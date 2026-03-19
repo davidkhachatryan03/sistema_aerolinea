@@ -7,12 +7,14 @@ class TablaManager:
         self.db_manager: DBManager = db_manager
         self.tabla: str = tabla
 
-    def agregar_fila(self, id_staff: int, datos: dict[str, Any]) -> None:
+    def agregar_fila(self, id_staff: int, entidad) -> None:
         if self.db_manager.obtener_cursor() == None or self.db_manager.obtener_conexion() == None:
             print("No hay cursor.")
             return
         
         self.db_manager.execute("SET @usuario = %s", (id_staff,))
+
+        datos = entidad.to_dict()
 
         columnas: str = ", ".join(map(str, datos.keys()))
         valores: list[Any] = ", ".join(map(str, datos.values())).split(", ")
@@ -40,7 +42,7 @@ class TablaManager:
             print("Hubo un error.\n")
             self.db_manager.rollback()
 
-    def modificar_fila(self, id: int, id_staff_modifica: int, campo: str, valor: Any) -> None:
+    def modificar_fila(self, entidad, id_staff_modifica: int, campo: str, valor: Any) -> None:
         if self.db_manager.obtener_cursor() == None or self.db_manager.obtener_conexion() == None:
                 print("No hay cursor.")
                 return
@@ -53,7 +55,7 @@ class TablaManager:
                         WHERE id = %s      
                         """
         
-        valores = (valor, id)
+        valores = (valor, entidad.id)
         self.db_manager.execute(query, valores)
 
         if self.db_manager.obtener_cursor().rowcount == 1:

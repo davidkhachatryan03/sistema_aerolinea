@@ -38,12 +38,10 @@ class VuelosManager(TablaManager):
         vuelo.precio_venta_usd = precio_venta_usd
         vuelo.id_estado_actual = 1
 
-        datos: dict[str, Any] = vuelo.to_dict()
+        super().agregar_fila(id_staff, vuelo)
 
-        super().agregar_fila(id_staff, datos)
-
-    def modificar_fechas(self, id_vuelo: int, id_staff: int, fecha_partida_programada: datetime, fecha_arribo_programada: datetime) -> None:
-        if not super()._verificar_id_a_modificar(id_vuelo):
+    def modificar_fechas(self, vuelo: VueloDesdeDB, id_staff: int, fecha_partida_programada: datetime, fecha_arribo_programada: datetime) -> None:
+        if not super()._verificar_id_a_modificar(vuelo.id):
             raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
@@ -52,53 +50,54 @@ class VuelosManager(TablaManager):
         if not self._verificar_fechas(fecha_partida_programada, fecha_arribo_programada):
             raise Exception(ERROR_FECHAS_INVALIDAS)
         
-        vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
-
         if not self._verificar_avion(vuelo.id_avion, vuelo.id_ruta, fecha_partida_programada, fecha_arribo_programada):
             raise Exception(ERROR_AVION_Y_FECHAS_INVALIDAS)
         
         if vuelo.fecha_partida_programada == fecha_partida_programada and vuelo.fecha_arribo_programada == fecha_arribo_programada:
             return
+        
+        vuelo.fecha_partida_programada = fecha_partida_programada
+        vuelo.fecha_arribo_programada = fecha_arribo_programada
 
-        super().modificar_fila(id_vuelo, id_staff, "fecha_partida_programada", fecha_partida_programada)
-        super().modificar_fila(id_vuelo, id_staff, "fecha_arribo_programada", fecha_arribo_programada)
+        super().modificar_fila(vuelo, id_staff, "fecha_partida_programada", fecha_partida_programada)
+        super().modificar_fila(vuelo, id_staff, "fecha_arribo_programada", fecha_arribo_programada)
     
-    def modificar_avion(self, id_vuelo: int, id_staff: int, id_avion: int) -> None:
-        if not super()._verificar_id_a_modificar(id_vuelo):
+    def modificar_avion(self, vuelo: VueloDesdeDB, id_staff: int, id_avion: int) -> None:
+        if not super()._verificar_id_a_modificar(vuelo.id):
             raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
             raise Exception(ERROR_STAFF_INVALIDO)
         
-        vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
-
         if not self._verificar_avion(id_avion, vuelo.id_ruta, vuelo.fecha_partida_programada, vuelo.fecha_arribo_programada):
             raise Exception(ERROR_AVION_INVALIDO)
         
         if vuelo.id_avion == id_avion:
             return
         
-        super().modificar_fila(id_vuelo, id_staff, "id_avion", id_avion)
+        vuelo.id_avion = id_avion
+        
+        super().modificar_fila(vuelo, id_staff, "id_avion", id_avion)
 
-    def modificar_ruta(self, id_vuelo: int, id_staff: int, id_ruta: int) -> None:
-        if not super()._verificar_id_a_modificar(id_vuelo):
+    def modificar_ruta(self, vuelo: VueloDesdeDB, id_staff: int, id_ruta: int) -> None:
+        if not super()._verificar_id_a_modificar(vuelo.id):
             raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
             raise Exception(ERROR_STAFF_INVALIDO)
         
-        vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
-
         if not self._verificar_ruta(vuelo.id_avion, id_ruta):
             raise Exception(ERROR_RUTA_INVALIDA)
         
         if vuelo.id_ruta == id_ruta:
             return
         
-        super().modificar_fila(id_vuelo, id_staff, "id_ruta", id_ruta)
+        vuelo.id_ruta = id_ruta
+        
+        super().modificar_fila(vuelo, id_staff, "id_ruta", id_ruta)
 
-    def modificar_estado(self, id_vuelo: int, id_staff: int, id_estado_actual: int) -> None:
-        if not super()._verificar_id_a_modificar(id_vuelo):
+    def modificar_estado(self, vuelo: VueloDesdeDB, id_staff: int, id_estado_actual: int) -> None:
+        if not super()._verificar_id_a_modificar(vuelo.id):
             raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
@@ -107,20 +106,24 @@ class VuelosManager(TablaManager):
         if id_estado_actual not in self.estados_posibles:
             raise Exception(ERROR_ESTADO_INVALIDO)
         
-        vuelo: VueloDesdeDB = self._obtener_vuelo(id_vuelo)
-
         if vuelo.id_estado_actual == id_estado_actual:
             return
 
         if self.estados_posibles[id_estado_actual] == "En vuelo":
+
+            vuelo.id_estado_actual = 2
+
             fecha_partida_real: str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            super().modificar_fila(id_vuelo, id_staff, "id_estado_actual", id_estado_actual)
-            super().modificar_fila(id_vuelo, id_staff, "fecha_partida_real", fecha_partida_real)
+            super().modificar_fila(vuelo, id_staff, "id_estado_actual", id_estado_actual)
+            super().modificar_fila(vuelo, id_staff, "fecha_partida_real", fecha_partida_real)
             
         elif self.estados_posibles[id_estado_actual] == "Aterrizado":
+
+            vuelo.id_estado_actual = 3
+
             fecha_arribo_real: str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            super().modificar_fila(id_vuelo, id_staff, "id_estado_actual", id_estado_actual)
-            super().modificar_fila(id_vuelo, id_staff, "fecha_arribo_real", fecha_arribo_real)
+            super().modificar_fila(vuelo, id_staff, "id_estado_actual", id_estado_actual)
+            super().modificar_fila(vuelo, id_staff, "fecha_arribo_real", fecha_arribo_real)
 
     def _obtener_aviones_disponibles(self, id_ruta: int, fecha_partida_programada: datetime, fecha_arribo_programada: datetime) -> list[int]:
         query = OBTENER_AVIONES

@@ -20,9 +20,7 @@ class CertificacionesStaffManager(TablaManager):
         if not self._verificar_campos_requeridos(certificacion):
             raise Exception("Error: no se ingresaron todos los campos requeridos.")
         
-        datos: dict[str, Any] = certificacion.to_dict()
-        
-        super().agregar_fila(id_staff, datos)
+        super().agregar_fila(id_staff, certificacion)
 
     def modificar_id_staff(self, id_certificacion: int, id_staff_modifica: int, id_staff_nuevo: int) -> None:
         if not super()._verificar_id_a_modificar(id_certificacion):

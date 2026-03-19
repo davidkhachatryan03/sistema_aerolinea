@@ -10,7 +10,7 @@ from src.GeneradorDatos import GeneradorDatos
 def registrar_pasajeros(generador_datos: GeneradorDatos, pasajeros_manager: TablaManager, cant: int, id_staff: int) -> None:
     pasajeros_generados = generador_datos.generar_pasajeros(cant)
     for pasajero in pasajeros_generados:
-        pasajeros_manager.agregar_fila(id_staff, pasajero.to_dict())
+        pasajeros_manager.agregar_fila(id_staff, pasajero)
 
 def generar_documentos(generador_datos: GeneradorDatos, pasajeros: list[PasajeroDesdeDB]) -> list[DocumentoBase]:
     documentos: list[DocumentoBase] = generador_datos.generar_documentos(pasajeros)
@@ -52,7 +52,7 @@ def test_modificar_num_documento_correcto(db_conectada: DBManager, generador_dat
     ultimo_documento_registrado = DocumentoDesdeDB(*db_conectada.consultar_ultima_fila("documentos", COLUMNAS_DOCUMENTOS))
 
     nuevo_num_documento = "AA1945723"
-    documentos_manager.modificar_num_documento(ultimo_documento_registrado.id, id_staff, nuevo_num_documento)
+    documentos_manager.modificar_num_documento(ultimo_documento_registrado, id_staff, nuevo_num_documento)
 
     ultimo_documento_registrado = DocumentoDesdeDB(*db_conectada.consultar_ultima_fila("documentos", COLUMNAS_DOCUMENTOS))
 
@@ -71,6 +71,7 @@ def test_modificar_num_documento_invalido(db_conectada: DBManager, generador_dat
 
     ultimo_documento_registrado = DocumentoDesdeDB(*db_conectada.consultar_ultima_fila("documentos", COLUMNAS_DOCUMENTOS))
 
-    nuevo_num_documento = 34512
+    nuevo_num_documento = 1945723
+
     with pytest.raises(Exception, match=ERROR_FORMATO_DATOS):
-        documentos_manager.modificar_num_documento(ultimo_documento_registrado.id, id_staff, nuevo_num_documento)
+        documentos_manager.modificar_num_documento(ultimo_documento_registrado, id_staff, nuevo_num_documento)

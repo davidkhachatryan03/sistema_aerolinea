@@ -26,9 +26,7 @@ class TarjetasEmbarqueManager(TablaManager):
         if not self._verificar_campos_requeridos(tarjeta_embarque):
             raise Exception("Error: no se ingresaron todos los campos requeridos.")
 
-        datos: dict[str, Any] = tarjeta_embarque.to_dict() 
-
-        super().agregar_fila(id_staff, datos)
+        super().agregar_fila(id_staff, tarjeta_embarque)
     
     def registrar_fecha_embarque(self, id_tarjeta_embarque: int, id_staff: int, fecha_emision: datetime) -> None:
         if not super()._verificar_id_a_modificar(id_tarjeta_embarque):

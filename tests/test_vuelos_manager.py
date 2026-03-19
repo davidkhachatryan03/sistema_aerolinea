@@ -74,7 +74,7 @@ def test_modificar_vuelo_avion_correcto(db_conectada: DBManager, generador_datos
 
     nuevo_id_avion = random.choice(vuelos_manager._obtener_aviones_disponibles(vuelo.id_ruta, vuelo.fecha_partida_programada, vuelo.fecha_arribo_programada))
     
-    vuelos_manager.modificar_avion(ultimo_vuelo_registrado.id, id_staff, nuevo_id_avion)
+    vuelos_manager.modificar_avion(ultimo_vuelo_registrado, id_staff, nuevo_id_avion)
 
     ultimo_vuelo_registrado = VueloDesdeDB(*db_conectada.consultar_ultima_fila("vuelos", COLUMNAS_VUELOS))
 
@@ -95,7 +95,7 @@ def test_modificar_vuelo_avion_invalido(db_conectada: DBManager, generador_datos
     nuevo_id_avion = 999 # cambio el id_avion por uno erróneo.
     
     with pytest.raises(Exception, match=ERROR_AVION_INVALIDO):
-        vuelos_manager.modificar_avion(ultimo_vuelo_registrado.id, id_staff, nuevo_id_avion)
+        vuelos_manager.modificar_avion(ultimo_vuelo_registrado, id_staff, nuevo_id_avion)
 
 def test_modificar_vuelo_ruta_correcta(db_conectada: DBManager, generador_datos: GeneradorDatos, vuelos_manager: VuelosManager, rutas: list[RutaDesdeDB], aviones: list[AvionDesdeDB], id_staff: int) -> None:
     vuelo: VueloBase = generar_vuelos_validos(generador_datos, vuelos_manager, 1, rutas, aviones)[0]
@@ -107,7 +107,7 @@ def test_modificar_vuelo_ruta_correcta(db_conectada: DBManager, generador_datos:
 
     ultimo_vuelo_registrado = VueloDesdeDB(*db_conectada.consultar_ultima_fila("vuelos", COLUMNAS_VUELOS))
 
-    vuelos_manager.modificar_ruta(ultimo_vuelo_registrado.id, id_staff, nuevo_id_ruta)
+    vuelos_manager.modificar_ruta(ultimo_vuelo_registrado, id_staff, nuevo_id_ruta)
 
     ultimo_vuelo_registrado = VueloDesdeDB(*db_conectada.consultar_ultima_fila("vuelos", COLUMNAS_VUELOS))
     
@@ -128,7 +128,7 @@ def test_modificar_vuelo_ruta_invalida(db_conectada: DBManager, generador_datos:
     nuevo_id_ruta = 999 # cambio el id_ruta por uno erróneo.
     
     with pytest.raises(Exception, match=ERROR_RUTA_INVALIDA):
-        vuelos_manager.modificar_ruta(ultimo_vuelo_registrado.id, id_staff, nuevo_id_ruta)
+        vuelos_manager.modificar_ruta(ultimo_vuelo_registrado, id_staff, nuevo_id_ruta)
 
 def test_modificar_vuelo_estado_en_vuelo(db_conectada: DBManager, generador_datos: GeneradorDatos, vuelos_manager: VuelosManager, rutas: list[RutaDesdeDB], aviones: list[AvionDesdeDB], id_staff: int) -> None:
     vuelo: VueloBase = generar_vuelos_validos(generador_datos, vuelos_manager, 1, rutas, aviones)[0]
@@ -138,7 +138,7 @@ def test_modificar_vuelo_estado_en_vuelo(db_conectada: DBManager, generador_dato
 
     nuevo_id_estado_actual = 2 # En vuelo.
 
-    vuelos_manager.modificar_estado(ultimo_vuelo_registrado.id, id_staff, nuevo_id_estado_actual)
+    vuelos_manager.modificar_estado(ultimo_vuelo_registrado, id_staff, nuevo_id_estado_actual)
 
     ultimo_vuelo_registrado = VueloDesdeDB(*db_conectada.consultar_ultima_fila("vuelos", COLUMNAS_VUELOS))
 
@@ -160,13 +160,13 @@ def test_modificar_vuelo_estado_aterrizado(db_conectada: DBManager, generador_da
 
     nuevo_id_estado_actual = 2 # En vuelo.
 
-    vuelos_manager.modificar_estado(ultimo_vuelo_registrado.id, id_staff, nuevo_id_estado_actual)
+    vuelos_manager.modificar_estado(ultimo_vuelo_registrado, id_staff, nuevo_id_estado_actual)
 
     ultimo_vuelo_registrado = VueloDesdeDB(*db_conectada.consultar_ultima_fila("vuelos", COLUMNAS_VUELOS))
 
     nuevo_id_estado_actual = 3 # Aterrizado.
 
-    vuelos_manager.modificar_estado(ultimo_vuelo_registrado.id, id_staff, nuevo_id_estado_actual)
+    vuelos_manager.modificar_estado(ultimo_vuelo_registrado, id_staff, nuevo_id_estado_actual)
 
     ultimo_vuelo_registrado = VueloDesdeDB(*db_conectada.consultar_ultima_fila("vuelos", COLUMNAS_VUELOS))
 
@@ -189,4 +189,4 @@ def test_modificar_vuelo_estado_invalido(db_conectada: DBManager, generador_dato
     nuevo_id_estado_actual = 999 # cambio el id_estado_actual por uno erróneo.
 
     with pytest.raises(Exception, match=ERROR_ESTADO_INVALIDO):
-        vuelos_manager.modificar_estado(ultimo_vuelo_registrado.id, id_staff, nuevo_id_estado_actual)
+        vuelos_manager.modificar_estado(ultimo_vuelo_registrado, id_staff, nuevo_id_estado_actual)

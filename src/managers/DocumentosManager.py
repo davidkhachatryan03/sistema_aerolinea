@@ -20,79 +20,69 @@ class DocumentosManager(TablaManager):
         if not self._verificar_campos_requeridos(documento):
             raise Exception("Error: no se ingresaron todos los campos requeridos.")
         
-        datos: dict[str, Any] = documento.to_dict()
+        super().agregar_fila(id_staff, documento)
 
-        super().agregar_fila(id_staff, datos)
-
-    def modificar_num_documento(self, id_documento: int, id_staff: int, num_documento: str) -> None:
-        if not super()._verificar_id_a_modificar(id_documento):
+    def modificar_num_documento(self, documento: DocumentoDesdeDB, id_staff: int, num_documento: str) -> None:
+        if not super()._verificar_id_a_modificar(documento.id):
             raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
             raise Exception(ERROR_STAFF_INVALIDO)
         
-        documento: DocumentoDesdeDB = self._obtener_documento(id_documento)
-
         if documento.num_documento == num_documento:
             return
         
-        super().modificar_fila(id_documento, id_staff, "num_documento", num_documento)
+        documento.num_documento = num_documento
+        
+        super().modificar_fila(documento, id_staff, "num_documento", num_documento)
     
-    def modificar_fecha_vencimiento(self, id_documento: int, id_staff: int, fecha_vencimiento: datetime) -> None:
-        if not super()._verificar_id_a_modificar(id_documento):
+    def modificar_fecha_vencimiento(self, documento: DocumentoDesdeDB, id_staff: int, fecha_vencimiento: datetime) -> None:
+        if not super()._verificar_id_a_modificar(documento.id):
             raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
             raise Exception(ERROR_STAFF_INVALIDO)
-        
-        documento: DocumentoDesdeDB = self._obtener_documento(id_documento)
         
         if documento.fecha_vencimiento == fecha_vencimiento:
             return
         
-        super().modificar_fila(id_documento, id_staff, "fecha_vencimiento", fecha_vencimiento)
+        super().modificar_fila(documento, id_staff, "fecha_vencimiento", fecha_vencimiento)
 
-    def modificar_pais_emision(self, id_documento: int, id_staff: int, pais_emision: str) -> None:
-        if not super()._verificar_id_a_modificar(id_documento):
+    def modificar_pais_emision(self, documento: DocumentoDesdeDB, id_staff: int, pais_emision: str) -> None:
+        if not super()._verificar_id_a_modificar(documento.id):
             raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
             raise Exception(ERROR_STAFF_INVALIDO)
         
-        documento: DocumentoDesdeDB = self._obtener_documento(id_documento)
-
         if documento.pais_emision == pais_emision:
             return
 
-        super().modificar_fila(id_documento, id_staff, "pais_emision", pais_emision) 
+        super().modificar_fila(documento, id_staff, "pais_emision", pais_emision) 
 
-    def modificar_pasajero(self, id_documento: int, id_staff: int, id_pasajero: int) -> None:
-        if not super()._verificar_id_a_modificar(id_documento):
+    def modificar_pasajero(self, documento: DocumentoDesdeDB, id_staff: int, id_pasajero: int) -> None:
+        if not super()._verificar_id_a_modificar(documento.id):
             raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
             raise Exception(ERROR_STAFF_INVALIDO)
         
-        documento: DocumentoDesdeDB = self._obtener_documento(id_documento)
-
         if documento.id_pasajero == id_pasajero:
             return
 
-        super().modificar_fila(id_documento, id_staff, "id_pasajero", id_pasajero)
+        super().modificar_fila(documento, id_staff, "id_pasajero", id_pasajero)
 
-    def modificar_tipo_documento(self, id_documento: int, id_staff: int, id_tipo_documento: int) -> None:
-        if not super()._verificar_id_a_modificar(id_documento):
+    def modificar_tipo_documento(self, documento: DocumentoDesdeDB, id_staff: int, id_tipo_documento: int) -> None:
+        if not super()._verificar_id_a_modificar(documento.id):
             raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
             raise Exception(ERROR_STAFF_INVALIDO)
-        
-        documento: DocumentoDesdeDB = self._obtener_documento(id_documento)
         
         if documento.id_tipo_documento == id_tipo_documento:
             return
 
-        super().modificar_fila(id_documento, id_staff, "id_tipo_documento", id_tipo_documento)
+        super().modificar_fila(documento, id_staff, "id_tipo_documento", id_tipo_documento)
 
     def _obtener_documento(self, id_documento: int) -> DocumentoDesdeDB:
         query = OBTENER_DOCUMENTO

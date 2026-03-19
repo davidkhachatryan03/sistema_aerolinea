@@ -131,7 +131,7 @@ def _obtener_ventas(db_manager: DBManager) -> list[VentaDesdeDB]:
 def _poblar_pasajeros(db_manager: DBManager, pasajeros: list[PasajeroBase]) -> None:
     pasajeros_manager = TablaManager("pasajeros", db_manager)
     for pasajero in pasajeros:
-        pasajeros_manager.agregar_fila(9, pasajero.to_dict())
+        pasajeros_manager.agregar_fila(9, pasajero)
 
 def _poblar_documentos(db_manager: DBManager, documentos: list[DocumentoBase]) -> None:
     documentos_manager = DocumentosManager(db_manager)
@@ -164,6 +164,6 @@ def _poblar_tarjetas_embarque(db_manager: DBManager, tarjetas_embarque: list[Tar
 def _poblar_asignaciones_vuelos(db_manager: DBManager, asignaciones_vuelos: list[AsignacionVueloBase]) -> None:
     asignaciones_vuelos_manager = AsignacionesVuelosManager(db_manager)
     for asignacion_vuelo in asignaciones_vuelos:
-        asignaciones_vuelos_manager.agregar_fila(9, asignacion_vuelo.to_dict())
+        asignaciones_vuelos_manager.agregar_fila(9, asignacion_vuelo)
 
 main()

@@ -18,7 +18,7 @@ class AsignacionesVuelosManager(TablaManager):
         
         asignacion = AsignacionVueloBase(fecha_inicio, fecha_fin, 1, id_vuelo, id_comandante)
 
-        super().agregar_fila(id_staff, asignacion.to_dict())
+        super().agregar_fila(id_staff, asignacion)
 
     def asignar_copiloto(self, id_staff: int, fecha_inicio: datetime, fecha_fin: datetime, id_vuelo: int, id_copiloto: int) -> None:
         copilotos_disponibles: list[int] = self._obtener_copilotos_disponibles(fecha_inicio, fecha_fin)
@@ -28,7 +28,7 @@ class AsignacionesVuelosManager(TablaManager):
         
         asignacion = AsignacionVueloBase(fecha_inicio, fecha_fin, 2, id_vuelo, id_copiloto)
 
-        super().agregar_fila(id_staff, asignacion.to_dict())
+        super().agregar_fila(id_staff, asignacion)
 
     def asignar_auxiliar_vuelo(self, id_staff: int, fecha_inicio: datetime, fecha_fin: datetime, id_vuelo: int, id_auxiliar_vuelo: int) -> None:
         auxiliares_vuelo_disponibles: list[int] = self._obtener_auxiliares_vuelo_disponibles(fecha_inicio, fecha_fin)
@@ -38,7 +38,7 @@ class AsignacionesVuelosManager(TablaManager):
         
         asignacion = AsignacionVueloBase(fecha_inicio, fecha_fin, 3, id_vuelo, id_auxiliar_vuelo)
 
-        super().agregar_fila(id_staff, asignacion.to_dict())
+        super().agregar_fila(id_staff, asignacion)
 
     def asginar_supervisor_cabina(self, id_staff: int, fecha_inicio: datetime, fecha_fin: datetime, id_vuelo: int, id_supervisor_cabina: int) -> None:
         supervisores_cabina_disponibles: list[int] = self._obtener_supervisores_cabina_disponibles(fecha_inicio, fecha_fin)
@@ -48,7 +48,7 @@ class AsignacionesVuelosManager(TablaManager):
 
         asignacion = AsignacionVueloBase(fecha_inicio, fecha_fin, 4, id_vuelo, id_supervisor_cabina)
 
-        super().agregar_fila(id_staff, asignacion.to_dict())
+        super().agregar_fila(id_staff, asignacion)
 
     def asignar_mecanico(self, id_staff: int, fecha_inicio: datetime, fecha_fin: datetime, id_vuelo: int, id_mecanico: int) -> None:
         mecanicos_disponibles: list[int] = self._obtener_mecanicos_disponibles(fecha_inicio, fecha_fin)
@@ -58,7 +58,7 @@ class AsignacionesVuelosManager(TablaManager):
         
         asignacion = AsignacionVueloBase(fecha_inicio, fecha_fin, 8, id_vuelo, id_staff)
 
-        super().agregar_fila(id_staff, asignacion.to_dict())
+        super().agregar_fila(id_staff, asignacion)
 
     def asignar_inspector(self, id_staff: int, fecha_inicio: datetime, fecha_fin: datetime, id_vuelo: int, id_inspector: int) -> None:
         inspectores_disponibles: list[int] = []
@@ -68,7 +68,7 @@ class AsignacionesVuelosManager(TablaManager):
         
         asignacion = AsignacionVueloBase(fecha_inicio, fecha_fin, 10, id_vuelo, id_inspector)
 
-        super().agregar_fila(id_staff, asignacion.to_dict())
+        super().agregar_fila(id_staff, asignacion)
 
     def asignar_agente_check_in(self, id_staff: int, fecha_inicio: datetime, fecha_fin: datetime, id_vuelo: int, id_agente: int) -> None:
         agentes_disponibles: list[int] = self._obtener_agentes_disponibles(fecha_inicio, fecha_fin)
@@ -78,7 +78,7 @@ class AsignacionesVuelosManager(TablaManager):
         
         asignacion = AsignacionVueloBase(fecha_inicio, fecha_fin, 5, id_vuelo, id_staff)
 
-        super().agregar_fila(id_staff, asignacion.to_dict())
+        super().agregar_fila(id_staff, asignacion)
 
     def asignar_agente_embarque(self, id_staff: int, fecha_inicio: datetime, fecha_fin: datetime, id_vuelo: int, id_agente: int) -> None:
         agentes_disponibles: list[int] = self._obtener_agentes_disponibles(fecha_inicio, fecha_fin)
@@ -88,7 +88,7 @@ class AsignacionesVuelosManager(TablaManager):
         
         asignacion = AsignacionVueloBase(fecha_inicio, fecha_fin, 6, id_vuelo, id_staff)
 
-        super().agregar_fila(id_staff, asignacion.to_dict())
+        super().agregar_fila(id_staff, asignacion)
 
     def asignar_supervisor_agentes(self, id_staff: int, fecha_inicio: datetime, fecha_fin: datetime, id_vuelo: int, id_supervisor: int) -> None:
         supervisores_agentes_disponibles: list[int] = self._obtener_supervisores_agentes_disponibles(fecha_inicio, fecha_fin)
@@ -98,8 +98,7 @@ class AsignacionesVuelosManager(TablaManager):
 
         asignacion = AsignacionVueloBase(fecha_inicio, fecha_fin, 7, id_vuelo, id_supervisor)
 
-        super().agregar_fila(id_staff, asignacion.to_dict( ))
-
+        super().agregar_fila(id_staff, asignacion)
 
     def _obtener_comandantes_disponibles(self, fecha_inicio: datetime, fecha_fin: datetime) -> list[int]:
         query = OBTENER_COMANDANTES

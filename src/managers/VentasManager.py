@@ -35,47 +35,41 @@ class VentasManager(TablaManager):
         venta.precio_pagado_usd = self._obtener_precio_pagado_usd(venta.id_vuelo)
         venta.id_estado_actual = 3
 
-        datos: dict[str, Any] = venta.to_dict()
-
-        super().agregar_fila(id_staff, datos)
+        super().agregar_fila(id_staff, venta)
     
-    def modificar_num_reserva(self, id_staff: int, id_venta: int) -> None:
-        if not super()._verificar_id_a_modificar(id_venta):
+    def modificar_num_reserva(self, id_staff: int, venta: VentaDesdeDB) -> None:
+        if not super()._verificar_id_a_modificar(venta.id):
             raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
             raise Exception(ERROR_STAFF_INVALIDO)
         
         num_reserva: str = self._generar_num_reserva()
+        venta.num_reserva = num_reserva
 
-        super().modificar_fila(id_venta, id_staff, "num_reserva", num_reserva)
+        super().modificar_fila(venta, id_staff, "num_reserva", num_reserva)
 
-    def modificar_estado(self, id_venta: int, id_staff: int, id_estado_actual: int) -> None:
-        if not super()._verificar_id_a_modificar(id_venta):
+    def modificar_estado(self, venta: VentaDesdeDB, id_staff: int, id_estado_actual: int) -> None:
+        if not super()._verificar_id_a_modificar(venta.id):
             raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
             raise Exception(ERROR_STAFF_INVALIDO)
         
-        venta: VentaDesdeDB = self._obtener_venta(id_venta)
-
         if id_estado_actual not in self.estados_posibles:
             raise Exception(ERROR_ESTADO_INVALIDO)
         
         if venta.id_estado_actual == id_estado_actual:
             return
         
-        super().modificar_fila(id_venta, id_staff, "id_estado_actual", id_estado_actual)
+        super().modificar_fila(venta, id_staff, "id_estado_actual", id_estado_actual)
     
-    def cambiar_vuelo(self, id_venta: int, id_staff: int, id_vuelo: int) -> None:
-
-        if not super()._verificar_id_a_modificar(id_venta):
+    def cambiar_vuelo(self, venta: VentaDesdeDB, id_staff: int, id_vuelo: int) -> None:
+        if not super()._verificar_id_a_modificar(venta.id):
             raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
             raise Exception(ERROR_STAFF_INVALIDO)
-        
-        venta: VentaDesdeDB = self._obtener_venta(id_venta)
         
         if not self._verificar_vuelo(id_vuelo):
             raise Exception(ERROR_VUELO_INVALIDO)
@@ -83,16 +77,14 @@ class VentasManager(TablaManager):
         if venta.id_vuelo == id_vuelo:
             return
         
-        super().modificar_fila(id_venta, id_staff, "id_vuelo", id_vuelo)
+        super().modificar_fila(venta, id_staff, "id_vuelo", id_vuelo)
     
-    def cambiar_pasajero(self, id_venta: int, id_staff: int, id_pasajero: int) -> None:
-        if not super()._verificar_id_a_modificar(id_venta):
+    def cambiar_pasajero(self, venta: VentaDesdeDB, id_staff: int, id_pasajero: int) -> None:
+        if not super()._verificar_id_a_modificar(venta.id):
             raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
             raise Exception(ERROR_STAFF_INVALIDO)
-        
-        venta: VentaDesdeDB = self._obtener_venta(id_venta)
         
         if not self._verificar_pasajero(id_pasajero):
             raise Exception(ERROR_PASAJERO_INVALIDO)
@@ -100,7 +92,7 @@ class VentasManager(TablaManager):
         if venta.id_pasajero == id_pasajero:
             return
         
-        super().modificar_fila(id_venta, id_staff, "id_pasajero", id_pasajero)
+        super().modificar_fila(venta, id_staff, "id_pasajero", id_pasajero)
     
     def _obtener_precio_pagado_usd(self, id_vuelo: int) -> Decimal:
         query = "SELECT precio_venta_usd FROM vuelos WHERE id = %s"

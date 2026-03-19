@@ -10,7 +10,7 @@ from src.GeneradorDatos import GeneradorDatos
 def registrar_pasajeros(generador_datos: GeneradorDatos, pasajeros_manager: TablaManager, cant: int, id_staff: int) -> None:
     pasajeros_generados = generador_datos.generar_pasajeros(cant)
     for pasajero in pasajeros_generados:
-        pasajeros_manager.agregar_fila(id_staff, pasajero.to_dict())
+        pasajeros_manager.agregar_fila(id_staff, pasajero)
 
 def registrar_vuelos(generador_datos: GeneradorDatos, vuelos_manager: VuelosManager, cant: int, rutas: list[RutaDesdeDB], aviones: list[AvionDesdeDB], id_staff: int) -> None:
     vuelos_validos: list[VueloBase] = []
@@ -141,7 +141,7 @@ def test_modificar_venta_num_reserva(db_conectada: DBManager, generador_datos: G
 
     ultima_venta_registrada = VentaDesdeDB(*db_conectada.consultar_ultima_fila("ventas", COLUMNAS_VENTAS))
 
-    ventas_manager.modificar_num_reserva(id_staff, ultima_venta_registrada.id) # genera un nuevo número de reserva automáticamente.
+    ventas_manager.modificar_num_reserva(id_staff, ultima_venta_registrada) # genera un nuevo número de reserva automáticamente.
 
     ultima_venta_registrada = VentaDesdeDB(*db_conectada.consultar_ultima_fila("ventas", COLUMNAS_VENTAS))
 
@@ -171,7 +171,7 @@ def test_modificar_venta_estado_correcto(db_conectada: DBManager, generador_dato
 
     ultima_venta_registrada = VentaDesdeDB(*db_conectada.consultar_ultima_fila("ventas", COLUMNAS_VENTAS))
 
-    ventas_manager.modificar_estado(ultima_venta_registrada.id, id_staff, nuevo_id_estado_actual)
+    ventas_manager.modificar_estado(ultima_venta_registrada, id_staff, nuevo_id_estado_actual)
 
     ultima_venta_registrada = VentaDesdeDB(*db_conectada.consultar_ultima_fila("ventas", COLUMNAS_VENTAS))
 
@@ -201,7 +201,7 @@ def test_modificar_venta_estado_invalido(db_conectada: DBManager, generador_dato
     ultima_venta_registrada = VentaDesdeDB(*db_conectada.consultar_ultima_fila("ventas", COLUMNAS_VENTAS))
 
     with pytest.raises(Exception, match=ERROR_ESTADO_INVALIDO):
-        ventas_manager.modificar_estado(ultima_venta_registrada.id, id_staff, nuevo_id_estado_actual)
+        ventas_manager.modificar_estado(ultima_venta_registrada, id_staff, nuevo_id_estado_actual)
 
 def test_modificar_venta_vuelo_correcto(db_conectada: DBManager, generador_datos: GeneradorDatos, ventas_manager: VentasManager, pasajeros_manager: TablaManager, vuelos_manager: VuelosManager, rutas: list[RutaDesdeDB], aviones: list[AvionDesdeDB], id_staff: int) -> None:
     registrar_pasajeros(generador_datos, pasajeros_manager, 1, id_staff)
@@ -225,7 +225,7 @@ def test_modificar_venta_vuelo_correcto(db_conectada: DBManager, generador_datos
 
     ultimo_vuelo_registrado = VueloDesdeDB(*db_conectada.consultar_ultima_fila("vuelos", COLUMNAS_VUELOS))
     nuevo_id_vuelo = ultimo_vuelo_registrado.id
-    ventas_manager.cambiar_vuelo(ultima_venta_registrada.id, id_staff, nuevo_id_vuelo)
+    ventas_manager.cambiar_vuelo(ultima_venta_registrada, id_staff, nuevo_id_vuelo)
 
     ultima_venta_registrada = VentaDesdeDB(*db_conectada.consultar_ultima_fila("ventas", COLUMNAS_VENTAS))
 
@@ -255,7 +255,7 @@ def test_modificar_venta_vuelo_incorrecto(db_conectada: DBManager, generador_dat
     nuevo_id_vuelo = 999
 
     with pytest.raises(Exception, match=ERROR_VUELO_INVALIDO):
-        ventas_manager.cambiar_vuelo(ultima_venta_registrada.id, id_staff, nuevo_id_vuelo)
+        ventas_manager.cambiar_vuelo(ultima_venta_registrada, id_staff, nuevo_id_vuelo)
 
 def test_modificar_venta_pasajero_correcto(db_conectada: DBManager, generador_datos: GeneradorDatos, ventas_manager: VentasManager, pasajeros_manager: TablaManager, vuelos_manager: VuelosManager, rutas: list[RutaDesdeDB], aviones: list[AvionDesdeDB], id_staff: int) -> None:
     registrar_pasajeros(generador_datos, pasajeros_manager, 1, id_staff)
@@ -279,7 +279,7 @@ def test_modificar_venta_pasajero_correcto(db_conectada: DBManager, generador_da
 
     ultimo_pasajero_registrado = PasajeroDesdeDB(*db_conectada.consultar_ultima_fila("pasajeros", COLUMNAS_PASAJEROS))
     nuevo_id_pasajero = ultimo_pasajero_registrado.id
-    ventas_manager.cambiar_pasajero(ultima_venta_registrada.id, id_staff, nuevo_id_pasajero)
+    ventas_manager.cambiar_pasajero(ultima_venta_registrada, id_staff, nuevo_id_pasajero)
 
     ultima_venta_registrada = VentaDesdeDB(*db_conectada.consultar_ultima_fila("ventas", COLUMNAS_VENTAS))
 
@@ -309,4 +309,4 @@ def test_modificar_venta_pasajero_incorrecto(db_conectada: DBManager, generador_
     nuevo_id_pasajero = 999
 
     with pytest.raises(Exception, match=ERROR_PASAJERO_INVALIDO):
-        ventas_manager.cambiar_pasajero(ultima_venta_registrada.id, id_staff, nuevo_id_pasajero)
+        ventas_manager.cambiar_pasajero(ultima_venta_registrada, id_staff, nuevo_id_pasajero)
