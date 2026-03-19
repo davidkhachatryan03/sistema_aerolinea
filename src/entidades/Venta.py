@@ -7,9 +7,6 @@ import re
 class VentaBase:
 
     def __init__(self, id_pasajero: int, id_vuelo: int, num_reserva: str, precio_pagado_usd: Decimal, id_estado_actual: int) -> None:
-        if not self._verificar_formato_id(id_pasajero) or not self._verificar_formato_id(id_vuelo) or not self._verificar_formato_id(id_estado_actual) or not self._verificar_formato_num_reserva(num_reserva) or not self._verificar_formato_precio_pagado_usd(precio_pagado_usd):
-            raise Exception(ERROR_FORMATO_DATOS)
-
         self.id_pasajero = id_pasajero
         self.id_vuelo = id_vuelo
         self.num_reserva = num_reserva
@@ -26,6 +23,56 @@ class VentaBase:
         }
 
         return datos
+    
+    @property
+    def id_pasajero(self) -> int:
+        return self._id_pasajero
+    
+    @id_pasajero.setter
+    def id_pasajero(self, valor: int) -> None:
+        if not self._verificar_formato_id(valor):
+            raise Exception(ERROR_FORMATO_DATOS)
+        self._id_pasajero = valor
+
+    @property
+    def id_vuelo(self) -> int:
+        return self._id_vuelo
+    
+    @id_vuelo.setter
+    def id_vuelo(self, valor: int) -> None:
+        if not self._verificar_formato_id(valor):
+            raise Exception(ERROR_FORMATO_DATOS)
+        self._id_vuelo = valor
+
+    @property
+    def num_reserva(self) -> str:
+        return self._num_reserva
+
+    @num_reserva.setter
+    def num_reserva(self, valor: str) -> None:
+        if not self._verificar_formato_num_reserva(valor):
+            raise Exception(ERROR_FORMATO_DATOS)
+        self._num_reserva = valor
+
+    @property
+    def precio_pagado_usd(self) -> Decimal:
+        return self._precio_pagado_usd
+    
+    @precio_pagado_usd.setter
+    def precio_pagado_usd(self, valor: Decimal) -> None:
+        if not self._verificar_formato_precio_pagado_usd(valor):
+            raise Exception(ERROR_FORMATO_DATOS)
+        self._precio_pagado_usd = valor
+
+    @property
+    def id_estado_actual(self) -> int:
+        return self._id_estado_actual
+    
+    @id_estado_actual.setter
+    def id_estado_actual(self, valor: int) -> None:
+        if not self._verificar_formato_id(valor):
+            raise Exception(ERROR_FORMATO_DATOS)
+        self._id_estado_actual = valor
     
     def _verificar_formato_id(self, id: int) -> bool:
         if type(id) != int:

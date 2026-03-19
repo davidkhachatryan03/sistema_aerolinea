@@ -5,9 +5,6 @@ from datetime import datetime
 class AsignacionVueloBase:
 
     def __init__(self, fecha_inicio: datetime, fecha_fin: datetime, id_rol: int, id_vuelo: int, id_staff: int) -> None:
-        if not self._verificar_fechas(fecha_inicio, fecha_fin) or not self._verificar_formato_id(id_rol) or not self._verificar_formato_id(id_vuelo) or not self._verificar_formato_id(id_staff):
-            raise Exception(ERROR_FORMATO_DATOS)
-
         self.fecha_inicio = fecha_inicio
         self.fecha_fin = fecha_fin
         self.id_rol = id_rol
@@ -24,6 +21,56 @@ class AsignacionVueloBase:
         }
 
         return datos
+    
+    @property
+    def fecha_inicio(self) -> datetime:
+        return self._fecha_inicio
+    
+    @fecha_inicio.setter
+    def fecha_inicio(self, valor: datetime) -> None:
+        if type(valor) != datetime:
+            raise Exception(ERROR_FORMATO_DATOS)
+        self._fecha_inicio = valor
+
+    @property
+    def fecha_fin(self) -> datetime:
+        return self._fecha_fin
+    
+    @fecha_fin.setter
+    def fecha_fin(self, valor: datetime) -> None:
+        if type(valor) != datetime:
+            raise Exception(ERROR_FORMATO_DATOS)
+        self._fecha_fin = valor
+
+    @property
+    def id_rol(self) -> int:
+        return self._id_rol
+    
+    @id_rol.setter
+    def id_rol(self, valor: int) -> None:
+        if not self._verificar_formato_id(valor):
+            raise Exception(ERROR_FORMATO_DATOS)
+        self._id_rol = valor
+
+    @property
+    def id_vuelo(self) -> int:
+        return self._id_vuelo
+    
+    @id_vuelo.setter
+    def id_vuelo(self, valor: int) -> None:
+        if not self._verificar_formato_id(valor):
+            raise Exception(ERROR_FORMATO_DATOS)
+        self._id_vuelo = valor
+
+    @property
+    def id_staff(self) -> int:
+        return self._id_staff
+    
+    @id_staff.setter
+    def id_staff(self, valor: int) -> None:
+        if not self._verificar_formato_id(valor):
+            raise Exception(ERROR_FORMATO_DATOS)
+        self._id_staff = valor
     
     def _verificar_formato_id(self, id: int) -> bool:
         if type(id) != int:

@@ -30,6 +30,76 @@ class VueloBase:
 
         return datos
     
+    @property
+    def id_ruta(self) -> int:
+        return self._id_ruta
+    
+    @id_ruta.setter
+    def id_ruta(self, valor: int) -> None:
+        if not self._verificar_formato_id(valor):
+            raise Exception(ERROR_FORMATO_DATOS)
+        self._id_ruta = valor
+
+    @property
+    def id_avion(self) -> int:
+        return self._id_avion
+    
+    @id_avion.setter
+    def id_avion(self, valor: int) -> None:
+        if not self._verificar_formato_id(valor):
+            raise Exception(ERROR_FORMATO_DATOS)
+        self._id_avion = valor
+
+    @property
+    def id_estado_actual(self) -> int:
+        return self._id_estado_actual
+    
+    @id_estado_actual.setter
+    def id_estado_actual(self, valor: int) -> None:
+        if not self._verificar_formato_id(valor):
+            raise Exception(ERROR_FORMATO_DATOS)
+        self._id_estado_actual = valor
+
+    @property
+    def fecha_partida_programada(self) -> datetime:
+        return self._fecha_partida_programada
+    
+    @fecha_partida_programada.setter
+    def fecha_partida_programada(self, valor: datetime) -> None:
+        if type(valor) != datetime:
+            raise Exception(ERROR_FORMATO_DATOS)
+        self._fecha_partida_programada = valor
+
+    @property
+    def fecha_arribo_programada(self) -> datetime:
+        return self._fecha_arribo_programada
+    
+    @fecha_arribo_programada.setter
+    def fecha_arribo_programada(self, valor: datetime) -> None:
+        if type(valor) != datetime:
+            raise Exception(ERROR_FORMATO_DATOS)
+        self._fecha_arribo_programada = valor
+
+    @property
+    def costo_operativo_usd(self) -> Decimal:
+        return self._costo_operativo_usd
+    
+    @costo_operativo_usd.setter
+    def costo_operativo_usd(self, valor: Decimal) -> None:
+        if not self._verificar_costo_operativo_usd(valor):
+            raise Exception(ERROR_FORMATO_DATOS)
+        self._costo_operativo_usd = valor
+
+    @property
+    def precio_venta_usd(self) -> Decimal:
+        return self._precio_venta_usd
+    
+    @precio_venta_usd.setter
+    def precio_venta_usd(self, valor: Decimal) -> None:
+        if not self._verificar_precio_venta_usd(valor):
+            raise Exception(ERROR_FORMATO_DATOS)
+        self._precio_venta_usd = valor
+    
     def _verificar_formato_id(self, id: int) -> bool:
         if type(id) != int:
             return False
