@@ -15,7 +15,7 @@ class TarjetasEmbarqueManager(TablaManager):
             1: "Emitida",
             2: "No Show",
             3: "Denegada",
-            4: "Pendiente"
+            4: "Embarcado"
         }
 
     def registrar_tarjeta_embarque(self, id_staff: int, tarjeta_embarque: TarjetaEmbarqueBase) -> None:
@@ -28,19 +28,8 @@ class TarjetasEmbarqueManager(TablaManager):
 
         super().agregar_fila(id_staff, tarjeta_embarque)
     
-    def registrar_fecha_embarque(self, id_tarjeta_embarque: int, id_staff: int, fecha_emision: datetime) -> None:
-        if not super()._verificar_id_a_modificar(id_tarjeta_embarque):
-            raise Exception(ERROR_ID_INVALIDO)
-
-        if not super()._verificar_id_staff(id_staff):
-            raise Exception(ERROR_STAFF_INVALIDO)
-        
-        super().modificar_fila(id_tarjeta_embarque, id_staff, "fecha_emision", fecha_emision)
-    
-    def cambiar_estado(self, id_tarjeta_embarque: int, id_staff: int, id_estado_actual: int) -> None:
-        tarjeta_embarque: TarjetaEmbarqueDesdeDB = self._obtener_tarjeta_embarque(id_tarjeta_embarque)
-
-        if not super()._verificar_id_a_modificar(id_tarjeta_embarque):
+    def cambiar_estado(self, tarjeta_embarque: TarjetaEmbarqueDesdeDB, id_staff: int, id_estado_actual: int) -> None:
+        if not super()._verificar_id_a_modificar(tarjeta_embarque.id):
             raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
@@ -49,8 +38,15 @@ class TarjetasEmbarqueManager(TablaManager):
         if tarjeta_embarque.id_estado_actual == id_estado_actual:
             return
         
-        super().modificar_fila(id_tarjeta_embarque, id_staff, "id_estado_actual", id_estado_actual)
+        if id_estado_actual not in self.estados_posibles:
+            raise Exception(ERROR_FORMATO_DATOS)
         
+        if self.estados_posibles[id_estado_actual] == "Embarcado":
+            fecha_embarque: str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            super().modificar_fila(tarjeta_embarque, id_staff, "fecha_embarque", fecha_embarque)
+
+        super().modificar_fila(tarjeta_embarque, id_staff, "id_estado_actual", id_estado_actual)
+
     def _verificar_campos_requeridos(self, tarjeta_embarque: TarjetaEmbarqueBase) -> bool:
         for campo in self.campos_requeridos:
             if getattr(tarjeta_embarque, campo) == None:

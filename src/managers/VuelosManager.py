@@ -108,22 +108,19 @@ class VuelosManager(TablaManager):
         
         if vuelo.id_estado_actual == id_estado_actual:
             return
+        
+        if id_estado_actual not in self.estados_posibles:
+            raise Exception(ERROR_FORMATO_DATOS)
 
         if self.estados_posibles[id_estado_actual] == "En vuelo":
-
-            vuelo.id_estado_actual = 2
-
             fecha_partida_real: str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            super().modificar_fila(vuelo, id_staff, "id_estado_actual", id_estado_actual)
             super().modificar_fila(vuelo, id_staff, "fecha_partida_real", fecha_partida_real)
             
         elif self.estados_posibles[id_estado_actual] == "Aterrizado":
-
-            vuelo.id_estado_actual = 3
-
             fecha_arribo_real: str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            super().modificar_fila(vuelo, id_staff, "id_estado_actual", id_estado_actual)
             super().modificar_fila(vuelo, id_staff, "fecha_arribo_real", fecha_arribo_real)
+        
+        super().modificar_fila(vuelo, id_staff, "id_estado_actual", id_estado_actual)
 
     def _obtener_aviones_disponibles(self, id_ruta: int, fecha_partida_programada: datetime, fecha_arribo_programada: datetime) -> list[int]:
         query = OBTENER_AVIONES
