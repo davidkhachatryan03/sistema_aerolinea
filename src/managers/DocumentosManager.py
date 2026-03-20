@@ -1,5 +1,5 @@
 from typing import Any
-from datetime import datetime
+from datetime import datetime, date
 from src.tipos import FilaDocumento
 from src.managers.TablaManager import TablaManager
 from src.entidades import DocumentoBase, DocumentoDesdeDB
@@ -36,7 +36,7 @@ class DocumentosManager(TablaManager):
         
         super().modificar_fila(documento, id_staff, "num_documento", num_documento)
     
-    def modificar_fecha_vencimiento(self, documento: DocumentoDesdeDB, id_staff: int, fecha_vencimiento: datetime) -> None:
+    def modificar_fecha_vencimiento(self, documento: DocumentoDesdeDB, id_staff: int, fecha_vencimiento: date) -> None:
         if not super()._verificar_id_a_modificar(documento.id):
             raise Exception(ERROR_ID_INVALIDO)
 
@@ -45,6 +45,8 @@ class DocumentosManager(TablaManager):
         
         if documento.fecha_vencimiento == fecha_vencimiento:
             return
+        
+        documento.fecha_vencimiento = fecha_vencimiento
         
         super().modificar_fila(documento, id_staff, "fecha_vencimiento", fecha_vencimiento)
 
@@ -57,6 +59,8 @@ class DocumentosManager(TablaManager):
         
         if documento.pais_emision == pais_emision:
             return
+        
+        documento.pais_emision = pais_emision
 
         super().modificar_fila(documento, id_staff, "pais_emision", pais_emision) 
 
@@ -69,6 +73,8 @@ class DocumentosManager(TablaManager):
         
         if documento.id_pasajero == id_pasajero:
             return
+        
+        documento.id_pasajero = id_pasajero
 
         super().modificar_fila(documento, id_staff, "id_pasajero", id_pasajero)
 
@@ -81,6 +87,8 @@ class DocumentosManager(TablaManager):
         
         if documento.id_tipo_documento == id_tipo_documento:
             return
+        
+        documento.id_tipo_documento = id_tipo_documento
 
         super().modificar_fila(documento, id_staff, "id_tipo_documento", id_tipo_documento)
 
