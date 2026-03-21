@@ -22,47 +22,47 @@ class CertificacionesStaffManager(TablaManager):
         
         super().agregar_fila(id_staff, certificacion)
 
-    def modificar_id_staff(self, id_certificacion: int, id_staff_modifica: int, id_staff_nuevo: int) -> None:
-        if not super()._verificar_id_a_modificar(id_certificacion):
+    def modificar_id_staff(self, certificacion: CertificacionStaffDesdeDB, id_staff_modifica: int, id_staff_nuevo: int) -> None:
+        if not super()._verificar_id_a_modificar(certificacion.id):
             raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff_modifica):
             raise Exception(ERROR_STAFF_INVALIDO)
         
-        certificacion: CertificacionStaffDesdeDB = self._obtener_certificacion(id_certificacion)
-
         if certificacion.id_staff == id_staff_nuevo:
             return
         
-        super().modificar_fila(id_certificacion, id_staff_modifica, "id_staff", id_staff_nuevo)
+        certificacion.id_staff = id_staff_nuevo
+        
+        super().modificar_fila(certificacion, id_staff_modifica, "id_staff", id_staff_nuevo)
 
-    def modificar_descripcion(self, id_certificacion: int, id_staff: int, descripcion: str) -> None:
-        if not super()._verificar_id_a_modificar(id_certificacion):
+    def modificar_descripcion(self, certificacion: CertificacionStaffDesdeDB, id_staff: int, descripcion: str) -> None:
+        if not super()._verificar_id_a_modificar(certificacion.id):
             raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
             raise Exception(ERROR_STAFF_INVALIDO)
         
-        certificacion: CertificacionStaffDesdeDB = self._obtener_certificacion(id_certificacion)
-
         if certificacion.id_staff == id_staff:
             return
         
-        super().modificar_fila(id_certificacion, id_staff, "descripcion", descripcion)
+        certificacion.descripcion = descripcion
         
-    def modificar_vencimiento(self, id_certificacion: int, id_staff: int, licencia_hasta: datetime) -> None:
-        if not super()._verificar_id_a_modificar(id_certificacion):
+        super().modificar_fila(certificacion, id_staff, "descripcion", descripcion)
+        
+    def modificar_vencimiento(self, certificacion: CertificacionStaffDesdeDB, id_staff: int, licencia_hasta: datetime) -> None:
+        if not super()._verificar_id_a_modificar(certificacion.id):
             raise Exception(ERROR_ID_INVALIDO)
 
         if not super()._verificar_id_staff(id_staff):
             raise Exception(ERROR_STAFF_INVALIDO)
         
-        certificacion: CertificacionStaffDesdeDB = self._obtener_certificacion(id_certificacion)
-
         if certificacion.licencia_hasta == licencia_hasta:
             return
         
-        super().modificar_fila(id_certificacion, id_staff, "licencia_hasta", licencia_hasta)
+        certificacion.licencia_hasta = licencia_hasta
+        
+        super().modificar_fila(certificacion, id_staff, "licencia_hasta", licencia_hasta)
     
     def _verificar_campos_requeridos(self, certificacion: CertificacionStaffBase) -> bool:
         for campo in self.campos_requeridos:

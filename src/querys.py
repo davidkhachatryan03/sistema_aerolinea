@@ -389,3 +389,11 @@ OBTENER_TODOS_LOS_PASAJEROS =   """
                                         es_vip
                                 FROM    pasajeros
                                 """
+
+OBTENER_TODO_EL_STAFF = """
+                        SELECT  id,
+                                nombre_completo,
+                                id_estado_actual,
+                                id_cargo_actual
+                        FROM    staff
+                        """

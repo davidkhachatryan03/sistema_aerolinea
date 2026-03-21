@@ -16,6 +16,7 @@ def db_conectada():
     db_conectada.conectar()
     db_conectada.execute("USE aerolinea")
     yield db_conectada
+    db_conectada.borrar_tabla("certificaciones_staff")
     db_conectada.borrar_tabla("tarjetas_embarque")
     db_conectada.borrar_tabla("documentos")
     db_conectada.borrar_tabla("ventas")
@@ -55,6 +56,11 @@ def tarjetas_embarque_manager(db_conectada: DBManager) -> TarjetasEmbarqueManage
     return tarjetas_embarque_manager
 
 @pytest.fixture
+def certificaciones_manager(db_conectada: DBManager) -> CertificacionesStaffManager:
+    certificaciones_manager = CertificacionesStaffManager(db_conectada)
+    return certificaciones_manager
+
+@pytest.fixture
 def id_staff(id: int=25) -> int:
     ID_STAFF = id
     return ID_STAFF
@@ -78,3 +84,13 @@ def aviones(db_conectada: DBManager) -> list[AvionDesdeDB]:
         aviones.append(AvionDesdeDB(*avion))
 
     return aviones
+
+@pytest.fixture
+def staff(db_conectada: DBManager) -> list[StaffDesdeDB]:
+    staff: list[StaffDesdeDB] = []
+
+    consulta_staff: list[FilaStaff] = db_conectada.consultar(OBTENER_TODO_EL_STAFF)
+    for empleado in consulta_staff:
+        staff.append(StaffDesdeDB(*empleado))
+    
+    return staff
