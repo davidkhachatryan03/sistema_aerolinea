@@ -7,3 +7,4 @@ from src.entidades.Ruta import RutaBase, RutaDesdeDB
 from src.entidades.TarjetaEmbarque import TarjetaEmbarqueBase, TarjetaEmbarqueDesdeDB
 from src.entidades.Venta import VentaBase, VentaDesdeDB
 from src.entidades.Vuelo import VueloBase, VueloDesdeDB
+from src.entidades.Staff import StaffBase, StaffDesdeDB
