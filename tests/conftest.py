@@ -61,6 +61,11 @@ def certificaciones_manager(db_conectada: DBManager) -> CertificacionesStaffMana
     return certificaciones_manager
 
 @pytest.fixture
+def asignaciones_vuelos_manager(db_conectada: DBManager) -> AsignacionesVuelosManager:
+    asignaciones_vuelos_manager = AsignacionesVuelosManager(db_conectada)
+    return asignaciones_vuelos_manager
+
+@pytest.fixture
 def id_staff(id: int=25) -> int:
     ID_STAFF = id
     return ID_STAFF
