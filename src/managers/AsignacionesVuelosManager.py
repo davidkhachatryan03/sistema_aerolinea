@@ -34,7 +34,7 @@ class AsignacionesVuelosManager(TablaManager):
         
         super().agregar_fila(id_staff, asignacion)
 
-    def asginar_supervisor_cabina(self, id_staff: int, asignacion: AsignacionVueloBase, vuelo: VueloDesdeDB) -> None:
+    def asignar_supervisor_cabina(self, id_staff: int, asignacion: AsignacionVueloBase, vuelo: VueloDesdeDB) -> None:
         supervisores_cabina_disponibles: list[int] = self._obtener_supervisores_cabina_disponibles(vuelo.fecha_partida_programada, vuelo.fecha_arribo_programada)
 
         if asignacion.id_staff not in supervisores_cabina_disponibles:
