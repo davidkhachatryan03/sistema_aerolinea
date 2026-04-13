@@ -29,4 +29,5 @@ INSERT INTO staff (nombre_completo, id_cargo_actual, id_estado_actual) VALUES
 ('Susana Giménez', 6, 1),
 ('Guillermo Francella', 6, 1),
 ('Elon Musk', 6, 1),
-('Tester', 9, 1);
+('Tester', 9, 1),
+('Máximo Penacino', 3, 1);
