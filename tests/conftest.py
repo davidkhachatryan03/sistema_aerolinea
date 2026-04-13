@@ -16,7 +16,7 @@ def db_conectada():
     db_conectada.conectar()
     db_conectada.execute("USE aerolinea")
     yield db_conectada
-    db_conectada.borrar_tabla("certificaciones_staff")
+    db_conectada.borrar_tabla("asignaciones_vuelos")
     db_conectada.borrar_tabla("tarjetas_embarque")
     db_conectada.borrar_tabla("documentos")
     db_conectada.borrar_tabla("ventas")
