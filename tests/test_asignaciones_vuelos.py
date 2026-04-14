@@ -29,7 +29,7 @@ def test_registrar_asignacion_vuelo_comandante(db_conectada: DBManager, generado
     comandantes_disponibles: list[int] = asignaciones_vuelos_manager._obtener_comandantes_disponibles(ultimo_vuelo_registrado.fecha_partida_programada, ultimo_vuelo_registrado.fecha_arribo_programada)
 
     fecha_inicio = ultimo_vuelo_registrado.fecha_partida_programada
-    fecha_fin = ultimo_vuelo_registrado._fecha_arribo_programada
+    fecha_fin = ultimo_vuelo_registrado.fecha_arribo_programada
     id_rol = 1 # PIC (Pilot in command).
     id_comandante: int = random.choice(comandantes_disponibles)
 
@@ -53,7 +53,7 @@ def test_registrar_asignacion_vuelo_copiloto(db_conectada: DBManager, generador_
     copilotos_disponibles: list[int] = asignaciones_vuelos_manager._obtener_copilotos_disponibles(ultimo_vuelo_registrado.fecha_partida_programada, ultimo_vuelo_registrado.fecha_arribo_programada)
 
     fecha_inicio = ultimo_vuelo_registrado.fecha_partida_programada
-    fecha_fin = ultimo_vuelo_registrado._fecha_arribo_programada
+    fecha_fin = ultimo_vuelo_registrado.fecha_arribo_programada
     id_rol = 2 # SIC (Second in command).
     id_copiloto: int = random.choice(copilotos_disponibles)
 

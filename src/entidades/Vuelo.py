@@ -59,27 +59,7 @@ class VueloBase:
         if not self._verificar_formato_id(valor):
             raise Exception(ERROR_FORMATO_DATOS)
         self._id_estado_actual = valor
-
-    @property
-    def fecha_partida_programada(self) -> datetime:
-        return self._fecha_partida_programada
     
-    @fecha_partida_programada.setter
-    def fecha_partida_programada(self, valor: datetime) -> None:
-        if type(valor) != datetime:
-            raise Exception(ERROR_FORMATO_DATOS)
-        self._fecha_partida_programada = valor
-
-    @property
-    def fecha_arribo_programada(self) -> datetime:
-        return self._fecha_arribo_programada
-    
-    @fecha_arribo_programada.setter
-    def fecha_arribo_programada(self, valor: datetime) -> None:
-        if type(valor) != datetime:
-            raise Exception(ERROR_FORMATO_DATOS)
-        self._fecha_arribo_programada = valor
-
     @property
     def costo_operativo_usd(self) -> Decimal:
         return self._costo_operativo_usd

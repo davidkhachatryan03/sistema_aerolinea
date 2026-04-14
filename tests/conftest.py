@@ -5,6 +5,7 @@ from src.entidades import *
 from src.tipos import *
 from src.querys import *
 from src.GeneradorDatos import GeneradorDatos
+from src.columnas import *
 
 @pytest.fixture(scope="session", autouse=True)
 def config():
@@ -99,3 +100,22 @@ def staff(db_conectada: DBManager) -> list[StaffDesdeDB]:
         staff.append(StaffDesdeDB(*empleado))
     
     return staff
+
+@pytest.fixture
+def vuelo_valido_sin_registrar(generador_datos: GeneradorDatos, vuelos_manager: VuelosManager, rutas: list[RutaDesdeDB], aviones: list[AvionDesdeDB]) -> VueloBase:
+    while True:
+        vuelo_generado = generador_datos.generar_vuelos(1, rutas, aviones)[0]
+
+        if vuelos_manager._verificar_avion(vuelo_generado.id_avion, vuelo_generado.id_ruta, vuelo_generado.fecha_partida_programada, vuelo_generado.fecha_arribo_programada):
+            return vuelo_generado
+
+@pytest.fixture
+def vuelo_registrado(db_conectada: DBManager, vuelos_manager: VuelosManager, vuelo_valido_sin_registrar: VueloBase, id_staff: int) -> tuple[VueloBase, VueloDesdeDB]:
+    vuelos_manager.registrar_vuelo(id_staff, vuelo_valido_sin_registrar)
+    ultimo_vuelo_registrado = VueloDesdeDB(*db_conectada.consultar_ultima_fila("vuelos", COLUMNAS_VUELOS))
+    return vuelo_valido_sin_registrar, ultimo_vuelo_registrado
+
+@pytest.fixture
+def ultimo_vuelo_registrado(db_conectada: DBManager) -> VueloDesdeDB:
+    ultimo_vuelo = VueloDesdeDB(*db_conectada.consultar_ultima_fila("vuelos", COLUMNAS_VUELOS))
+    return ultimo_vuelo
