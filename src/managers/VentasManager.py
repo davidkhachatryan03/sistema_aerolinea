@@ -45,8 +45,7 @@ class VentasManager(TablaManager):
             raise Exception(ERROR_STAFF_INVALIDO)
         
         num_reserva: str = self._generar_num_reserva()
-        venta.num_reserva = num_reserva
-
+        
         super().modificar_fila(venta, id_staff, "num_reserva", num_reserva)
 
     def modificar_estado(self, venta: VentaDesdeDB, id_staff: int, id_estado_actual: int) -> None:

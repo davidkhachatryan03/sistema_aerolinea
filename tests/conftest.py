@@ -104,7 +104,7 @@ def staff(db_conectada: DBManager) -> list[StaffDesdeDB]:
 @pytest.fixture
 def vuelo_valido_sin_registrar(generador_datos: GeneradorDatos, vuelos_manager: VuelosManager, rutas: list[RutaDesdeDB], aviones: list[AvionDesdeDB]) -> VueloBase:
     while True:
-        vuelo_generado = generador_datos.generar_vuelos(1, rutas, aviones)[0]
+        vuelo_generado = generador_datos.generar_vuelos(cant=1, rutas=rutas, aviones=aviones)[0]
 
         if vuelos_manager._verificar_avion(vuelo_generado.id_avion, vuelo_generado.id_ruta, vuelo_generado.fecha_partida_programada, vuelo_generado.fecha_arribo_programada):
             return vuelo_generado
@@ -116,6 +116,23 @@ def vuelo_registrado(db_conectada: DBManager, vuelos_manager: VuelosManager, vue
     return vuelo_valido_sin_registrar, ultimo_vuelo_registrado
 
 @pytest.fixture
-def ultimo_vuelo_registrado(db_conectada: DBManager) -> VueloDesdeDB:
-    ultimo_vuelo = VueloDesdeDB(*db_conectada.consultar_ultima_fila("vuelos", COLUMNAS_VUELOS))
-    return ultimo_vuelo
+def pasajero_valido_sin_registrar(generador_datos: GeneradorDatos) -> PasajeroBase:
+    pasajero_generado = generador_datos.generar_pasajeros(cant=1)[0]
+    return pasajero_generado
+
+@pytest.fixture
+def pasajero_registrado(db_conectada: DBManager, pasajeros_manager: TablaManager, pasajero_valido_sin_registrar: PasajeroBase, id_staff: int) -> tuple[PasajeroBase, PasajeroDesdeDB]:
+    pasajeros_manager.agregar_fila(id_staff, pasajero_valido_sin_registrar)
+    ultimo_pasajero_registrado = PasajeroDesdeDB(*db_conectada.consultar_ultima_fila("pasajeros", COLUMNAS_PASAJEROS))
+    return pasajero_valido_sin_registrar, ultimo_pasajero_registrado
+
+@pytest.fixture
+def venta_valida_sin_registrar(generador_datos: GeneradorDatos, vuelo_registrado: tuple[VueloBase, VueloDesdeDB], pasajero_registrado: tuple[PasajeroBase, PasajeroDesdeDB]) -> VentaBase:
+    venta_generada = generador_datos.generar_ventas(cant=1, vuelos=[vuelo_registrado[1]], pasajeros=[pasajero_registrado[1]])[0]
+    return venta_generada
+
+@pytest.fixture
+def venta_registrada(db_conectada: DBManager, ventas_manager: VentasManager, venta_valida_sin_registrar, id_staff: int) -> tuple[VentaBase, VentaDesdeDB]:
+    ventas_manager.registrar_venta(id_staff, venta_valida_sin_registrar)
+    ultima_venta_registrada = VentaDesdeDB(*db_conectada.consultar_ultima_fila("ventas", COLUMNAS_VENTAS))
+    return venta_valida_sin_registrar, ultima_venta_registrada

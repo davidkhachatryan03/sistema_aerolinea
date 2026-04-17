@@ -29,14 +29,14 @@ def test_registrar_vuelo_staff_invalido(vuelo_registrado: tuple[VueloBase, Vuelo
     with pytest.raises(Exception, match=ERROR_STAFF_INVALIDO):
         vuelos_manager.registrar_vuelo(ID_STAFF, vuelo_valido_sin_registrar)
 
-def test_registrar_vuelo_fecha_partida_programada_invalida(vuelo_registrado: tuple[VueloBase, VueloDesdeDB], vuelos_manager: VuelosManager, id_staff: int) -> None:
+def test_registrar_vuelo_fechas_invalidas(vuelo_registrado: tuple[VueloBase, VueloDesdeDB], vuelos_manager: VuelosManager, id_staff: int) -> None:
     vuelo_valido_sin_registrar, ultimo_vuelo_registrado = vuelo_registrado
 
-    with pytest.raises(Exception, match=ERROR_FECHAS_INVALIDAS):
-        vuelos_manager.modificar_fechas(ultimo_vuelo_registrado, id_staff, ultimo_vuelo_registrado.fecha_partida_programada, ultimo_vuelo_registrado.fecha_partida_programada)
+    nueva_fecha_partida_programada = datetime(2080,1,1)
+    nueva_fecha_arribo_programada = datetime(2070,1,1)
 
-def test_registrar_vuelo_fecha_arribo_programada_invalida(generador_datos: GeneradorDatos, vuelos_manager: VuelosManager, rutas: list[RutaDesdeDB], aviones: list[AvionDesdeDB], id_staff: int) -> None:
-    pass
+    with pytest.raises(Exception, match=ERROR_FECHAS_INVALIDAS):
+        vuelos_manager.modificar_fechas(ultimo_vuelo_registrado, id_staff, nueva_fecha_partida_programada, nueva_fecha_arribo_programada)
 
 def test_registrar_vuelo_avion_invalido(vuelo_registrado: tuple[VueloBase, VueloDesdeDB], vuelos_manager: VuelosManager, id_staff: int) -> None:
     vuelo_valido_sin_registrar, ultimo_vuelo_registrado = vuelo_registrado
@@ -46,14 +46,23 @@ def test_registrar_vuelo_avion_invalido(vuelo_registrado: tuple[VueloBase, Vuelo
     with pytest.raises(Exception, match=ERROR_AVION_Y_RUTA_INVALIDAS):
         vuelos_manager.registrar_vuelo(id_staff, vuelo_valido_sin_registrar)
 
-def test_modificar_vuelo_fechas_correctas(vuelo_registrado: tuple[VueloBase, VueloDesdeDB], vuelos_manager: VuelosManager, id_staff: int) -> None:
-    pass
+def test_modificar_vuelo_fechas_correctas(db_conectada: DBManager, vuelo_registrado: tuple[VueloBase, VueloDesdeDB], vuelos_manager: VuelosManager, id_staff: int) -> None:
+    vuelo_valido_sin_registrar, ultimo_vuelo_registrado = vuelo_registrado
 
-def test_modificar_vuelo_fecha_partida_programada_invalida(db_conectada: DBManager, generador_datos: GeneradorDatos, vuelos_manager: VuelosManager, rutas: list[RutaDesdeDB], aviones: list[AvionDesdeDB], id_staff: int) -> None:
-    pass
+    nueva_fecha_partida_programada = datetime(2080,1,1)
+    nueva_fecha_arribo_programada = datetime(2080,1,2)
 
-def test_modificar_vuelo_fecha_arribo_programada_invalida(db_conectada: DBManager, generador_datos: GeneradorDatos, vuelos_manager: VuelosManager, rutas: list[RutaDesdeDB], aviones: list[AvionDesdeDB], id_staff: int) -> None:
-    pass
+    vuelos_manager.modificar_fechas(ultimo_vuelo_registrado, id_staff, nueva_fecha_partida_programada, nueva_fecha_arribo_programada)
+
+    ultimo_vuelo_registrado_modificado = obtener_ultimo_vuelo_registrado(db_conectada)
+
+    assert ultimo_vuelo_registrado_modificado.id_ruta == ultimo_vuelo_registrado.id_ruta
+    assert ultimo_vuelo_registrado_modificado.id_avion == ultimo_vuelo_registrado.id_avion
+    assert ultimo_vuelo_registrado_modificado.id_estado_actual == ultimo_vuelo_registrado.id_estado_actual
+    assert ultimo_vuelo_registrado_modificado.fecha_partida_programada == nueva_fecha_partida_programada
+    assert ultimo_vuelo_registrado_modificado.fecha_arribo_programada == nueva_fecha_arribo_programada
+    assert ultimo_vuelo_registrado_modificado.costo_operativo_usd == ultimo_vuelo_registrado.costo_operativo_usd
+    assert ultimo_vuelo_registrado_modificado.precio_venta_usd == ultimo_vuelo_registrado.precio_venta_usd
 
 def test_modificar_vuelo_avion_correcto(db_conectada: DBManager, vuelo_registrado: tuple[VueloBase, VueloDesdeDB], vuelos_manager: VuelosManager, id_staff: int) -> None:
     vuelo_valido_sin_registrar, ultimo_vuelo_registrado = vuelo_registrado
