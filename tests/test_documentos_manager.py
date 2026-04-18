@@ -1,4 +1,5 @@
-import pytest, random
+import pytest
+from collections.abc import Callable
 from src.managers import *
 from src.tipos import *
 from src.entidades import *
@@ -16,201 +17,131 @@ def generar_documentos(generador_datos: GeneradorDatos, pasajeros: list[Pasajero
     documentos: list[DocumentoBase] = generador_datos.generar_documentos(pasajeros)
     return documentos
 
-def test_registrar_documento_correcto(db_conectada: DBManager, generador_datos: GeneradorDatos, documentos_manager: DocumentosManager, pasajeros_manager: TablaManager, id_staff: int) -> None:
-    registrar_pasajeros(generador_datos, pasajeros_manager, 1, id_staff)
-    ultimo_pasajero_registrado: PasajeroDesdeDB = PasajeroDesdeDB(*db_conectada.consultar_ultima_fila("pasajeros", COLUMNAS_PASAJEROS))
+def test_registrar_documento_correcto(documento_registrado: Callable[[], tuple[DocumentoBase, DocumentoDesdeDB]]) -> None:
+    documento_valido_sin_registrar, ultimo_documento_registrado = documento_registrado()
 
-    documento: DocumentoBase = generador_datos.generar_documentos([ultimo_pasajero_registrado])[0]
-    documentos_manager.registrar_documento(id_staff, documento)
+    assert ultimo_documento_registrado.num_documento == documento_valido_sin_registrar.num_documento
+    assert ultimo_documento_registrado.fecha_vencimiento == documento_valido_sin_registrar.fecha_vencimiento
+    assert ultimo_documento_registrado.pais_emision == documento_valido_sin_registrar.pais_emision
+    assert ultimo_documento_registrado.id_pasajero == documento_valido_sin_registrar.id_pasajero
+    assert ultimo_documento_registrado.id_tipo_documento == documento_valido_sin_registrar.id_tipo_documento
 
-    ultimo_documento_registrado = DocumentoDesdeDB(*db_conectada.consultar_ultima_fila("documentos", COLUMNAS_DOCUMENTOS))
-
-    assert ultimo_documento_registrado.num_documento == documento.num_documento
-    assert ultimo_documento_registrado.fecha_vencimiento == documento.fecha_vencimiento
-    assert ultimo_documento_registrado.pais_emision == documento.pais_emision
-    assert ultimo_documento_registrado.id_pasajero == documento.id_pasajero
-    assert ultimo_documento_registrado.id_tipo_documento == documento.id_tipo_documento
-
-def test_registrar_documento_staff_invalido(db_conectada: DBManager, generador_datos: GeneradorDatos, documentos_manager: DocumentosManager, pasajeros_manager: TablaManager, id_staff: int) -> None:
-    registrar_pasajeros(generador_datos, pasajeros_manager, 1, id_staff)
-    ultimo_pasajero_registrado: PasajeroDesdeDB = PasajeroDesdeDB(*db_conectada.consultar_ultima_fila("pasajeros", COLUMNAS_PASAJEROS))
-
-    documento: DocumentoBase = generador_datos.generar_documentos([ultimo_pasajero_registrado])[0]
+def test_registrar_documento_staff_invalido(documento_registrado: Callable[[], tuple[DocumentoBase, DocumentoDesdeDB]], documentos_manager: DocumentosManager) -> None:
+    documento_valido_sin_registrar, ultimo_documento_registrado = documento_registrado()
 
     ID_STAFF = 999 # cambio el id_staff por uno erróneo.
 
     with pytest.raises(Exception, match=ERROR_STAFF_INVALIDO):
-        documentos_manager.registrar_documento(ID_STAFF, documento)
+        documentos_manager.registrar_documento(ID_STAFF, ultimo_documento_registrado)
 
-def test_modificar_num_documento_correcto(db_conectada: DBManager, generador_datos: GeneradorDatos, documentos_manager: DocumentosManager, pasajeros_manager: TablaManager, id_staff: int) -> None:
-    registrar_pasajeros(generador_datos, pasajeros_manager, 1, id_staff)
-    ultimo_pasajero_registrado: PasajeroDesdeDB = PasajeroDesdeDB(*db_conectada.consultar_ultima_fila("pasajeros", COLUMNAS_PASAJEROS))
-
-    documento: DocumentoBase = generador_datos.generar_documentos([ultimo_pasajero_registrado])[0]
-    documentos_manager.registrar_documento(id_staff, documento)
-
-    ultimo_documento_registrado = DocumentoDesdeDB(*db_conectada.consultar_ultima_fila("documentos", COLUMNAS_DOCUMENTOS))
+def test_modificar_num_documento_correcto(db_conectada: DBManager, documento_registrado: Callable[[], tuple[DocumentoBase, DocumentoDesdeDB]], documentos_manager: DocumentosManager, id_staff: int) -> None:
+    documento_valido_sin_registrar, ultimo_documento_registrado = documento_registrado()
 
     nuevo_num_documento = "AA1945723"
+
     documentos_manager.modificar_num_documento(ultimo_documento_registrado, id_staff, nuevo_num_documento)
 
-    ultimo_documento_registrado = DocumentoDesdeDB(*db_conectada.consultar_ultima_fila("documentos", COLUMNAS_DOCUMENTOS))
+    ultimo_documento_registrado_modificado = DocumentoDesdeDB(*db_conectada.consultar_ultima_fila("documentos", COLUMNAS_DOCUMENTOS))
 
-    assert ultimo_documento_registrado.num_documento == nuevo_num_documento
-    assert ultimo_documento_registrado.fecha_vencimiento == documento.fecha_vencimiento
-    assert ultimo_documento_registrado.pais_emision == documento.pais_emision
-    assert ultimo_documento_registrado.id_pasajero == documento.id_pasajero
-    assert ultimo_documento_registrado.id_tipo_documento == documento.id_tipo_documento
+    assert ultimo_documento_registrado_modificado.num_documento == nuevo_num_documento
+    assert ultimo_documento_registrado_modificado.fecha_vencimiento == ultimo_documento_registrado.fecha_vencimiento
+    assert ultimo_documento_registrado_modificado.pais_emision == ultimo_documento_registrado.pais_emision
+    assert ultimo_documento_registrado_modificado.id_pasajero == ultimo_documento_registrado.id_pasajero
+    assert ultimo_documento_registrado_modificado.id_tipo_documento == ultimo_documento_registrado.id_tipo_documento
 
-def test_modificar_num_documento_invalido(db_conectada: DBManager, generador_datos: GeneradorDatos, documentos_manager: DocumentosManager, pasajeros_manager: TablaManager, id_staff: int) -> None:
-    registrar_pasajeros(generador_datos, pasajeros_manager, 1, id_staff)
-    ultimo_pasajero_registrado: PasajeroDesdeDB = PasajeroDesdeDB(*db_conectada.consultar_ultima_fila("pasajeros", COLUMNAS_PASAJEROS))
-
-    documento: DocumentoBase = generador_datos.generar_documentos([ultimo_pasajero_registrado])[0]
-    documentos_manager.registrar_documento(id_staff, documento)
-
-    ultimo_documento_registrado = DocumentoDesdeDB(*db_conectada.consultar_ultima_fila("documentos", COLUMNAS_DOCUMENTOS))
+def test_modificar_num_documento_invalido(documento_registrado: Callable[[], tuple[DocumentoBase, DocumentoDesdeDB]], documentos_manager: DocumentosManager, id_staff: int) -> None:
+    documento_valido_sin_registrar, ultimo_documento_registrado = documento_registrado()
 
     nuevo_num_documento = 1945723
 
     with pytest.raises(Exception, match=ERROR_FORMATO_DATOS):
         documentos_manager.modificar_num_documento(ultimo_documento_registrado, id_staff, nuevo_num_documento)
 
-def test_modificar_fecha_vencimiento_correcta(db_conectada: DBManager, generador_datos: GeneradorDatos, documentos_manager: DocumentosManager, pasajeros_manager: TablaManager, id_staff: int) -> None:
-    registrar_pasajeros(generador_datos, pasajeros_manager, 1, id_staff)
-    ultimo_pasajero_registrado: PasajeroDesdeDB = PasajeroDesdeDB(*db_conectada.consultar_ultima_fila("pasajeros", COLUMNAS_PASAJEROS))
-
-    documento: DocumentoBase = generador_datos.generar_documentos([ultimo_pasajero_registrado])[0]
-    documentos_manager.registrar_documento(id_staff, documento)
-
-    ultimo_documento_registrado = DocumentoDesdeDB(*db_conectada.consultar_ultima_fila("documentos", COLUMNAS_DOCUMENTOS))
+def test_modificar_fecha_vencimiento_correcta(db_conectada: DBManager, documento_registrado: Callable[[], tuple[DocumentoBase, DocumentoDesdeDB]], documentos_manager: DocumentosManager, id_staff: int) -> None:
+    documento_valido_sin_registrar, ultimo_documento_registrado = documento_registrado()
 
     nueva_fecha_vencimiento = date(2060, 1, 1)
 
     documentos_manager.modificar_fecha_vencimiento(ultimo_documento_registrado, id_staff, nueva_fecha_vencimiento)
 
-    ultimo_documento_registrado = DocumentoDesdeDB(*db_conectada.consultar_ultima_fila("documentos", COLUMNAS_DOCUMENTOS))
+    ultimo_documento_registrado_modificado = DocumentoDesdeDB(*db_conectada.consultar_ultima_fila("documentos", COLUMNAS_DOCUMENTOS))
 
-    assert ultimo_documento_registrado.num_documento == documento.num_documento
-    assert ultimo_documento_registrado.fecha_vencimiento == nueva_fecha_vencimiento
-    assert ultimo_documento_registrado.pais_emision == documento.pais_emision
-    assert ultimo_documento_registrado.id_pasajero == documento.id_pasajero
-    assert ultimo_documento_registrado.id_tipo_documento == documento.id_tipo_documento
+    assert ultimo_documento_registrado_modificado.num_documento == ultimo_documento_registrado.num_documento
+    assert ultimo_documento_registrado_modificado.fecha_vencimiento == nueva_fecha_vencimiento
+    assert ultimo_documento_registrado_modificado.pais_emision == ultimo_documento_registrado.pais_emision
+    assert ultimo_documento_registrado_modificado.id_pasajero == ultimo_documento_registrado.id_pasajero
+    assert ultimo_documento_registrado_modificado.id_tipo_documento == ultimo_documento_registrado.id_tipo_documento
 
-def test_modificar_fecha_vencimiento_invalida(db_conectada: DBManager, generador_datos: GeneradorDatos, documentos_manager: DocumentosManager, pasajeros_manager: TablaManager, id_staff: int) -> None:
-    registrar_pasajeros(generador_datos, pasajeros_manager, 1, id_staff)
-    ultimo_pasajero_registrado: PasajeroDesdeDB = PasajeroDesdeDB(*db_conectada.consultar_ultima_fila("pasajeros", COLUMNAS_PASAJEROS))
-
-    documento: DocumentoBase = generador_datos.generar_documentos([ultimo_pasajero_registrado])[0]
-    documentos_manager.registrar_documento(id_staff, documento)
-
-    ultimo_documento_registrado = DocumentoDesdeDB(*db_conectada.consultar_ultima_fila("documentos", COLUMNAS_DOCUMENTOS))
+def test_modificar_fecha_vencimiento_invalida(documento_registrado: Callable[[], tuple[DocumentoBase, DocumentoDesdeDB]], documentos_manager: DocumentosManager, id_staff: int) -> None:
+    documento_valido_sin_registrar, ultimo_documento_registrado = documento_registrado()
 
     nueva_fecha_vencimiento = None
 
     with pytest.raises(Exception, match=ERROR_FORMATO_DATOS):
         documentos_manager.modificar_fecha_vencimiento(ultimo_documento_registrado, id_staff, nueva_fecha_vencimiento)
 
-def test_modificar_documento_pais_emision_correcto(db_conectada: DBManager, generador_datos: GeneradorDatos, documentos_manager: DocumentosManager, pasajeros_manager: TablaManager, id_staff: int) -> None:
-    registrar_pasajeros(generador_datos, pasajeros_manager, 1, id_staff)
-    ultimo_pasajero_registrado: PasajeroDesdeDB = PasajeroDesdeDB(*db_conectada.consultar_ultima_fila("pasajeros", COLUMNAS_PASAJEROS))
-
-    documento: DocumentoBase = generador_datos.generar_documentos([ultimo_pasajero_registrado])[0]
-    documentos_manager.registrar_documento(id_staff, documento)
-
-    ultimo_documento_registrado = DocumentoDesdeDB(*db_conectada.consultar_ultima_fila("documentos", COLUMNAS_DOCUMENTOS))
+def test_modificar_documento_pais_emision_correcto(db_conectada: DBManager, documento_registrado: Callable[[], tuple[DocumentoBase, DocumentoDesdeDB]], documentos_manager: DocumentosManager, id_staff: int) -> None:
+    documento_valido_sin_registrar, ultimo_documento_registrado = documento_registrado()
 
     nuevo_pais_emision = "FRA" # mi generador de datos no asigna este país a ningún documento, por lo que sé que va a ser distinto siempre.
 
     documentos_manager.modificar_pais_emision(ultimo_documento_registrado, id_staff, nuevo_pais_emision)
 
-    ultimo_documento_registrado = DocumentoDesdeDB(*db_conectada.consultar_ultima_fila("documentos", COLUMNAS_DOCUMENTOS))
+    ultimo_documento_registrado_modificado = DocumentoDesdeDB(*db_conectada.consultar_ultima_fila("documentos", COLUMNAS_DOCUMENTOS))
 
-    assert ultimo_documento_registrado.num_documento == documento.num_documento
-    assert ultimo_documento_registrado.fecha_vencimiento == documento.fecha_vencimiento
-    assert ultimo_documento_registrado.pais_emision == nuevo_pais_emision
-    assert ultimo_documento_registrado.id_pasajero == documento.id_pasajero
-    assert ultimo_documento_registrado.id_tipo_documento == documento.id_tipo_documento
+    assert ultimo_documento_registrado_modificado.num_documento == ultimo_documento_registrado.num_documento
+    assert ultimo_documento_registrado_modificado.fecha_vencimiento == ultimo_documento_registrado.fecha_vencimiento
+    assert ultimo_documento_registrado_modificado.pais_emision == nuevo_pais_emision
+    assert ultimo_documento_registrado_modificado.id_pasajero == ultimo_documento_registrado.id_pasajero
+    assert ultimo_documento_registrado_modificado.id_tipo_documento == ultimo_documento_registrado.id_tipo_documento
 
-def test_modificar_documento_pais_emision_invalido(db_conectada: DBManager, generador_datos: GeneradorDatos, documentos_manager: DocumentosManager, pasajeros_manager: TablaManager, id_staff: int) -> None:
-    registrar_pasajeros(generador_datos, pasajeros_manager, 1, id_staff)
-    ultimo_pasajero_registrado: PasajeroDesdeDB = PasajeroDesdeDB(*db_conectada.consultar_ultima_fila("pasajeros", COLUMNAS_PASAJEROS))
-
-    documento: DocumentoBase = generador_datos.generar_documentos([ultimo_pasajero_registrado])[0]
-    documentos_manager.registrar_documento(id_staff, documento)
-
-    ultimo_documento_registrado = DocumentoDesdeDB(*db_conectada.consultar_ultima_fila("documentos", COLUMNAS_DOCUMENTOS))
+def test_modificar_documento_pais_emision_invalido(documento_registrado: Callable[[], tuple[DocumentoBase, DocumentoDesdeDB]], documentos_manager: DocumentosManager, id_staff: int) -> None:
+    documento_valido_sin_registrar, ultimo_documento_registrado = documento_registrado()
 
     nuevo_pais_emision = None
 
     with pytest.raises(Exception, match=ERROR_FORMATO_DATOS):
         documentos_manager.modificar_pais_emision(ultimo_documento_registrado, id_staff, nuevo_pais_emision)
 
-def test_modificar_documento_pasajero_correcto(db_conectada: DBManager, generador_datos: GeneradorDatos, documentos_manager: DocumentosManager, pasajeros_manager: TablaManager, id_staff: int) -> None:
-    registrar_pasajeros(generador_datos, pasajeros_manager, 1, id_staff)
-    ultimo_pasajero_registrado: PasajeroDesdeDB = PasajeroDesdeDB(*db_conectada.consultar_ultima_fila("pasajeros", COLUMNAS_PASAJEROS))
-
-    documento: DocumentoBase = generador_datos.generar_documentos([ultimo_pasajero_registrado])[0]
-    documentos_manager.registrar_documento(id_staff, documento)
-
-    registrar_pasajeros(generador_datos, pasajeros_manager, 1, id_staff)
-    ultimo_pasajero_registrado: PasajeroDesdeDB = PasajeroDesdeDB(*db_conectada.consultar_ultima_fila("pasajeros", COLUMNAS_PASAJEROS))
-
-    ultimo_documento_registrado = DocumentoDesdeDB(*db_conectada.consultar_ultima_fila("documentos", COLUMNAS_DOCUMENTOS))
+def test_modificar_documento_pasajero_correcto(db_conectada: DBManager, documento_registrado: Callable[[], tuple[DocumentoBase, DocumentoDesdeDB]], pasajero_registrado: Callable[[], tuple[PasajeroBase, PasajeroDesdeDB]], documentos_manager: DocumentosManager, id_staff: int) -> None:
+    documento_valido_sin_registrar, ultimo_documento_registrado = documento_registrado()
+    pasajero_valido_sin_registrar, ultimo_pasajero_registrado = pasajero_registrado()
 
     documentos_manager.modificar_pasajero(ultimo_documento_registrado, id_staff, ultimo_pasajero_registrado.id)
 
-    ultimo_documento_registrado = DocumentoDesdeDB(*db_conectada.consultar_ultima_fila("documentos", COLUMNAS_DOCUMENTOS))
+    ultimo_documento_registrado_modificado = DocumentoDesdeDB(*db_conectada.consultar_ultima_fila("documentos", COLUMNAS_DOCUMENTOS))
 
-    assert ultimo_documento_registrado.num_documento == documento.num_documento
-    assert ultimo_documento_registrado.fecha_vencimiento == documento.fecha_vencimiento
-    assert ultimo_documento_registrado.pais_emision == documento.pais_emision
-    assert ultimo_documento_registrado.id_pasajero == ultimo_pasajero_registrado.id
-    assert ultimo_documento_registrado.id_tipo_documento == documento.id_tipo_documento
+    assert ultimo_documento_registrado_modificado.num_documento == ultimo_documento_registrado.num_documento
+    assert ultimo_documento_registrado_modificado.fecha_vencimiento == ultimo_documento_registrado.fecha_vencimiento
+    assert ultimo_documento_registrado_modificado.pais_emision == ultimo_documento_registrado.pais_emision
+    assert ultimo_documento_registrado_modificado.id_pasajero == ultimo_pasajero_registrado.id
+    assert ultimo_documento_registrado_modificado.id_tipo_documento == ultimo_documento_registrado.id_tipo_documento
 
-def test_modificar_documento_pasajero_invalido(db_conectada: DBManager, generador_datos: GeneradorDatos, documentos_manager: DocumentosManager, pasajeros_manager: TablaManager, id_staff: int) -> None:
-    registrar_pasajeros(generador_datos, pasajeros_manager, 1, id_staff)
-    ultimo_pasajero_registrado: PasajeroDesdeDB = PasajeroDesdeDB(*db_conectada.consultar_ultima_fila("pasajeros", COLUMNAS_PASAJEROS))
-
-    documento: DocumentoBase = generador_datos.generar_documentos([ultimo_pasajero_registrado])[0]
-    documentos_manager.registrar_documento(id_staff, documento)
-
-    ultimo_documento_registrado = DocumentoDesdeDB(*db_conectada.consultar_ultima_fila("documentos", COLUMNAS_DOCUMENTOS))
+def test_modificar_documento_pasajero_invalido(documento_registrado: Callable[[], tuple[DocumentoBase, DocumentoDesdeDB]], documentos_manager: DocumentosManager, id_staff: int) -> None:
+    documento_valido_sin_registrar, ultimo_documento_registrado = documento_registrado()
 
     nuevo_pasajero = None
 
     with pytest.raises(Exception, match=ERROR_FORMATO_DATOS):
         documentos_manager.modificar_pasajero(ultimo_documento_registrado, id_staff, nuevo_pasajero)
 
-def test_modificar_tipo_documento_correcto(db_conectada: DBManager, generador_datos: GeneradorDatos, documentos_manager: DocumentosManager, pasajeros_manager: TablaManager, id_staff: int) -> None:
-    registrar_pasajeros(generador_datos, pasajeros_manager, 1, id_staff)
-    ultimo_pasajero_registrado: PasajeroDesdeDB = PasajeroDesdeDB(*db_conectada.consultar_ultima_fila("pasajeros", COLUMNAS_PASAJEROS))
-
-    documento: DocumentoBase = generador_datos.generar_documentos([ultimo_pasajero_registrado])[0]
-    documentos_manager.registrar_documento(id_staff, documento)
-
-    ultimo_documento_registrado = DocumentoDesdeDB(*db_conectada.consultar_ultima_fila("documentos", COLUMNAS_DOCUMENTOS))
+def test_modificar_tipo_documento_correcto(db_conectada: DBManager, documento_registrado: Callable[[], tuple[DocumentoBase, DocumentoDesdeDB]], documentos_manager: DocumentosManager, id_staff: int) -> None:
+    documento_valido_sin_registrar, ultimo_documento_registrado = documento_registrado()
 
     nuevo_tipo_documento = 1
 
     documentos_manager.modificar_tipo_documento(ultimo_documento_registrado, id_staff, nuevo_tipo_documento)
 
-    ultimo_documento_registrado = DocumentoDesdeDB(*db_conectada.consultar_ultima_fila("documentos", COLUMNAS_DOCUMENTOS))
+    ultimo_documento_registrado_modificado = DocumentoDesdeDB(*db_conectada.consultar_ultima_fila("documentos", COLUMNAS_DOCUMENTOS))
 
-    assert ultimo_documento_registrado.num_documento == documento.num_documento
-    assert ultimo_documento_registrado.fecha_vencimiento == documento.fecha_vencimiento
-    assert ultimo_documento_registrado.pais_emision == documento.pais_emision
-    assert ultimo_documento_registrado.id_pasajero == documento.id_pasajero
-    assert ultimo_documento_registrado.id_tipo_documento == nuevo_tipo_documento
+    assert ultimo_documento_registrado_modificado.num_documento == ultimo_documento_registrado.num_documento
+    assert ultimo_documento_registrado_modificado.fecha_vencimiento == ultimo_documento_registrado.fecha_vencimiento
+    assert ultimo_documento_registrado_modificado.pais_emision == ultimo_documento_registrado.pais_emision
+    assert ultimo_documento_registrado_modificado.id_pasajero == ultimo_documento_registrado.id_pasajero
+    assert ultimo_documento_registrado_modificado.id_tipo_documento == nuevo_tipo_documento
 
-def test_modificar_tipo_documento_invalido(db_conectada: DBManager, generador_datos: GeneradorDatos, documentos_manager: DocumentosManager, pasajeros_manager: TablaManager, id_staff: int) -> None:
-    registrar_pasajeros(generador_datos, pasajeros_manager, 1, id_staff)
-    ultimo_pasajero_registrado: PasajeroDesdeDB = PasajeroDesdeDB(*db_conectada.consultar_ultima_fila("pasajeros", COLUMNAS_PASAJEROS))
-
-    documento: DocumentoBase = generador_datos.generar_documentos([ultimo_pasajero_registrado])[0]
-    documentos_manager.registrar_documento(id_staff, documento)
-
-    ultimo_documento_registrado = DocumentoDesdeDB(*db_conectada.consultar_ultima_fila("documentos", COLUMNAS_DOCUMENTOS))
+def test_modificar_tipo_documento_invalido(documento_registrado: Callable[[], tuple[DocumentoBase, DocumentoDesdeDB]], documentos_manager: DocumentosManager, id_staff: int) -> None:
+    documento_valido_sin_registrar, ultimo_documento_registrado = documento_registrado()
 
     nuevo_tipo_documento = None
 

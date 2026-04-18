@@ -1,4 +1,5 @@
 import pytest, random
+from collections.abc import Callable
 from datetime import datetime
 from src.managers import *
 from src.tipos import *
@@ -6,48 +7,24 @@ from src.entidades import *
 from src.querys import *
 from src.columnas import *
 from src.errores import *
-from src.GeneradorDatos import GeneradorDatos
 
-def registrar_certificaciones(certificaciones_manager: CertificacionesStaffManager, certificaciones: list[CertificacionStaffBase], id_staff: int) -> None:
-    for certificado in certificaciones:
-        certificaciones_manager.registrar_certificacion(id_staff, certificado)
+def test_registrar_certificacion_correcta(certificacion_registrada: Callable[[], tuple[CertificacionStaffBase, CertificacionStaffDesdeDB]]) -> None:
+    certificacion_valida_sin_registrar, ultima_certificacion_registrada = certificacion_registrada()
 
-def generar_certificaciones(cant: int, staff: list[StaffDesdeDB]) -> list[CertificacionStaffBase]:
-    certificaciones: list[CertificacionStaffBase] = []
+    assert ultima_certificacion_registrada.id_staff == certificacion_valida_sin_registrar.id_staff
+    assert ultima_certificacion_registrada.descripcion == certificacion_valida_sin_registrar.descripcion
+    assert ultima_certificacion_registrada.licencia_hasta == certificacion_valida_sin_registrar.licencia_hasta
 
-    for _ in range(cant):
-        id_staff: int = random.choice(staff).id
-        descripcion = "Licencia X"
-        licencia_hasta = datetime(2060, 1, 1)
+def test_registrar_certificacion_staff_invalido(certificacion_registrada: Callable[[], tuple[CertificacionStaffBase, CertificacionStaffDesdeDB]], certificaciones_manager: CertificacionesStaffManager) -> None:
+    certificacion_valida_sin_registrar, ultima_certificacion_registrada = certificacion_registrada()
 
-        certificacion = CertificacionStaffBase(id_staff, descripcion, licencia_hasta)
-        certificaciones.append(certificacion)
-
-    return certificaciones
-
-def test_registrar_certificacion_correcta(db_conectada: DBManager, certificaciones_manager: CertificacionesStaffManager, staff: list[StaffDesdeDB], id_staff: int) -> None:
-    certificacion: CertificacionStaffBase = generar_certificaciones(1, staff)[0]
-
-    certificaciones_manager.registrar_certificacion(id_staff, certificacion)
-    ultima_certificacion_registrada = CertificacionStaffDesdeDB(*db_conectada.consultar_ultima_fila("certificaciones_staff", COLUMNAS_CERTIFICACIONES_STAFF))
-
-    assert ultima_certificacion_registrada.id_staff == certificacion.id_staff
-    assert ultima_certificacion_registrada.descripcion == certificacion.descripcion
-    assert ultima_certificacion_registrada.licencia_hasta == certificacion.licencia_hasta
-
-def test_registrar_certificacion_staff_invalido(certificaciones_manager: CertificacionesStaffManager, staff: list[StaffDesdeDB]) -> None:
-    certificacion: CertificacionStaffBase = generar_certificaciones(1, staff)[0]
-
-    ID_STAFF = 999
+    ID_STAFF = 999 # cambio el id_staff por uno erróneo.
 
     with pytest.raises(Exception, match=ERROR_STAFF_INVALIDO):
-        certificaciones_manager.registrar_certificacion(ID_STAFF, certificacion)
+        certificaciones_manager.registrar_certificacion(ID_STAFF, certificacion_valida_sin_registrar)
 
-def test_modificar_certificacion_staff_correcto(db_conectada: DBManager, certificaciones_manager: CertificacionesStaffManager, staff: list[StaffDesdeDB], id_staff: int) -> None:
-    certificacion: CertificacionStaffBase = generar_certificaciones(1, staff)[0]
-
-    certificaciones_manager.registrar_certificacion(id_staff, certificacion)
-    ultima_certificacion_registrada = CertificacionStaffDesdeDB(*db_conectada.consultar_ultima_fila("certificaciones_staff", COLUMNAS_CERTIFICACIONES_STAFF))
+def test_modificar_certificacion_staff_correcto(db_conectada: DBManager, certificacion_registrada: Callable[[], tuple[CertificacionStaffBase, CertificacionStaffDesdeDB]], certificaciones_manager: CertificacionesStaffManager, staff: list[StaffDesdeDB], id_staff: int) -> None:
+    certificacion_valida_sin_registrar, ultima_certificacion_registrada = certificacion_registrada()
 
     nuevo_id_staff = random.choice(staff).id
     while nuevo_id_staff == ultima_certificacion_registrada.id:
@@ -55,15 +32,14 @@ def test_modificar_certificacion_staff_correcto(db_conectada: DBManager, certifi
 
     certificaciones_manager.modificar_id_staff(ultima_certificacion_registrada, id_staff, nuevo_id_staff)
 
-    assert ultima_certificacion_registrada.id_staff == nuevo_id_staff
-    assert ultima_certificacion_registrada.descripcion == certificacion.descripcion
-    assert ultima_certificacion_registrada.licencia_hasta == certificacion.licencia_hasta
+    ultima_certificacion_registrada_modificada = CertificacionStaffDesdeDB(*db_conectada.consultar_ultima_fila("certificaciones_staff", COLUMNAS_CERTIFICACIONES_STAFF))
 
-def test_modificar_certificacion_staff_invalido(db_conectada: DBManager, certificaciones_manager: CertificacionesStaffManager, staff: list[StaffDesdeDB], id_staff: int) -> None:
-    certificacion: CertificacionStaffBase = generar_certificaciones(1, staff)[0]
+    assert ultima_certificacion_registrada_modificada.id_staff == nuevo_id_staff
+    assert ultima_certificacion_registrada_modificada.descripcion == ultima_certificacion_registrada.descripcion
+    assert ultima_certificacion_registrada_modificada.licencia_hasta == ultima_certificacion_registrada.licencia_hasta
 
-    certificaciones_manager.registrar_certificacion(id_staff, certificacion)
-    ultima_certificacion_registrada = CertificacionStaffDesdeDB(*db_conectada.consultar_ultima_fila("certificaciones_staff", COLUMNAS_CERTIFICACIONES_STAFF))
+def test_modificar_certificacion_staff_invalido(certificacion_registrada: Callable[[], tuple[CertificacionStaffBase, CertificacionStaffDesdeDB]], certificaciones_manager: CertificacionesStaffManager, staff: list[StaffDesdeDB]) -> None:
+    certificacion_valida_sin_registrar, ultima_certificacion_registrada = certificacion_registrada()
 
     nuevo_id_staff = random.choice(staff).id
     while nuevo_id_staff == ultima_certificacion_registrada.id:
@@ -74,52 +50,40 @@ def test_modificar_certificacion_staff_invalido(db_conectada: DBManager, certifi
     with pytest.raises(Exception, match=ERROR_STAFF_INVALIDO):
         certificaciones_manager.modificar_id_staff(ultima_certificacion_registrada, ID_STAFF, nuevo_id_staff)
 
-def test_modificar_certificacion_descripcion_correcta(db_conectada: DBManager, certificaciones_manager: CertificacionesStaffManager, staff: list[StaffDesdeDB], id_staff: int) -> None:
-    certificacion: CertificacionStaffBase = generar_certificaciones(1, staff)[0]
-
-    certificaciones_manager.registrar_certificacion(id_staff, certificacion)
-    ultima_certificacion_registrada = CertificacionStaffDesdeDB(*db_conectada.consultar_ultima_fila("certificaciones_staff", COLUMNAS_CERTIFICACIONES_STAFF))
+def test_modificar_certificacion_descripcion_correcta(db_conectada: DBManager, certificacion_registrada: Callable[[], tuple[CertificacionStaffBase, CertificacionStaffDesdeDB]], certificaciones_manager: CertificacionesStaffManager, id_staff: int) -> None:
+    certificacion_valida_sin_registrar, ultima_certificacion_registrada = certificacion_registrada()
 
     nueva_descripcion = "Licencia profesional X"
     certificaciones_manager.modificar_descripcion(ultima_certificacion_registrada, id_staff, nueva_descripcion)
 
-    ultima_certificacion_registrada = CertificacionStaffDesdeDB(*db_conectada.consultar_ultima_fila("certificaciones_staff", COLUMNAS_CERTIFICACIONES_STAFF))
+    ultima_certificacion_registrada_modificada = CertificacionStaffDesdeDB(*db_conectada.consultar_ultima_fila("certificaciones_staff", COLUMNAS_CERTIFICACIONES_STAFF))
 
-    assert ultima_certificacion_registrada.id_staff == certificacion.id_staff
-    assert ultima_certificacion_registrada.descripcion == nueva_descripcion
-    assert ultima_certificacion_registrada.licencia_hasta == certificacion.licencia_hasta
+    assert ultima_certificacion_registrada_modificada.id_staff == ultima_certificacion_registrada.id_staff
+    assert ultima_certificacion_registrada_modificada.descripcion == nueva_descripcion
+    assert ultima_certificacion_registrada_modificada.licencia_hasta == ultima_certificacion_registrada.licencia_hasta
 
-def test_modificar_certificacion_descripcion_invalida(db_conectada: DBManager, certificaciones_manager: CertificacionesStaffManager, staff: list[StaffDesdeDB], id_staff: int) -> None:
-    certificacion: CertificacionStaffBase = generar_certificaciones(1, staff)[0]
-
-    certificaciones_manager.registrar_certificacion(id_staff, certificacion)
-    ultima_certificacion_registrada = CertificacionStaffDesdeDB(*db_conectada.consultar_ultima_fila("certificaciones_staff", COLUMNAS_CERTIFICACIONES_STAFF))
+def test_modificar_certificacion_descripcion_invalida(certificacion_registrada: Callable[[], tuple[CertificacionStaffBase, CertificacionStaffDesdeDB]], certificaciones_manager: CertificacionesStaffManager, id_staff: int) -> None:
+    certificacion_valida_sin_registrar, ultima_certificacion_registrada = certificacion_registrada()
 
     nueva_descripcion = 123
 
     with pytest.raises(Exception, match=ERROR_FORMATO_DATOS):
         certificaciones_manager.modificar_descripcion(ultima_certificacion_registrada, id_staff, nueva_descripcion)
     
-def test_modificar_certificacion_vencimiento_correcto(db_conectada: DBManager, certificaciones_manager: CertificacionesStaffManager, staff: list[StaffDesdeDB], id_staff: int) -> None:
-    certificacion: CertificacionStaffBase = generar_certificaciones(1, staff)[0]
-
-    certificaciones_manager.registrar_certificacion(id_staff, certificacion)
-    ultima_certificacion_registrada = CertificacionStaffDesdeDB(*db_conectada.consultar_ultima_fila("certificaciones_staff", COLUMNAS_CERTIFICACIONES_STAFF))
+def test_modificar_certificacion_vencimiento_correcto(db_conectada: DBManager, certificacion_registrada: Callable[[], tuple[CertificacionStaffBase, CertificacionStaffDesdeDB]], certificaciones_manager: CertificacionesStaffManager, id_staff: int) -> None:
+    certificacion_valida_sin_registrar, ultima_certificacion_registrada = certificacion_registrada()
 
     nueva_licencia_hasta = datetime(2090, 1, 1)
     certificaciones_manager.modificar_vencimiento(ultima_certificacion_registrada, id_staff, nueva_licencia_hasta)
 
-    ultima_certificacion_registrada = CertificacionStaffDesdeDB(*db_conectada.consultar_ultima_fila("certificaciones_staff", COLUMNAS_CERTIFICACIONES_STAFF))
+    ultima_certificacion_registrada_modificada = CertificacionStaffDesdeDB(*db_conectada.consultar_ultima_fila("certificaciones_staff", COLUMNAS_CERTIFICACIONES_STAFF))
 
-    assert ultima_certificacion_registrada.id_staff == certificacion.id_staff
-    assert ultima_certificacion_registrada.descripcion == certificacion.descripcion
-    assert ultima_certificacion_registrada.licencia_hasta == nueva_licencia_hasta
+    assert ultima_certificacion_registrada_modificada.id_staff == ultima_certificacion_registrada.id_staff
+    assert ultima_certificacion_registrada_modificada.descripcion == ultima_certificacion_registrada.descripcion
+    assert ultima_certificacion_registrada_modificada.licencia_hasta == nueva_licencia_hasta
 
-def test_modificar_certificacion_vencimiento_invalida(db_conectada: DBManager, certificaciones_manager: CertificacionesStaffManager, staff: list[StaffDesdeDB], id_staff: int) -> None: 
-    certificacion: CertificacionStaffBase = generar_certificaciones(1, staff)[0]
-
-    certificaciones_manager.registrar_certificacion(id_staff, certificacion)
-    ultima_certificacion_registrada = CertificacionStaffDesdeDB(*db_conectada.consultar_ultima_fila("certificaciones_staff", COLUMNAS_CERTIFICACIONES_STAFF))
+def test_modificar_certificacion_vencimiento_invalida(certificacion_registrada: Callable[[], tuple[CertificacionStaffBase, CertificacionStaffDesdeDB]], certificaciones_manager: CertificacionesStaffManager, id_staff: int) -> None: 
+    certificacion_valida_sin_registrar, ultima_certificacion_registrada = certificacion_registrada()
 
     nueva_licencia_hasta = "ABC"
 

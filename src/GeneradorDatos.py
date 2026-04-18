@@ -174,7 +174,7 @@ class GeneradorDatos:
             vuelos.append(vuelo)
 
         return vuelos
-
+    
     def _generar_num_reserva(self) -> str:
         num_reserva: str = ""
 
