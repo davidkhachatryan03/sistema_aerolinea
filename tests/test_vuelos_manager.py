@@ -1,11 +1,10 @@
 import pytest, random
 from collections.abc import Callable
-from src.managers import *
-from src.tipos import *
-from src.entidades import *
-from src.querys import *
-from src.columnas import *
-from src.errores import *
+from datetime import datetime
+from src.managers import DBManager, VuelosManager
+from src.entidades import VueloBase, VueloDesdeDB
+from src.columnas import COLUMNAS_VUELOS
+from src.errores import ERROR_STAFF_INVALIDO, ERROR_FECHAS_INVALIDAS, ERROR_AVION_Y_RUTA_INVALIDAS, ERROR_AVION_INVALIDO, ERROR_RUTA_INVALIDA, ERROR_ESTADO_INVALIDO
 
 def obtener_ultimo_vuelo_registrado(db_conectada: DBManager) -> VueloDesdeDB:
     return VueloDesdeDB(*db_conectada.consultar_ultima_fila("vuelos", COLUMNAS_VUELOS))

@@ -1,12 +1,10 @@
 import pytest, random
 from collections.abc import Callable
 from datetime import datetime
-from src.managers import *
-from src.tipos import *
-from src.entidades import *
-from src.querys import *
-from src.columnas import *
-from src.errores import *
+from src.managers import DBManager, CertificacionesStaffManager
+from src.entidades import CertificacionStaffBase, CertificacionStaffDesdeDB, StaffDesdeDB
+from src.columnas import COLUMNAS_CERTIFICACIONES_STAFF
+from src.errores import ERROR_STAFF_INVALIDO, ERROR_FORMATO_DATOS
 
 def test_registrar_certificacion_correcta(certificacion_registrada: Callable[[], tuple[CertificacionStaffBase, CertificacionStaffDesdeDB]]) -> None:
     certificacion_valida_sin_registrar, ultima_certificacion_registrada = certificacion_registrada()

@@ -1,12 +1,9 @@
 import pytest
 from collections.abc import Callable
-from src.managers import *
-from src.tipos import *
-from src.entidades import *
-from src.querys import *
-from src.columnas import *
-from src.errores import *
-from src.GeneradorDatos import GeneradorDatos
+from src.managers import DBManager, VentasManager
+from src.entidades import VentaBase, VentaDesdeDB, VueloBase, VueloDesdeDB, PasajeroBase, PasajeroDesdeDB
+from src.columnas import COLUMNAS_VENTAS
+from src.errores import ERROR_STAFF_INVALIDO, ERROR_PASAJERO_INVALIDO, ERROR_VUELO_INVALIDO, ERROR_SIN_ASIENTOS, ERROR_ESTADO_INVALIDO
 
 def test_registrar_venta_correcta(venta_registrada: Callable[[], tuple[VentaBase, VentaDesdeDB]]) -> None:
     venta_valida_sin_registrar, ultima_venta_registrada = venta_registrada()
@@ -88,7 +85,7 @@ def test_modificar_venta_estado_invalido(venta_registrada: Callable[[], tuple[Ve
     with pytest.raises(Exception, match=ERROR_ESTADO_INVALIDO):
         ventas_manager.modificar_estado(ultima_venta_registrada, id_staff, nuevo_id_estado_actual)
 
-def test_modificar_venta_vuelo_correcto(db_conectada: DBManager, venta_registrada: Callable[[], tuple[VentaBase, VentaDesdeDB]], vuelo_registrado: Callable[[], tuple[VueloBase, VueloDesdeDB]], ventas_manager: VentasManager, vuelos_manager: VuelosManager, generador_datos: GeneradorDatos, rutas: list[RutaDesdeDB], aviones: list[AvionDesdeDB], id_staff: int) -> None:
+def test_modificar_venta_vuelo_correcto(db_conectada: DBManager, venta_registrada: Callable[[], tuple[VentaBase, VentaDesdeDB]], vuelo_registrado: Callable[[], tuple[VueloBase, VueloDesdeDB]], ventas_manager: VentasManager, id_staff: int) -> None:
     venta_valida_sin_registrar, ultima_venta_registrada = venta_registrada()
     vuelo_valido_sin_registrar, ultimo_vuelo_registrado = vuelo_registrado()
 
@@ -110,7 +107,7 @@ def test_modificar_venta_vuelo_incorrecto(venta_registrada: Callable[[], tuple[V
     with pytest.raises(Exception, match=ERROR_VUELO_INVALIDO):
         ventas_manager.cambiar_vuelo(ultima_venta_registrada, id_staff, nuevo_id_vuelo)
 
-def test_modificar_venta_pasajero_correcto(db_conectada: DBManager, venta_registrada: Callable[[], tuple[VentaBase, VentaDesdeDB]], pasajero_registrado: Callable[[], tuple[PasajeroBase, PasajeroDesdeDB]], ventas_manager: VentasManager, pasajeros_manager: TablaManager, generador_datos: GeneradorDatos, id_staff: int) -> None:
+def test_modificar_venta_pasajero_correcto(db_conectada: DBManager, venta_registrada: Callable[[], tuple[VentaBase, VentaDesdeDB]], pasajero_registrado: Callable[[], tuple[PasajeroBase, PasajeroDesdeDB]], ventas_manager: VentasManager, id_staff: int) -> None:
     venta_valida_sin_registrar, ultima_venta_registrada = venta_registrada()
     pasajero_valido_sin_registrar, ultimo_pasajero_registrado = pasajero_registrado()
 

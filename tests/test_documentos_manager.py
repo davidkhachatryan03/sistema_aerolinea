@@ -1,21 +1,10 @@
 import pytest
 from collections.abc import Callable
-from src.managers import *
-from src.tipos import *
-from src.entidades import *
-from src.querys import *
-from src.columnas import *
-from src.errores import *
-from src.GeneradorDatos import GeneradorDatos
-
-def registrar_pasajeros(generador_datos: GeneradorDatos, pasajeros_manager: TablaManager, cant: int, id_staff: int) -> None:
-    pasajeros_generados = generador_datos.generar_pasajeros(cant)
-    for pasajero in pasajeros_generados:
-        pasajeros_manager.agregar_fila(id_staff, pasajero)
-
-def generar_documentos(generador_datos: GeneradorDatos, pasajeros: list[PasajeroDesdeDB]) -> list[DocumentoBase]:
-    documentos: list[DocumentoBase] = generador_datos.generar_documentos(pasajeros)
-    return documentos
+from datetime import date
+from src.managers import DBManager, DocumentosManager
+from src.entidades import DocumentoBase, DocumentoDesdeDB
+from src.columnas import COLUMNAS_DOCUMENTOS
+from src.errores import ERROR_STAFF_INVALIDO, ERROR_FORMATO_DATOS
 
 def test_registrar_documento_correcto(documento_registrado: Callable[[], tuple[DocumentoBase, DocumentoDesdeDB]]) -> None:
     documento_valido_sin_registrar, ultimo_documento_registrado = documento_registrado()

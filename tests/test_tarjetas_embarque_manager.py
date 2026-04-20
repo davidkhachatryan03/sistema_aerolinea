@@ -1,11 +1,9 @@
 import pytest
 from collections.abc import Callable
-from src.managers import *
-from src.tipos import *
-from src.entidades import *
-from src.querys import *
-from src.columnas import *
-from src.errores import *
+from src.managers import DBManager, TarjetasEmbarqueManager
+from src.entidades import TarjetaEmbarqueBase, TarjetaEmbarqueDesdeDB
+from src.columnas import COLUMNAS_TARJETAS_EMBARQUE
+from src.errores import ERROR_STAFF_INVALIDO, ERROR_FORMATO_DATOS
 
 def test_registrar_tarjeta_embarque_correcta(tarjeta_embarque_registrada: Callable[[], tuple[TarjetaEmbarqueBase, TarjetaEmbarqueDesdeDB]]) -> None:
     tarjeta_embarque_valida_sin_registrar, ultima_tarjeta_embarque_registrada = tarjeta_embarque_registrada()

@@ -1,7 +1,7 @@
 import pytest
 from decimal import Decimal
 from datetime import datetime, date
-from src.entidades import *
+from src.entidades import AsignacionVueloBase, AvionBase, CertificacionStaffBase, DocumentoBase, PasajeroBase, RutaBase, TarjetaEmbarqueBase, VentaBase, VueloBase
 from src.errores import ERROR_FORMATO_DATOS
 
 def test_asignacion_vuelo_se_crea_con_formato_correcto() -> None:

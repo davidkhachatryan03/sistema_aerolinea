@@ -1,12 +1,8 @@
 import pytest, random
 from collections.abc import Callable
-from src.managers import *
-from src.tipos import *
-from src.entidades import *
-from src.querys import *
-from src.columnas import *
-from src.errores import *
-from src.GeneradorDatos import GeneradorDatos
+from src.managers import DBManager, AsignacionesVuelosManager
+from src.entidades import AsignacionVueloBase, AsignacionVueloDesdeDB, VueloBase, VueloDesdeDB
+from src.columnas import COLUMNAS_ASIGNACIONES_VUELOS
 
 @pytest.mark.parametrize(
     "metodo_disponibles, metodo_asignar, id_rol",
