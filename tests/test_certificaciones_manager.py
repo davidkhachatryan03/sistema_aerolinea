@@ -80,7 +80,7 @@ def test_modificar_certificacion_vencimiento_correcto(db_conectada: DBManager, c
     assert ultima_certificacion_registrada_modificada.descripcion == ultima_certificacion_registrada.descripcion
     assert ultima_certificacion_registrada_modificada.licencia_hasta == nueva_licencia_hasta
 
-def test_modificar_certificacion_vencimiento_invalida(certificacion_registrada: Callable[[], tuple[CertificacionStaffBase, CertificacionStaffDesdeDB]], certificaciones_manager: CertificacionesStaffManager, id_staff: int) -> None: 
+def test_modificar_certificacion_vencimiento_invalido(certificacion_registrada: Callable[[], tuple[CertificacionStaffBase, CertificacionStaffDesdeDB]], certificaciones_manager: CertificacionesStaffManager, id_staff: int) -> None: 
     certificacion_valida_sin_registrar, ultima_certificacion_registrada = certificacion_registrada()
 
     nueva_licencia_hasta = "ABC"

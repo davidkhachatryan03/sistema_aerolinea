@@ -99,7 +99,7 @@ def test_modificar_venta_vuelo_correcto(db_conectada: DBManager, venta_registrad
     assert ultima_venta_registrada_modificada.precio_pagado_usd == ultima_venta_registrada.precio_pagado_usd
     assert ultima_venta_registrada_modificada.id_estado_actual == ultima_venta_registrada.id_estado_actual
 
-def test_modificar_venta_vuelo_incorrecto(venta_registrada: Callable[[], tuple[VentaBase, VentaDesdeDB]], ventas_manager: VentasManager, id_staff: int) -> None:
+def test_modificar_venta_vuelo_invalido(venta_registrada: Callable[[], tuple[VentaBase, VentaDesdeDB]], ventas_manager: VentasManager, id_staff: int) -> None:
     venta_valida_sin_registrar, ultima_venta_registrada = venta_registrada()
 
     nuevo_id_vuelo = 999 # cambio el id_vuelo por uno erróneo.
@@ -121,7 +121,7 @@ def test_modificar_venta_pasajero_correcto(db_conectada: DBManager, venta_regist
     assert ultima_venta_registrada_modificada.precio_pagado_usd == ultima_venta_registrada.precio_pagado_usd
     assert ultima_venta_registrada_modificada.id_estado_actual == ultima_venta_registrada.id_estado_actual
 
-def test_modificar_venta_pasajero_incorrecto(venta_registrada: Callable[[], tuple[VentaBase, VentaDesdeDB]], ventas_manager: VentasManager, id_staff: int) -> None:
+def test_modificar_venta_pasajero_invalido(venta_registrada: Callable[[], tuple[VentaBase, VentaDesdeDB]], ventas_manager: VentasManager, id_staff: int) -> None:
     venta_valida_sin_registrar, ultima_venta_registrada = venta_registrada()
 
     nuevo_id_pasajero = 999 # cambio el id_pasajero por uno erróneo.
