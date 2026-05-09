@@ -21,17 +21,17 @@ CREATE TABLE passengers (
     is_vip BOOLEAN NOT NULL
 );
 
-CREATE TABLE sale_stasuses (
+CREATE TABLE sale_statuses (
 	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     description VARCHAR(100) UNIQUE NOT NULL
 );
 
-CREATE TABLE flight_stasuses (
+CREATE TABLE flight_statuses (
 	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     description VARCHAR(100) UNIQUE NOT NULL
 );
 
-CREATE TABLE airpline_stasuses (
+CREATE TABLE airplane_statuses (
 	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     description VARCHAR(100) UNIQUE NOT NULL
 );
@@ -41,12 +41,12 @@ CREATE TABLE positions (
 	description VARCHAR(100) UNIQUE NOT NULL
 );
 
-CREATE TABLE staff_stasuses (
+CREATE TABLE staff_statuses (
 	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     description VARCHAR(100) UNIQUE NOT NULL
 );
 
-CREATE TABLE boarding_pass_stasuses (
+CREATE TABLE boarding_pass_statuses (
 	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     description VARCHAR(100) UNIQUE NOT NULL
 );
@@ -83,7 +83,7 @@ CREATE TABLE airplanes (
     range_km SMALLINT UNSIGNED NOT NULL,
     flight_hour_cost DECIMAL(10,2) NOT NULL,
     current_status_id INT UNSIGNED NOT NULL,
-    FOREIGN KEY (current_status_id) REFERENCES airplane_stasuses(id)
+    FOREIGN KEY (current_status_id) REFERENCES airplane_statuses(id)
 );
 
 CREATE TABLE flights (
@@ -97,7 +97,7 @@ CREATE TABLE flights (
     current_status_id INT UNSIGNED NOT NULL,
     route_id INT UNSIGNED NOT NULL,
     airplane_id INT UNSIGNED,
-    FOREIGN KEY (current_status_id) REFERENCES flights_stasuses(id),
+    FOREIGN KEY (current_status_id) REFERENCES flight_statuses(id),
     FOREIGN KEY (route_id) REFERENCES routes(id),
     FOREIGN KEY (airplane_id) REFERENCES airplanes(id)
 );
@@ -107,7 +107,7 @@ CREATE TABLE staff (
     full_name VARCHAR(100) NOT NULL,
     current_status_id INT UNSIGNED NOT NULL,
     current_position_id INT UNSIGNED NOT NULL,
-    FOREIGN KEY (current_status_id) REFERENCES staff_stasuses(id),
+    FOREIGN KEY (current_status_id) REFERENCES staff_statuses(id),
     FOREIGN KEY (current_position_id) REFERENCES positions(id)
 );
 
@@ -132,7 +132,7 @@ CREATE TABLE sales (
     current_status_id INT UNSIGNED NOT NULL,
     flight_id INT UNSIGNED NOT NULL,
     passenger_id INT UNSIGNED NOT NULL,
-    FOREIGN KEY (current_status_id) REFERENCES sale_stasuses(id),
+    FOREIGN KEY (current_status_id) REFERENCES sale_statuses(id),
     FOREIGN KEY (flight_id) REFERENCES flights(id),
     FOREIGN KEY (passenger_id) REFERENCES passengers(id)
 );
@@ -143,7 +143,7 @@ CREATE TABLE boarding_passes (
     boarding_date DATETIME DEFAULT NULL,
     current_status_id INT UNSIGNED NOT NULL,
     sale_id INT UNSIGNED NOT NULL,
-    FOREIGN KEY (current_status_id) REFERENCES boarding_pass_stasuses(id),
+    FOREIGN KEY (current_status_id) REFERENCES boarding_pass_statuses(id),
 	FOREIGN KEY (sale_id) REFERENCES sales(id)
 );
 
