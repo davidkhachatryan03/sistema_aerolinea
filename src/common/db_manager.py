@@ -59,8 +59,8 @@ class DBManager:
         
         try:
             self.cursor.execute(query, valores)
-            resultados: list[tuple] = cast(list[tuple], self.cursor.fetchall())
-            return resultados
+            results: list[tuple] = cast(list[tuple], self.cursor.fetchall())
+            return results
 
         except Exception as e:
             raise DatabaseError(f"SQL error: {e}") from e
