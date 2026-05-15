@@ -51,7 +51,7 @@ class FlightCreated:
         if not isinstance(value, Decimal):
             raise TypeError(f"The type of {value} is not datetime.")
         
-        if value < 0:
+        if value <= 0:
             raise ValueError("The operating cost can not be negative or zero.")
         
         self._operating_cost_usd = value
@@ -65,7 +65,7 @@ class FlightCreated:
         if not isinstance(value, Decimal):
             raise TypeError(f"The type of {value} is not decimal.")
         
-        if value < 0:
+        if value <= 0:
             raise ValueError("The base price can not be negative or zero.")
         
         self._base_price_usd = value
@@ -79,7 +79,7 @@ class FlightCreated:
         if not isinstance(value, int):
             raise TypeError(f"The type of {value} is not int.")
         
-        if value < 0:
+        if value <= 0:
             raise ValueError(f"The current status id can not be negative or zero.")
         
         self._current_status_id = value
@@ -93,7 +93,7 @@ class FlightCreated:
         if not isinstance(value, int):
             raise TypeError(f"The type of {value} is not int.")
         
-        if value < 0:
+        if value <= 0:
             raise ValueError("The route id can not be negative or zero.")
         
         self._route_id = value
@@ -107,7 +107,32 @@ class FlightCreated:
         if not isinstance(value, int):
             raise TypeError(f"The type of {value} is not int.")
         
-        if value < 0:
+        if value <= 0:
             raise ValueError("The airplane id can not be negative or zero.")
         
         self._airplane_id = value
+
+class FlightRetrieved:
+
+    def __init__(self,
+                id: int,
+                scheduled_departure_datetime: datetime,
+                scheduled_arrival_datetime: datetime,
+                actual_departure_datetime: datetime,
+                actual_arrival_datetime: datetime,
+                operating_cost_usd: Decimal,
+                base_price_usd: Decimal,
+                current_status_id: int,
+                route_id: int,
+                airplane_id: int) -> None:
+        
+        self.id = id
+        self.scheduled_departure_datetime = scheduled_departure_datetime
+        self.scheduled_arrival_datetime = scheduled_arrival_datetime
+        self.actual_departure_datetime = actual_departure_datetime
+        self.actual_arrival_datetime = actual_arrival_datetime
+        self.operating_cost_usd = operating_cost_usd
+        self.base_price_usd = base_price_usd
+        self.current_status_id = current_status_id
+        self.route_id = route_id
+        self.airplane_id = airplane_id

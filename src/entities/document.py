@@ -62,6 +62,12 @@ class DocumentCreated:
         if not isinstance(value, str):
             raise TypeError(f"The type of {value} is not str.")
         
+        if not value.strip():
+            raise ValueError("The issue country can not be empty.")
+        
+        if len(value.strip()) != 3:
+            raise ValueError("The issue country must be 3 characters long.")
+        
         self._issue_country = value
 
     @property
@@ -77,6 +83,20 @@ class DocumentCreated:
             raise ValueError("The passenger id can not be negative or zero.")
         
         self._passenger_id = value
+    
+    @property
+    def document_type_id(self) -> int:
+        return self._document_type_id
+    
+    @document_type_id.setter
+    def document_type_id(self, value: int) -> None:
+        if not isinstance(value, int):
+            raise TypeError(f"The type of {value} is not int.")
+        
+        if value <= 0:
+            raise ValueError("The passenger id can not be negative or zero.")
+        
+        self._document_type_id = value
 
 class DocumentRetrieved:
 
@@ -89,6 +109,7 @@ class DocumentRetrieved:
                 passenger_id: int,
                 document_type_id: int) -> None:
         
+        self.id = id
         self.document_number = document_number
         self.valid_from = valid_from
         self.valid_until = valid_until

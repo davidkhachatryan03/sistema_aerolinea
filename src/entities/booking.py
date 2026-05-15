@@ -26,6 +26,9 @@ class BookingCreated:
         if not value.strip():
             raise ValueError("The booking reference can not be empty.")
         
+        if len(value.strip()) != 6:
+            raise ValueError("The booking reference mut be 6 characters long.")
+        
         self._booking_reference = value
 
     @property
@@ -48,7 +51,7 @@ class BookingCreated:
         if not isinstance(value, Decimal):
             raise TypeError(f"The type of {value} is not decimal.")
         
-        if value < 0:
+        if value <= 0:
             raise ValueError("The paid amount can not be negative or zero.")
         
         self._paid_amount_usd = value
@@ -62,7 +65,7 @@ class BookingCreated:
         if not isinstance(value, int):
             raise TypeError(f"The type of {value} is not int.")
         
-        if value < 0:
+        if value <= 0:
             raise ValueError(f"The current status id can not be negative or zero.")
         
         self._current_status_id = value

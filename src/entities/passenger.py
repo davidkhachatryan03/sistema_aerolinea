@@ -29,7 +29,7 @@ class PassengerCreated:
 
     @property
     def email(self) -> str:
-        return self._full_name
+        return self._email
     
     @email.setter
     def email(self, value: str) -> None:
@@ -50,7 +50,10 @@ class PassengerCreated:
         if not isinstance(value, int):
             raise TypeError(f"The type of {value} is not int.")
         
-        if value < 0:
+        if isinstance(value, bool):
+            raise TypeError(f"The type of {value} is not int.")
+        
+        if value <= 0:
             raise ValueError("The phone number can not be negative or zero.")
         
         self._phone_number = value
