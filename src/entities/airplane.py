@@ -24,7 +24,7 @@ class AirplaneCreated:
         return self._tail_number
     
     @tail_number.setter
-    def tail_number(self, value: str):
+    def tail_number(self, value: str) -> None:
         if not isinstance(value, str):
             raise TypeError(f"The type of {value} is not str.")
         
@@ -38,7 +38,7 @@ class AirplaneCreated:
         return self._manufacturer
     
     @manufacturer.setter
-    def manufacturer(self, value: str):
+    def manufacturer(self, value: str) -> None:
         if not isinstance(value, str):
             raise TypeError(f"The type of {value} is not str.")
         
@@ -52,7 +52,7 @@ class AirplaneCreated:
         return self._model 
     
     @model.setter
-    def model(self, value: str):
+    def model(self, value: str) -> None:
         if not isinstance(value, str):
             raise TypeError(f"The type of {value} is not str.")
         
@@ -66,12 +66,12 @@ class AirplaneCreated:
         return self._capacity
     
     @capacity_km.setter
-    def capacity_km(self, value: int):
+    def capacity_km(self, value: int) -> None:
         if not isinstance(value, int):
             raise TypeError(f"The type of {value} is not int.")
         
         if value < 0:
-            raise ValueError(f"Capacity can not be negative or zero.")
+            raise ValueError(f"The capacity can not be negative or zero.")
         
         self._capacity = value
 
@@ -80,12 +80,12 @@ class AirplaneCreated:
         return self._range_km
     
     @range_km.setter
-    def range_km(self, value: int):
+    def range_km(self, value: int) -> None:
         if not isinstance(value, int):
             raise TypeError(f"The type of {value} is not int.")
         
         if value < 0:
-            raise ValueError(f"Range can not be negative or zero.")
+            raise ValueError(f"The range can not be negative or zero.")
         
         self._range_km = value
 
@@ -94,12 +94,12 @@ class AirplaneCreated:
         return self._flight_hour_cost
     
     @flight_hour_cost_usd.setter
-    def flight_hour_cost_usd(self, value: Decimal):
+    def flight_hour_cost_usd(self, value: Decimal) -> None:
         if not isinstance(value, Decimal):
             raise TypeError(f"The type of {value} is not decimal.")
         
         if value < 0:
-            raise ValueError(f"Flight hour cost can not be negative or zero.")
+            raise ValueError(f"The flight hour cost can not be negative or zero.")
         
         self._flight_hour_cost = value
 
@@ -108,12 +108,12 @@ class AirplaneCreated:
         return self._current_status_id
     
     @current_status_id.setter
-    def current_status_id(self, value: int):
+    def current_status_id(self, value: int) -> None:
         if not isinstance(value, int):
             raise TypeError(f"The type of {value} is not int.")
         
         if value < 0:
-            raise ValueError(f"Current status id can not be negative or zero.")
+            raise ValueError(f"The current status id can not be negative or zero.")
         
         self._current_status_id = value
 
