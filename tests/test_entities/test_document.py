@@ -26,7 +26,7 @@ def test_valid_document(valid_document: dict) -> None:
     ("passenger_id", -100, ValueError),
     ("document_type_id", "123", TypeError),
     ("document_type_id", 0, ValueError),
-    ("document_type_id", -100, ValueError)
+    ("document_type_id", -100, ValueError),
 ])
 
 def test_invalid_document(valid_document: dict, field, value, expected_exception) -> None:

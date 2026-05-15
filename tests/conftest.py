@@ -43,3 +43,34 @@ def valid_booking() -> dict:
         "paid_amount_usd": Decimal("5000.25"),
         "current_status_id": 1
     }
+
+@pytest.fixture
+def valid_airplane() -> dict:
+    return {
+        "tail_number": "AB-1234",
+        "manufacturer": "Airbus",
+        "model": "A300-800",
+        "capacity": 126,
+        "range_km": 12000,
+        "flight_hour_cost_usd": Decimal("1300.12"),
+        "current_status_id": 1
+    }
+
+@pytest.fixture
+def valid_boarding_pass() -> dict:
+    return {
+        "issue_datetime": datetime(2026,1,1),
+        "boarding_datetime": datetime(2026,1,1),
+        "current_status_id": 1,
+        "ticket_id": 1
+    }
+
+@pytest.fixture
+def valid_route() -> dict:
+    return {
+        "flight_number": "AB123",
+        "origin": "EZE",
+        "destination": "CDG",
+        "distance_km": 13000,
+        "duration_min": 540
+    }
