@@ -53,12 +53,12 @@ class DBManager:
         except Exception as e:
             raise DatabaseError(f"SQL error: {e} ") from e
     
-    def retrieve(self, query: str, valores: tuple | list | None = None) -> list[tuple]:
+    def retrieve(self, query: str, values: tuple | list | None = None) -> list[tuple]:
         if self.cursor is None:
             raise CursorNotFound("Cursor not found.")
         
         try:
-            self.cursor.execute(query, valores)
+            self.cursor.execute(query, values)
             results: list[tuple] = cast(list[tuple], self.cursor.fetchall())
             return results
 

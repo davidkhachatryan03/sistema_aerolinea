@@ -1,0 +1,1 @@
+from src.core.repositories.booking_repository import BookingRepository

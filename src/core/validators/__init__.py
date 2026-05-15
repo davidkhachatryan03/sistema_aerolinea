@@ -1,0 +1,1 @@
+from src.core.validators.booking_validator import BookingValidator
