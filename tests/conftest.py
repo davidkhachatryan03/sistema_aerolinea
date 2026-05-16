@@ -74,3 +74,14 @@ def valid_route() -> dict:
         "distance_km": 13000,
         "duration_min": 540
     }
+
+@pytest.fixture
+def valid_ticket() -> dict:
+    return {
+        "ticket_number": "1234567890123",
+        "paid_amount_usd": Decimal("1000.13"),
+        "current_status_id": 1,
+        "booking_id": 1,
+        "flight_id": 1,
+        "passenger_id": 1
+    }
