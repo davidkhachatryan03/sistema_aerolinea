@@ -34,6 +34,9 @@ class TicketCreated:
         if len(value) != 13:
             raise ValueError("The ticket number must be exactly 13 characters long.")
         
+        if not value.isnumeric():
+            raise ValueError("The ticket number must only contain digits.")
+        
         self._ticket_number = value
 
     @property

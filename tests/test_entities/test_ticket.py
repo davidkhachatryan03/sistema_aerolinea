@@ -17,6 +17,7 @@ def test_valid_ticket(valid_ticket: dict) -> None:
     ("ticket_number", "   ", ValueError),
     ("ticket_number", "", ValueError),
     ("ticket_number", "123", ValueError),
+    ("ticket_number", "123456789012A", ValueError),
     ("paid_amount_usd", "123", TypeError),
     ("paid_amount_usd", Decimal("0"), ValueError),
     ("paid_amount_usd", Decimal("-100"), ValueError),
