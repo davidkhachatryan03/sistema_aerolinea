@@ -1,4 +1,5 @@
 from repositories import BookingRepository
+from src.entities import BookingCreated
 
 class BookingValidator:
 

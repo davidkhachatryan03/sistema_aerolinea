@@ -1,1 +1,0 @@
-RETRIEVE_BOOKING_REFERENCE = "SELECT * FROM bookings WHERE booking_reference = %s;"
