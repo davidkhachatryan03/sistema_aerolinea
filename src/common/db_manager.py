@@ -15,20 +15,20 @@ class DBManager:
         self.password: str = os.environ["DB_PASS"]
 
     def connect(self) -> None:
-        self.conexion: MySQLConnection = cast(MySQLConnection, mysql.connector.connect(
+        self.connection: MySQLConnection = cast(MySQLConnection, mysql.connector.connect(
             host = self.host,
             port = 3306,
             user = self.user,
             password = self.password
         ))
 
-        if self.conexion.is_connected():
+        if self.connection.is_connected():
             print("Connected.")
-            self.cursor: MySQLCursor = cast(MySQLCursor, self.conexion.cursor)
+            self.cursor: MySQLCursor = cast(MySQLCursor, self.connection.cursor)
     
     def disconnect(self) -> None:
-        if self.conexion and self.cursor:
-            self.conexion.close()
+        if self.connection and self.cursor:
+            self.connection.close()
             self.cursor.close()
             print("Disconnected.")
 
@@ -80,7 +80,7 @@ class DBManager:
 
         try:
             self.cursor.execute(query, values)
-            self.conexion.commit()
+            self.connection.commit()
             return cast(int, self.cursor.lastrowid)
         
         except Exception as e:
