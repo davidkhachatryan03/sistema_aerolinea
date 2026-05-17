@@ -65,9 +65,11 @@ class DBManager:
         except Exception as e:
             raise DatabaseError(f"SQL error: {e}") from e
         
-    def insert_row(self, table_name: str, row: dict) -> None:
+    def insert_row(self, table_name: str, entity) -> int:
         if self.cursor is None:
             raise CursorNotFound("Cursor not found.")
+        
+        row: dict = entity.to_dict()
         
         columns: str = "(" + ",".join(row.keys()) + ")"
         columns_amount: str = "(" + ",".join(["%s"] * len(row)) + ")"
@@ -79,6 +81,7 @@ class DBManager:
         try:
             self.cursor.execute(query, values)
             self.conexion.commit()
+            return cast(int, self.cursor.lastrowid)
         
         except Exception as e:
             raise DatabaseError(f"SQL error: {e}") from e
