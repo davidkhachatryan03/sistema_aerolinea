@@ -10,6 +10,15 @@ def test_valid_route(valid_route: dict) -> None:
     assert route_created.distance_km == valid_route["distance_km"]
     assert route_created.duration_min == valid_route["duration_min"]
 
+def test_valid_route_to_dict(route_created: RouteCreated) -> None:
+    route_dict = route_created.to_dict()
+
+    assert route_created.flight_number == route_dict["flight_number"]
+    assert route_created.origin == route_dict["origin"]
+    assert route_created.destination == route_dict["destination"]
+    assert route_created.distance_km == route_dict["distance_km"]
+    assert route_created.duration_min == route_dict["duration_min"]
+
 @pytest.mark.parametrize("field, value, expected_exception", [
     ("flight_number", 123, TypeError),
     ("flight_number", "   ", ValueError),

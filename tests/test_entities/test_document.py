@@ -11,6 +11,16 @@ def test_valid_document(valid_document: dict) -> None:
     assert document_created.passenger_id == valid_document["passenger_id"]
     assert document_created.document_type_id == valid_document["document_type_id"]
 
+def test_valid_document_to_dict(document_created: DocumentCreated) -> None:
+    document_dict = document_created.to_dict()
+
+    assert document_created.document_number == document_dict["document_number"]
+    assert document_created.valid_from == document_dict["valid_from"]
+    assert document_created.valid_until == document_dict["valid_until"]
+    assert document_created.issue_country == document_dict["issue_country"]
+    assert document_created.passenger_id == document_dict["passenger_id"]
+    assert document_created.document_type_id == document_dict["document_type_id"]
+
 @pytest.mark.parametrize("field, value, expected_exception", [
     ("document_number", 123456, TypeError),
     ("document_number", "   ", ValueError),

@@ -13,6 +13,17 @@ def test_valid_airplane(valid_airplane: dict) -> None:
     assert airplane_created.flight_hour_cost_usd == valid_airplane["flight_hour_cost_usd"]
     assert airplane_created.current_status_id == valid_airplane["current_status_id"]
 
+def test_valid_airplane_to_dict(airplane_created: AirplaneCreated) -> None:
+    airplane_dict = airplane_created.to_dict()
+
+    assert airplane_created.tail_number == airplane_dict["tail_number"]
+    assert airplane_created.manufacturer == airplane_dict["manufacturer"]
+    assert airplane_created.model == airplane_dict["model"]
+    assert airplane_created.capacity == airplane_dict["capacity"]
+    assert airplane_created.range_km == airplane_dict["range_km"]
+    assert airplane_created.flight_hour_cost_usd == airplane_dict["flight_hour_cost_usd"]
+    assert airplane_created.current_status_id == airplane_dict["current_status_id"]
+
 @pytest.mark.parametrize("field, value, expected_exception", [
     ("tail_number", 123, TypeError),
     ("tail_number", "   ", ValueError),

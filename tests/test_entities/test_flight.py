@@ -13,6 +13,17 @@ def test_valid_flight(valid_flight: dict) -> None:
     assert flight_created.route_id == valid_flight["route_id"]
     assert flight_created.airplane_id == valid_flight["airplane_id"]
 
+def test_valid_flight_to_dict(flight_created: FlightCreated) -> None:
+    flight_dict = flight_created.to_dict()
+
+    assert flight_created.scheduled_departure_datetime == flight_dict["scheduled_departure_datetime"]
+    assert flight_created.scheduled_arrival_datetime == flight_dict["scheduled_arrival_datetime"]
+    assert flight_created.operating_cost_usd == flight_dict["operating_cost_usd"]
+    assert flight_created.base_price_usd == flight_dict["base_price_usd"]
+    assert flight_created.current_status_id == flight_dict["current_status_id"]
+    assert flight_created.route_id == flight_dict["route_id"]
+    assert flight_created.airplane_id == flight_dict["airplane_id"]
+
 @pytest.mark.parametrize("field, value, expected_exception", [
     ("scheduled_departure_datetime", 123, TypeError),
     ("scheduled_arrival_datetime", 123, TypeError),

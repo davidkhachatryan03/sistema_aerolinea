@@ -1,6 +1,7 @@
 import pytest
 from datetime import datetime, date
 from decimal import Decimal
+from src.entities import *
 
 @pytest.fixture
 def valid_passenger() -> dict:
@@ -11,6 +12,11 @@ def valid_passenger() -> dict:
         "is_blacklisted": False,
         "is_vip": True
     }
+
+@pytest.fixture
+def passenger_created(valid_passenger: dict) -> PassengerCreated:
+    passenger_created = PassengerCreated(**valid_passenger)
+    return passenger_created
 
 @pytest.fixture
 def valid_flight() -> dict:
@@ -25,6 +31,11 @@ def valid_flight() -> dict:
     }
 
 @pytest.fixture
+def flight_created(valid_flight: dict) -> FlightCreated:
+    flight_created = FlightCreated(**valid_flight)
+    return flight_created
+
+@pytest.fixture
 def valid_document() -> dict:
     return {
         "document_number": "ABC123456",
@@ -36,6 +47,11 @@ def valid_document() -> dict:
     }
 
 @pytest.fixture
+def document_created(valid_document: dict) -> DocumentCreated:
+    document_created = DocumentCreated(**valid_document)
+    return document_created
+
+@pytest.fixture
 def valid_booking() -> dict:
     return {
         "booking_reference": "ABC123",
@@ -43,6 +59,11 @@ def valid_booking() -> dict:
         "paid_amount_usd": Decimal("5000.25"),
         "current_status_id": 1
     }
+
+@pytest.fixture
+def booking_created(valid_booking: dict) -> BookingCreated:
+    booking_created = BookingCreated(**valid_booking)
+    return booking_created
 
 @pytest.fixture
 def valid_airplane() -> dict:
@@ -57,6 +78,11 @@ def valid_airplane() -> dict:
     }
 
 @pytest.fixture
+def airplane_created(valid_airplane: dict) -> AirplaneCreated:
+    airplane_created = AirplaneCreated(**valid_airplane)
+    return airplane_created
+
+@pytest.fixture
 def valid_boarding_pass() -> dict:
     return {
         "issue_datetime": datetime(2026,1,1),
@@ -64,6 +90,11 @@ def valid_boarding_pass() -> dict:
         "current_status_id": 1,
         "ticket_id": 1
     }
+
+@pytest.fixture
+def boarding_pass_created(valid_boarding_pass: dict) -> BoardingPassCreated:
+    boarding_pass_created = BoardingPassCreated(**valid_boarding_pass)
+    return boarding_pass_created
 
 @pytest.fixture
 def valid_route() -> dict:
@@ -76,6 +107,11 @@ def valid_route() -> dict:
     }
 
 @pytest.fixture
+def route_created(valid_route: dict) -> RouteCreated:
+    route_created = RouteCreated(**valid_route)
+    return route_created
+
+@pytest.fixture
 def valid_ticket() -> dict:
     return {
         "ticket_number": "1234567890123",
@@ -85,3 +121,8 @@ def valid_ticket() -> dict:
         "flight_id": 1,
         "passenger_id": 1
     }
+
+@pytest.fixture
+def ticket_created(valid_ticket: dict) -> TicketCreated:
+    ticket_created = TicketCreated(**valid_ticket)
+    return ticket_created

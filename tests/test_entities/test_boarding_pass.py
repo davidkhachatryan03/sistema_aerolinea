@@ -9,6 +9,14 @@ def test_valid_boarding_pass(valid_boarding_pass: dict) -> None:
     assert boarding_pass_created.current_status_id == valid_boarding_pass["current_status_id"]
     assert boarding_pass_created.ticket_id == valid_boarding_pass["ticket_id"]
 
+def test_valid_boarding_pass_to_dict(boarding_pass_created: BoardingPassCreated) -> None:
+    boarding_pass_dict = boarding_pass_created.to_dict()
+
+    assert boarding_pass_created.issue_datetime == boarding_pass_dict["issue_datetime"]
+    assert boarding_pass_created.boarding_datetime == boarding_pass_dict["boarding_datetime"]
+    assert boarding_pass_created.current_status_id == boarding_pass_dict["current_status_id"]
+    assert boarding_pass_created.ticket_id == boarding_pass_dict["ticket_id"]
+
 @pytest.mark.parametrize("field, value, expected_exception", [
     ("issue_datetime", 123, TypeError),
     ("boarding_datetime", 123, TypeError),

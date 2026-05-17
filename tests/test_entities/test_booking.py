@@ -10,6 +10,14 @@ def test_valid_booking(valid_booking: dict) -> None:
     assert booking_created.paid_amount_usd == valid_booking["paid_amount_usd"]
     assert booking_created.current_status_id == valid_booking["current_status_id"]
 
+def test_valid_booking_to_dict(booking_created: BookingCreated) -> None:
+    boarding_pass_dict = booking_created.to_dict()
+
+    assert booking_created.booking_reference == boarding_pass_dict["booking_reference"]
+    assert booking_created.booking_datetime == boarding_pass_dict["booking_datetime"]
+    assert booking_created.paid_amount_usd == boarding_pass_dict["paid_amount_usd"]
+    assert booking_created.current_status_id == boarding_pass_dict["current_status_id"]
+
 @pytest.mark.parametrize("field, value, expected_exception", [
     ("booking_reference", 123, TypeError),
     ("booking_reference", "   ", ValueError),
