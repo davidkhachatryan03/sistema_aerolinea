@@ -14,6 +14,19 @@ class DBManager:
         self.user: str = os.environ["DB_USER"]
         self.password: str = os.environ["DB_PASS"]
 
+    def __enter__(self):
+        self.connect()
+        return self
+
+    def __exit__(self, exception_type, exception_value , exception_traceback):
+        if self.connection and self.connection.is_connected():
+            if exception_type is not None:
+                self.connection.rollback()
+            else:
+                self.connection.commit()
+            
+            self.disconnect()
+
     def connect(self) -> None:
         self.connection: MySQLConnection = cast(MySQLConnection, mysql.connector.connect(
             host = self.host,
@@ -37,7 +50,7 @@ class DBManager:
             self.cursor.execute("USE {}".format(database_name))
         
         except Exception as e:
-            raise DatabaseError(f"SQL error: {e}") from e
+            raise DatabaseError(f"The selected database does not exist.") from e
 
     def execute_sql_file(self, route: str) -> None:
         if not self.connection.is_connected():
@@ -47,15 +60,14 @@ class DBManager:
             with open(route, "r", encoding="utf-8") as f:
                 lines: list[str] = f.read().split(";")
 
+            for line in lines:
+                self.cursor.execute(line)
+
         except FileNotFoundError as e:
             raise SQLFileNotFound("SQL file not found.") from e
         
         except PermissionError as e:
             raise DatabaseError("Access to file is not granted.") from e
-
-        try:
-            for line in lines:
-                self.cursor.execute(line)
 
         except Exception as e:
             raise DatabaseError(f"SQL error: {e} ") from e
@@ -72,25 +84,28 @@ class DBManager:
             return results[0]
 
         except Exception as e:
+            self.disconnect()
             raise DatabaseError(f"SQL error: {e}") from e
         
     def insert_row(self, table_name: str, entity) -> int:
         if not self.connection.is_connected():
             raise NoConnection("Connection not found.")
         
-        row: dict = entity.to_dict()
-        
-        columns: str = "(" + ",".join(row.keys()) + ")"
-        columns_amount: str = "(" + ",".join(["%s"] * len(row)) + ")"
-
-        values: list = list(row.values())
-
-        query = "INSERT INTO {} {} VALUES {}".format(table_name, columns, columns_amount)
-
         try:
+            row: dict = entity.to_dict()
+            
+            columns: str = "(" + ",".join(row.keys()) + ")"
+            columns_amount: str = "(" + ",".join(["%s"] * len(row)) + ")"
+
+            values: list = list(row.values())
+
+            query = "INSERT INTO {} {} VALUES {}".format(table_name, columns, columns_amount)
+
             self.cursor.execute(query, values)
-            self.connection.commit()
             return cast(int, self.cursor.lastrowid)
+        
+        except AttributeError as e:
+            raise ValueError("The entity has not to_dict method.") from e
         
         except Exception as e:
             raise DatabaseError(f"SQL error: {e}") from e
