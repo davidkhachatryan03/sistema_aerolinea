@@ -1,8 +1,8 @@
-from src.entities.booking import BookingCreated, BookingRetrieved
+from src.entities.booking import Booking
 from src.entities.airplane import AirplaneCreated, AirplaneRetrieved
-from src.entities.boarding_pass import BoardingPassCreated, BoardingPassRetrieved
-from src.entities.document import DocumentCreated, DocumentRetrieved
-from src.entities.flight import FlightCreated, FlightRetrieved
-from src.entities.passenger import PassengerCreated, PassengerRetrieved
+from src.entities.boarding_pass import BoardingPass
+from src.entities.document import Document
+from src.entities.flight import Flight
+from src.entities.passenger import Passenger
 from src.entities.route import RouteCreated, RouteRetrieved
-from src.entities.ticket import TicketCreated, TicketRetrieved
+from src.entities.ticket import Ticket
