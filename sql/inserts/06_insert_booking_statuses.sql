@@ -1,10 +1,10 @@
 USE airline;
 
 SET FOREIGN_KEY_CHECKS = 0;
-TRUNCATE TABLE sale_stasuses;
+TRUNCATE TABLE booking_statuses;
 SET FOREIGN_KEY_CHECKS = 1;
 
-INSERT INTO sale_stasuses (description) VALUES
+INSERT INTO booking_statuses (description) VALUES
 ("Paid"),
 ("Refunded"),
 ("Booked"),
