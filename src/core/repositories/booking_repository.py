@@ -30,7 +30,8 @@ class BookingRepository:
     
     def retrieve_paid_amount_usd(self, flight_id: UUID) -> Decimal:
         query = """
-                SELECT  r.distance_km, a.flight_hour_cost_usd
+                SELECT  r.distance_km, 
+                        a.flight_hour_cost_usd
                 FROM    flight f
                 JOIN    route r
                 ON      f.route_id = r.id
