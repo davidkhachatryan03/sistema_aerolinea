@@ -8,7 +8,7 @@ class Passenger:
                 full_name: str,
                 birth_date: date,
                 email: str,
-                phone_number: int,
+                phone_number: str,
                 is_blacklisted: bool,
                 is_vip: bool) -> None:
         
@@ -85,15 +85,15 @@ class Passenger:
         return self._phone_number
 
     @phone_number.setter
-    def phone_number(self, value: int) -> None:
+    def phone_number(self, value: str) -> None:
         if not isinstance(value, int):
-            raise TypeError(f"The type of {value} is not int.")
+            raise TypeError(f"The type of {value} is not str.")
         
-        if isinstance(value, bool):
-            raise TypeError(f"The type of {value} is not int.")
+        if not value:
+            raise ValueError("The phone number can not be empty.")
         
-        if value <= 0:
-            raise ValueError("The phone number can not be negative or zero.")
+        if len(value) > 20:
+            raise ValueError("The full name must be 20 characters long or less.")
         
         self._phone_number = value
     

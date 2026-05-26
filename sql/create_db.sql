@@ -17,7 +17,7 @@ CREATE TABLE passengers (
     full_name VARCHAR(100) NOT NULL,
     birth_date DATE NOT NULL,
     email VARCHAR(100) NOT NULL,
-    phone_number INT NOT NULL,
+    phone_number VARCHAR(20) NOT NULL,
     is_blacklisted BOOLEAN NOT NULL,
     is_vip BOOLEAN NOT NULL
 ); 
