@@ -1,1 +1,2 @@
 from src.core.validators.booking_validator import BookingValidator
+from src.core.validators.passenger_validator import PassengerValidator
