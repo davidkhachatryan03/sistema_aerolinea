@@ -15,6 +15,7 @@ CREATE TABLE routes (
 CREATE TABLE passengers (
 	id BINARY(16) PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
+    birth_date DATE NOT NULL,
     email VARCHAR(100) NOT NULL,
     phone_number INT NOT NULL,
     is_blacklisted BOOLEAN NOT NULL,
