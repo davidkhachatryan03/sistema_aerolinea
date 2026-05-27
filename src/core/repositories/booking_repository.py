@@ -12,12 +12,11 @@ class BookingRepository:
         self.table_tickets = "tickets"
     
     def insert_booking(self, booking_created: Booking, tickets_created: list[Ticket]) -> None:
-        with self.db_manager:
-            self.db_manager.insert_row(self.table_bookings, booking_created)
+        self.db_manager.insert_row(self.table_bookings, booking_created)
 
-            for ticket_created in tickets_created:
-                self.db_manager.insert_row(self.table_tickets, ticket_created)
-    
+        for ticket_created in tickets_created:
+            self.db_manager.insert_row(self.table_tickets, ticket_created)
+
     def retrieve_passenger(self, passenger_id: UUID) -> Passenger:
         result = Passenger(*self.db_manager.retrieve("SELECT * FROM passengers WHERE id = %s", (passenger_id,))[0])
 
