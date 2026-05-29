@@ -97,23 +97,23 @@ class DBManager:
             self.disconnect()
             raise DatabaseError(f"SQL error: {e}") from e
         
-    def insert_row(self, table_name: str, entity) -> int:
+    def insert_rows(self, table_name: str, entities: list) -> int:
         if not self.connection.is_connected():
             raise NoConnection("Connection not found.")
         
         try:
-            row: dict = entity.to_dict()
+            row: dict = entities[0].to_dict()
             
             columns: str = "(" + ",".join(row.keys()) + ")"
             columns_amount: str = "(" + ",".join(["%s"] * len(row)) + ")"
 
-            values: list = list(row.values())
-            values_formatted: list = self.uuid_to_bytes(values)
+            values: list[list] = [list(entity.to_dict().values()) for entity in entities]
+            values_formatted: list[list] = [self.uuid_to_bytes(value) for value in values]
 
             query = "INSERT INTO {} {} VALUES {}".format(table_name, columns, columns_amount)
 
-            self.cursor.execute(query, values_formatted)
-            return cast(int, self.cursor.lastrowid)
+            self.cursor.executemany(query, values_formatted)
+            return cast(int, self.cursor.rowcount)
         
         except AttributeError as e:
             raise ValueError("The entity has not to_dict method.") from e
