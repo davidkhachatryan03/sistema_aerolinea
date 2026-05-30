@@ -19,6 +19,5 @@ class BookingRequest(BaseModel):
 class BookingResponse(BaseModel):
     booking_reference: str
     tickets: list[str]
-    booking_datetime: datetime
+    booking_datetime: datetime = datetime.now()
     paid_amount_usd: Decimal
-    current_status_id: int

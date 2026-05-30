@@ -1,8 +1,9 @@
 from src.core.units_of_work import CreateBookingUoW
 from src.core.validators import FlightValidator
-from src.entities import Flight, Document, Passenger, Booking
+from src.entities import Flight, Document, Passenger, Booking, Ticket
 from src.api.schemas import BookingRequest, BookingResponse, PassengerRequest
 from uuid import UUID
+from decimal import Decimal
 
 class CreateBooking:
 
@@ -27,14 +28,38 @@ class CreateBooking:
 
             passengers_not_in_db: list[Passenger]
             documents_not_in_db: list[Document]
-            all_passengers: list[UUID]
+            all_passengers_id: list[UUID]
 
-            passengers_not_in_db, documents_not_in_db, all_passengers = self._process_passengers_and_documents(passengers_requested, documents_retrieved)
+            passengers_not_in_db, documents_not_in_db, all_passengers_id = self._process_passengers_and_documents(passengers_requested, documents_retrieved)
 
             self.uow.passenger_repository.insert_passengers(passengers_not_in_db)
             self.uow.document_repository.insert_documents(documents_not_in_db)
 
+            paid_amount_usd: Decimal = self._calculate_paid_amount_usd(flights_retrieved, len(all_passengers_id))
 
+            booking_created = Booking.new_booking(paid_amount_usd)
+
+            self.uow.booking_repository.insert_booking(booking_created)
+
+            tickets_created: list[Ticket] = []
+            for passenger_id in all_passengers_id:
+                for flight in flights_retrieved: 
+                    ticket_created = Ticket.new_ticket(
+                        paid_amount_usd=flight.base_price_usd,
+                        booking_id=booking_created.id,
+                        flight_id=flight.id,
+                        passenger_id=passenger_id
+                    )
+                    
+                    tickets_created.append(ticket_created)
+
+            self.uow.ticket_repository.insert_tickets(tickets_created)
+
+            return BookingResponse(
+                booking_reference=booking_created.booking_reference,
+                tickets=[ticket.ticket_number for ticket in tickets_created],
+                paid_amount_usd=paid_amount_usd
+            )
 
     def _process_passengers_and_documents(self, passengers_requested: list[PassengerRequest], documents_retrieved: list[Document]) -> tuple[list[Passenger], list[Document], list[UUID]]:
         passengers_not_in_db: list[Passenger] = []
@@ -45,27 +70,21 @@ class CreateBooking:
         for passenger in passengers_requested:
             if (passenger.document_number, passenger.valid_from, passenger.valid_until, passenger.issue_country, passenger.document_type_id) not in dict_documents_retrieved:
 
-                values = {
-                    "full_name": passenger.full_name,
-                    "birth_date": passenger.birth_date,
-                    "email": passenger.email,
-                    "phone_number": passenger.phone_number,
-                    "is_blacklisted": False,
-                    "is_vip": False
-                }
+                passenger_not_in_db = Passenger.new_passenger(
+                    full_name=passenger.full_name,
+                    birth_date=passenger.birth_date,
+                    email=passenger.email,
+                    phone_number=passenger.phone_number
+                )
 
-                passenger_not_in_db = Passenger.new_passenger(**values)
-
-                values = {
-                    "document_number": passenger.document_number,
-                    "valid_from": passenger.valid_from,
-                    "valid_until": passenger.valid_until,
-                    "issue_country": passenger.issue_country,
-                    "passenger_id": passenger_not_in_db.id,
-                    "document_type_id": passenger.document_type_id
-                }
-
-                document_not_in_db = Document.new_document(**values)
+                document_not_in_db = Document.new_document(
+                    document_number=passenger.document_number,
+                    valid_from=passenger.valid_from,
+                    valid_until=passenger.valid_until,
+                    issue_country=passenger.issue_country,
+                    passenger_id=passenger_not_in_db.id,
+                    document_type_id=passenger.document_type_id
+                )
 
                 passengers_not_in_db.append(passenger_not_in_db)
                 all_passengers_id.append(passenger_not_in_db.id)
@@ -76,3 +95,8 @@ class CreateBooking:
                 all_passengers_id.append(dict_documents_retrieved[(passenger.document_number, passenger.valid_from, passenger.valid_until, passenger.issue_country, passenger.document_type_id)])
 
         return passengers_not_in_db, documents_not_in_db, all_passengers_id
+
+    def _calculate_paid_amount_usd(self, flights: list[Flight], number_of_passengers: int) -> Decimal:
+        paid_amount_usd: Decimal = sum([flight.base_price_usd for flight in flights], Decimal("0")) * number_of_passengers
+
+        return paid_amount_usd
