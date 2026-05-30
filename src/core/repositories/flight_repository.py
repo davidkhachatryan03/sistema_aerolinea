@@ -1,6 +1,7 @@
 from src.common import DBManager
 from src.entities import Flight
 from uuid import UUID
+from decimal import Decimal
 
 class FlightRepository:
 
@@ -21,7 +22,9 @@ class FlightRepository:
                 IN      ({})
                 """.format(placeholders)
         
-        result: list[tuple] = self.db_manager.retrieve(query, flights_id)
+        values = flights_id
+
+        result: list[tuple] = self.db_manager.retrieve(query, values)
 
         if result:
             return [Flight(*row) for row in result]
@@ -32,7 +35,7 @@ class FlightRepository:
         if not flights:
             return []
         
-        placeholders = "(" + "".join(["%s" * len(flights)]) + ")"
+        placeholders = "".join(["%s" * len(flights)])
 
         query = """
                 SELECT      f.id, 
@@ -49,8 +52,31 @@ class FlightRepository:
                             a.capacity;
                 """.format(placeholders)
         
-        flights_id: list[UUID] = [flight.id for flight in flights]
-        result: list[tuple[UUID, int]] = self.db_manager.retrieve(query, flights_id)
+        values: list[UUID] = [flight.id for flight in flights]
+
+        result: list[tuple[UUID, int]] = self.db_manager.retrieve(query, values)
+
+        if result:
+            return result
+        
+        return []
+    
+    def retrieve_flights_prices(self, flights: list[Flight]) -> list[Decimal]:
+        if not flights:
+            return []
+        
+        placeholders = "".join(["%s" * len(flights)])
+
+        query = """
+                SELECT  base_price_usd
+                FROM    flights
+                WHERE   id
+                IN      ({})    
+                """.format(placeholders)
+        
+        values: list[UUID] = [flight.id for flight in flights]
+
+        result: list[Decimal] = self.db_manager.retrieve(query, values)
 
         if result:
             return result
