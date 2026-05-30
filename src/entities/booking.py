@@ -1,6 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
 from uuid import UUID
+import uuid6, string, random
 
 class Booking:
 
@@ -92,3 +93,18 @@ class Booking:
             "paid_amount_usd": self.paid_amount_usd,
             "current_status_id": self.current_status_id
         } 
+    
+    @classmethod
+    def new_booking(cls, paid_amount_usd: Decimal) -> 'Booking':
+        return cls(
+            id=uuid6.uuid7(),
+            booking_reference=cls._generate_reference(),
+            booking_datetime=datetime.now(),
+            paid_amount_usd=paid_amount_usd,
+            current_status_id=1 
+        )
+    
+    @staticmethod
+    def _generate_reference() -> str:
+        chars = string.ascii_uppercase + string.digits
+        return ''.join(random.choices(chars, k=6))

@@ -1,5 +1,6 @@
 from decimal import Decimal
 from uuid import UUID
+import uuid6, random, string
 
 class Ticket:
 
@@ -124,3 +125,22 @@ class Ticket:
             "flight_id": self.flight_id,
             "passenger_id": self.passenger_id
         }
+    
+    @classmethod
+    def new_ticket(cls, paid_amount_usd: Decimal, booking_id: UUID, flight_id: UUID, passenger_id: UUID) -> 'Ticket':
+        return cls(
+            id=uuid6.uuid7(),
+            ticket_number=cls._generate_ticket_number(),
+            paid_amount_usd=paid_amount_usd,
+            current_status_id=1,
+            booking_id=booking_id,
+            flight_id=flight_id,
+            passenger_id=passenger_id
+        )
+    
+    @staticmethod
+    def _generate_ticket_number() -> str:
+        first_digit = str(random.randint(1, 9))
+        rest_digits = ''.join(random.choices(string.digits, k=12))
+        
+        return first_digit + rest_digits

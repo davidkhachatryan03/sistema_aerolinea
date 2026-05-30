@@ -131,13 +131,13 @@ class Passenger:
         }
     
     @classmethod
-    def new_passenger(cls, values: dict) -> "Passenger":
+    def new_passenger(cls, full_name: str, birth_date: date, email: str, phone_number: str) -> "Passenger":
         return cls(
             id=uuid6.uuid7(), 
-            full_name=values["full_name"],
-            birth_date=values["birth_date"],
-            email=values["email"],
-            phone_number=values["phone_number"],
-            is_blacklisted=values.get("is_blacklisted", False), 
-            is_vip=values.get("is_vip", False)
+            full_name=full_name,
+            birth_date=birth_date,
+            email=email,
+            phone_number=phone_number,
+            is_blacklisted=False, 
+            is_vip=False
         )

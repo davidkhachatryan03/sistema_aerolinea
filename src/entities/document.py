@@ -127,13 +127,13 @@ class Document:
         }
     
     @classmethod
-    def new_document(cls, values: dict) -> "Document":
+    def new_document(cls, document_number: str, valid_from: date, valid_until: date, issue_country: str, passenger_id: UUID, document_type_id: int) -> "Document":
         return cls(
             id=uuid6.uuid7(), 
-            document_number=values["document_number"],
-            valid_from=values["valid_from"],
-            valid_until=values["valid_until"],
-            issue_country=values["issue_country"],
-            passenger_id=values["passenger_id"],
-            document_type_id=values["document_type_id"]
+            document_number=document_number,
+            valid_from=valid_from,
+            valid_until=valid_until,
+            issue_country=issue_country,
+            passenger_id=passenger_id,
+            document_type_id=document_type_id
         )
