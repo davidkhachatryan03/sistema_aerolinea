@@ -1,9 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from src.api.schemas.booking_schema import BookingRequest, BookingResponse
-from src.core.validators.flight_validator import FlightValidator
+from src.core.validators import FlightValidator, PassengerValidator
 from src.common import DBManager
-from src.common.exceptions import InvalidFlightId, InvalidPassengerId, InvalidPassengerBlacklisted, InvalidPaidAmountUsd
-from src.core.use_cases import CreateBooking
+from src.core.use_cases import CreateBooking, PassengerProcessor
 from src.core.units_of_work import CreateBookingUoW
 
 router = APIRouter(prefix="/api/bookings", tags=["Bookings"])
@@ -12,8 +11,10 @@ router = APIRouter(prefix="/api/bookings", tags=["Bookings"])
 def create_booking(booking_request: BookingRequest):
 
     db_manager = DBManager()
+    passenger_processor = PassengerProcessor()
     flight_validator = FlightValidator()
-    booking_creator = CreateBooking(CreateBookingUoW(db_manager), flight_validator)
+    passenger_validator = PassengerValidator()
+    booking_creator = CreateBooking(CreateBookingUoW(db_manager), passenger_processor, flight_validator, passenger_validator)
 
     booking_response: BookingResponse = booking_creator.execute(booking_request)
 
