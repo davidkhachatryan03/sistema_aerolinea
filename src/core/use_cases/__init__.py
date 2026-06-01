@@ -1,1 +1,1 @@
-from src.core.use_cases.create_booking import CreateBooking
+from src.core.use_cases.create_booking import CreateBooking, PassengerProcessor
