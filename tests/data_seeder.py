@@ -78,15 +78,11 @@ class DataSeeder:
 
             operating_cost_usd: Decimal = airplane.flight_hour_cost_usd * (Decimal(route.duration_min) / Decimal("60")).quantize(Decimal("0.01"), ROUND_HALF_UP)
 
-            flight = Flight(
-                id=uuid6.uuid7(),
+            flight = Flight.new_flight(
                 scheduled_departure_datetime=scheduled_departure_datetime,
                 scheduled_arrival_datetime=scheduled_arrival_datetime,
-                actual_departure_datetime=None,
-                actual_arrival_datetime=None,
                 operating_cost_usd=operating_cost_usd,
-                base_price_usd=(operating_cost_usd * Decimal("1.30")).quantize(Decimal("0.01"), ROUND_HALF_UP),
-                current_status_id=1,
+                base_price_usd=(operating_cost_usd * Decimal("1.3")).quantize(Decimal("0.01"), ROUND_HALF_UP),
                 route_id=route.id,
                 airplane_id=airplane.id
             )

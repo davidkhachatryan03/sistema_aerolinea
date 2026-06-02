@@ -82,12 +82,12 @@ class Passenger:
         self._email = value
 
     @property
-    def phone_number(self) -> int:
+    def phone_number(self) -> str:
         return self._phone_number
 
     @phone_number.setter
     def phone_number(self, value: str) -> None:
-        if not isinstance(value, int):
+        if not isinstance(value, str):
             raise TypeError(f"The type of {value} is not str.")
         
         if not value:
@@ -124,6 +124,7 @@ class Passenger:
         return {
             "id": self.id,
             "full_name": self.full_name,
+            "birth_date": self.birth_date,
             "email": self.email,
             "phone_number": self.phone_number,
             "is_blacklisted": self.is_blacklisted,

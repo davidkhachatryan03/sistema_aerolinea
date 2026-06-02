@@ -25,8 +25,8 @@ class RouteCreated:
         if not value.strip():
             raise ValueError("The flight number can not be empty.")
 
-        if len(value.strip()) != 5:
-            raise ValueError("The origin must be 5 characters long.")
+        if len(value.strip()) != 6:
+            raise ValueError("The flight number must be 6 characters long.")
                 
         self._flight_number = value
     

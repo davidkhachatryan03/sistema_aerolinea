@@ -18,6 +18,7 @@ class DBManager:
 
     def __enter__(self):
         self.connect()
+        self.connection.autocommit = False
         return self
 
     def __exit__(self, exception_type, exception_value, exception_traceback):
@@ -57,12 +58,14 @@ class DBManager:
                 lines: list[str] = f.read().split(";")
 
             for line in lines:
-                self.cursor.execute(line)
+                if line.strip() != "":
+                    self.cursor.execute(line)
 
         except FileNotFoundError as e:
             raise InexistentSQLFile from e
 
         except Exception as e:
+            print(route)
             raise DatabaseError(e) from e
     
     def retrieve(self, query: str, values: tuple | list = ()) -> list:
@@ -80,8 +83,9 @@ class DBManager:
 
             if len(rows[0]) == 1:
                 result: list = [rows[i][0] for i in range(len(rows))]
+                return self.bytes_to_uuid(result)
 
-            return self.bytes_to_uuid(result)
+            return self.bytes_to_uuid(rows)
 
         except Exception as e:
             raise DatabaseError(e) from e
