@@ -65,7 +65,6 @@ class DBManager:
             raise InexistentSQLFile from e
 
         except Exception as e:
-            print(route)
             raise DatabaseError(e) from e
     
     def retrieve(self, query: str, values: tuple | list = ()) -> list:
