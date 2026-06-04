@@ -1,4 +1,4 @@
-from src.common.exceptions import InvalidFlightId, FullFlight, NotProgrammedFlight
+from src.common.exceptions import InvalidFlightId, FullFlight, NotScheduledFlight
 from uuid import UUID
 from src.entities import Flight
 
@@ -6,6 +6,10 @@ class FlightValidator:
 
     def check_flights_existence(self, flights_requested: list[UUID], flights_retrieved: list[Flight]) -> None:
         set_flights_requested = set(flights_requested)
+
+        if not flights_retrieved:
+            raise InvalidFlightId
+
         for flight in flights_retrieved:
             if flight.id not in set_flights_requested:
                 raise InvalidFlightId
@@ -17,4 +21,5 @@ class FlightValidator:
             
     def check_flights_statuses(self, flights_retrieved: list[Flight]) -> None:
         for flight in flights_retrieved:
-            raise NotProgrammedFlight
+            if flight.current_status_id != 1: 
+                raise NotScheduledFlight
