@@ -1,5 +1,5 @@
 from datetime import datetime
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 from uuid import UUID
 import uuid6
 
@@ -35,7 +35,7 @@ class Flight:
     @id.setter
     def id(self, value: UUID) -> None:
         if not isinstance(value, UUID):
-            raise TypeError(f"The type of {value} is not UUID.")
+            raise TypeError("The type of the id is not UUID.")
         
         self._id = value
 
@@ -45,8 +45,8 @@ class Flight:
     
     @scheduled_departure_datetime.setter
     def scheduled_departure_datetime(self, value: datetime) -> None:
-        if value is not None and not isinstance(value, datetime):
-            raise TypeError(f"The type of {value} must be datetime or none.")
+        if not isinstance(value, datetime):
+            raise TypeError("The type of the scheduled departure datetime must be datetime or none.")
         
         self._scheduled_departure_datetime = value
 
@@ -56,8 +56,8 @@ class Flight:
     
     @scheduled_arrival_datetime.setter
     def scheduled_arrival_datetime(self, value: datetime) -> None:
-        if value is not None and not isinstance(value, datetime):
-            raise TypeError(f"The type of {value} must be datetime or none.")
+        if not isinstance(value, datetime):
+            raise TypeError("The type of the scheduled arrival datetime must be datetime or none.")
         
         self._scheduled_arrival_datetime = value
 
@@ -68,7 +68,7 @@ class Flight:
     @actual_departure_datetime.setter
     def actual_departure_datetime(self, value: datetime | None) -> None:
         if value is not None and not isinstance(value, datetime):
-            raise TypeError(f"The type of {value} must be datetime or none.")
+            raise TypeError("The type of the actual departure datetime must be datetime or none.")
         
         self._actual_departure_datetime = value
 
@@ -79,7 +79,7 @@ class Flight:
     @actual_arrival_datetime.setter
     def actual_arrival_datetime(self, value: datetime | None) -> None:
         if value is not None and not isinstance(value, datetime):
-            raise TypeError(f"The type of {value} must be datetime or none.")
+            raise TypeError("The type of the actual arrival datetime must be datetime or none.")
         
         self._actual_arrival_datetime = value
 
@@ -90,7 +90,7 @@ class Flight:
     @operating_cost_usd.setter
     def operating_cost_usd(self, value: Decimal) -> None:
         if not isinstance(value, Decimal):
-            raise TypeError(f"The type of {value} is not datetime.")
+            raise TypeError("The type of the operating cost is not datetime.")
         
         if value <= 0:
             raise ValueError("The operating cost can not be negative or zero.")
@@ -104,7 +104,7 @@ class Flight:
     @base_price_usd.setter
     def base_price_usd(self, value: Decimal) -> None:
         if not isinstance(value, Decimal):
-            raise TypeError(f"The type of {value} is not decimal.")
+            raise TypeError("The type of the base price is not decimal.")
         
         if value <= 0:
             raise ValueError("The base price can not be negative or zero.")
@@ -118,10 +118,10 @@ class Flight:
     @current_status_id.setter
     def current_status_id(self, value: int) -> None:
         if not isinstance(value, int):
-            raise TypeError(f"The type of {value} is not int.")
+            raise TypeError("The type of the current status id is not int.")
         
         if value <= 0:
-            raise ValueError(f"The current status id can not be negative or zero.")
+            raise ValueError("The current status id can not be negative or zero.")
         
         self._current_status_id = value
 
@@ -132,7 +132,7 @@ class Flight:
     @route_id.setter
     def route_id(self, value: int) -> None:
         if not isinstance(value, int):
-            raise TypeError(f"The type of {value} is not int.")
+            raise TypeError("The type of the route id is not int.")
         
         if value <= 0:
             raise ValueError("The route id can not be negative or zero.")
@@ -146,7 +146,7 @@ class Flight:
     @airplane_id.setter
     def airplane_id(self, value: int) -> None:
         if not isinstance(value, int):
-            raise TypeError(f"The type of {value} is not int.")
+            raise TypeError("The type of the airplane id is not int.")
         
         if value <= 0:
             raise ValueError("The airplane id can not be negative or zero.")
@@ -172,7 +172,6 @@ class Flight:
                 scheduled_departure_datetime: datetime, 
                 scheduled_arrival_datetime: datetime,
                 operating_cost_usd: Decimal,
-                base_price_usd: Decimal,
                 route_id: int,
                 airplane_id: int) -> 'Flight':
         
@@ -183,8 +182,12 @@ class Flight:
             actual_departure_datetime=None,
             actual_arrival_datetime=None,
             operating_cost_usd=operating_cost_usd,
-            base_price_usd=base_price_usd,
+            base_price_usd=cls._calculate_base_price_usd(operating_cost_usd),
             current_status_id=1,
             route_id=route_id,
             airplane_id=airplane_id
         )
+    
+    @staticmethod
+    def _calculate_base_price_usd(operating_cost_usd: Decimal) -> Decimal:
+        return (operating_cost_usd * Decimal("1.30")).quantize(Decimal("0.01"), ROUND_HALF_UP)

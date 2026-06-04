@@ -25,7 +25,7 @@ class Booking:
     @id.setter
     def id(self, value: UUID) -> None:
         if not isinstance(value, UUID):
-            raise TypeError(f"The type of {value} is not UUID.")
+            raise TypeError("The type of the id is not UUID.")
         
         self._id = value
 
@@ -36,15 +36,17 @@ class Booking:
     @booking_reference.setter
     def booking_reference(self, value: str) -> None:
         if not isinstance(value, str):
-            raise TypeError(f"The type of {value} is not str.")
+            raise TypeError("The type of the booking reference is not str.")
         
-        if not value.strip():
+        value_formatted: str = value.strip()
+        
+        if not value_formatted:
             raise ValueError("The booking reference can not be empty.")
         
-        if len(value.strip()) != 6:
+        if len(value_formatted) != 6:
             raise ValueError("The booking reference mut be 6 characters long.")
         
-        self._booking_reference = value
+        self._booking_reference = value_formatted
 
     @property
     def booking_datetime(self) -> datetime:
@@ -53,7 +55,7 @@ class Booking:
     @booking_datetime.setter
     def booking_datetime(self, value: datetime) -> None:
         if not isinstance(value, datetime):
-            raise TypeError(f"The type of {value} is not datetime.")
+            raise TypeError("The type of the booking datetime is not datetime.")
         
         self._booking_datetime = value
 
@@ -64,7 +66,7 @@ class Booking:
     @paid_amount_usd.setter
     def paid_amount_usd(self, value: Decimal) -> None:
         if not isinstance(value, Decimal):
-            raise TypeError(f"The type of {value} is not decimal.")
+            raise TypeError("The type of the paid amount is not decimal.")
         
         if value <= 0:
             raise ValueError("The paid amount can not be negative or zero.")
@@ -78,10 +80,10 @@ class Booking:
     @current_status_id.setter
     def current_status_id(self, value: int) -> None:
         if not isinstance(value, int):
-            raise TypeError(f"The type of {value} is not int.")
+            raise TypeError("The type of the current status id is not int.")
         
         if value <= 0:
-            raise ValueError(f"The current status id can not be negative or zero.")
+            raise ValueError("The current status id can not be negative or zero.")
         
         self._current_status_id = value
 
