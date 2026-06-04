@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field, field_validator
 from uuid import UUID
 from decimal import Decimal
 from datetime import datetime
-from src.api.schemas import PassengerRequest
+from src.api.schemas.passenger_schema import PassengerRequest
 
 class BookingRequest(BaseModel):
     flights_id: list[UUID] = Field(min_length=1)
@@ -20,4 +20,4 @@ class BookingResponse(BaseModel):
     booking_reference: str
     tickets: list[str]
     booking_datetime: datetime = datetime.now()
-    paid_amount_usd: Decimal
+    paid_amount_usd: Decimal = Field(gt=0, decimal_places=2, max_digits=8)
