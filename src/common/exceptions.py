@@ -19,7 +19,7 @@ class FullFlight(InvalidFlight):
     def __init__(self, message = "A flight is full.") -> None:
         super().__init__(message)
 
-class NotProgrammedFlight(InvalidFlight):
+class NotScheduledFlight(InvalidFlight):
     def __init__(self, message = "A flight is not programmed.") -> None:
         super().__init__(message)
 
