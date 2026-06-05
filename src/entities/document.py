@@ -28,7 +28,7 @@ class Document:
     @id.setter
     def id(self, value: UUID) -> None:
         if not isinstance(value, UUID):
-            raise TypeError(f"The type of {value} is not UUID.")
+            raise TypeError("The type of the id is not UUID.")
         
         self._id = value
 
@@ -39,17 +39,17 @@ class Document:
     @document_number.setter
     def document_number(self, value: str) -> None:
         if not isinstance(value, str):
-            raise TypeError(f"The type of {value} is not str.")
+            raise TypeError("The type of the document number is not str.")
         
-        value = value.strip()
+        value_formatted: str = value.strip()
         
-        if not value:
+        if not value_formatted:
             raise ValueError("The document number can not be empty.")
         
-        if len(value) > 20:
-            raise ValueError("The document number mut be 20 characters or less.")
+        if len(value_formatted) > 20:
+            raise ValueError("The document number must be 20 characters or less.")
         
-        self._document_number = value
+        self._document_number = value_formatted
         
     @property
     def valid_from(self) -> date:
@@ -58,7 +58,7 @@ class Document:
     @valid_from.setter
     def valid_from(self, value: date) -> None:
         if not isinstance(value, date):
-            raise TypeError(f"The type of {value} is not date.")
+            raise TypeError("The type of the valid from date is not date.")
         
         self._valid_from = value
 
@@ -69,7 +69,7 @@ class Document:
     @valid_until.setter
     def valid_until(self, value: date) -> None:
         if not isinstance(value, date):
-            raise TypeError(f"The type of {value} is not date.")
+            raise TypeError(f"The type of the valid until date is not date.")
         
         self._valid_until = value
 
@@ -80,12 +80,14 @@ class Document:
     @issue_country.setter
     def issue_country(self, value: str) -> None:
         if not isinstance(value, str):
-            raise TypeError(f"The type of {value} is not str.")
+            raise TypeError(f"The type of the issue country is not str.")
+
+        value_formatted: str = value.strip()
         
-        if not value.strip():
+        if not value_formatted:
             raise ValueError("The issue country can not be empty.")
         
-        if len(value.strip()) != 3:
+        if len(value_formatted) != 3:
             raise ValueError("The issue country must be 3 characters long.")
         
         self._issue_country = value
@@ -97,7 +99,7 @@ class Document:
     @passenger_id.setter
     def passenger_id(self, value: UUID) -> None:
         if not isinstance(value, UUID):
-            raise TypeError(f"The type of {value} is not UUID.")
+            raise TypeError("The type of the passenger id is not UUID.")
         
         self._passenger_id = value
     
@@ -108,10 +110,10 @@ class Document:
     @document_type_id.setter
     def document_type_id(self, value: int) -> None:
         if not isinstance(value, int):
-            raise TypeError(f"The type of {value} is not int.")
+            raise TypeError(f"The type of the document type id is not int.")
         
         if value <= 0:
-            raise ValueError("The passenger id can not be negative or zero.")
+            raise ValueError("The document type id can not be negative or zero.")
         
         self._document_type_id = value
 

@@ -52,7 +52,7 @@ class Ticket:
         if not value_formatted.isnumeric():
             raise ValueError("The ticket number must only contain digits.")
         
-        self._ticket_number = value
+        self._ticket_number = value_formatted
 
     @property
     def paid_amount_usd(self) -> Decimal:
