@@ -1,8 +1,8 @@
 import pytest
-from src.entities import Booking, Flight, Ticket
+from src.entities import Booking, Flight, Ticket, Passenger, Document
 from decimal import Decimal
 from uuid import UUID
-from datetime import datetime
+from datetime import datetime, date
 
 @pytest.fixture
 def booking() -> Booking:
@@ -39,4 +39,28 @@ def ticket() -> Ticket:
         booking_id=UUID("019e97c2-2c47-70a5-a87d-a04de3b9c11f"),
         flight_id=UUID("019e97c2-2c47-73ad-8730-18e7d13cfbf7"),
         passenger_id=UUID("019e97c2-2c47-73ad-8730-18e7d13cfbf7"),
+    )
+
+@pytest.fixture
+def passenger() -> Passenger:
+    return Passenger(
+        id=UUID("019e92b3-e0db-7244-a9a2-43322a076e75"),
+        full_name="David Khachatryan",
+        birth_date=date(2000, 1, 1),
+        email="dkh@email.com",
+        phone_number="12345678",
+        is_blacklisted=False,
+        is_vip=True
+    )
+
+@pytest.fixture
+def document() -> Document:
+    return Document(
+        id=UUID("019e92b3-e0db-7244-a9a2-43322a076e75"),
+        document_number="AB12345678",
+        valid_from=date(2024, 1, 1),
+        valid_until=date(2034, 1, 1),
+        issue_country="ARG",
+        passenger_id=UUID("019e97c2-2c47-73ad-8730-18e7d13cfbf7"),
+        document_type_id=1
     )

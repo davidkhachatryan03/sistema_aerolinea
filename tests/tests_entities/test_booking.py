@@ -1,6 +1,6 @@
 import pytest
-from src.entities import Booking
-from decimal import Decimal
+from src.entities import Booking, Flight
+from decimal import Decimal, ROUND_HALF_UP
 from uuid import UUID
 from datetime import datetime
 
@@ -12,13 +12,15 @@ def test_booking_valid_input(booking: Booking) -> None:
     assert booking.paid_amount_usd == Decimal("10000.76")
     assert booking.current_status_id == 1
 
-def test_new_booking_classmethod_valid_input(booking: Booking) -> None:
-    new_booking = Booking.new_booking(booking.paid_amount_usd)
+def test_new_booking_classmethod_valid_input(flight: Flight, number_of_passengers=4) -> None:
+    new_booking = Booking.new_booking([flight], number_of_passengers)
+
+    calculated_paid_amount_usd: Decimal = (flight.base_price_usd * number_of_passengers).quantize(Decimal("0.01"), ROUND_HALF_UP)
 
     assert isinstance(new_booking.id, UUID)
     assert isinstance(new_booking.booking_reference, str)
     assert isinstance(new_booking.booking_datetime, datetime)
-    assert new_booking.paid_amount_usd == booking.paid_amount_usd
+    assert new_booking.paid_amount_usd == calculated_paid_amount_usd
     assert new_booking.current_status_id == 1
 
 def test_to_dict_method(booking: Booking) -> None:
@@ -53,7 +55,3 @@ def test_invalid_booking(booking: Booking, field, value, exception, message) -> 
 
     with pytest.raises(exception, match=message):
         Booking(**test_data)
-
-    if field == "paid_amount_usd":
-        with pytest.raises(exception, match=message):
-            Booking.new_booking(value)
