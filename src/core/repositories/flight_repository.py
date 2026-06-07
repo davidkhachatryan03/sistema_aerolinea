@@ -31,9 +31,9 @@ class FlightRepository:
         
         return []
     
-    def retrieve_seats_available_per_flight(self, flights: list[Flight]) -> list[tuple[UUID, int]]:
+    def retrieve_seats_available_per_flight(self, flights: list[Flight]) -> dict[UUID, int]:
         if not flights:
-            return []
+            return {}
         
         placeholders = "".join(["%s" * len(flights)])
 
@@ -56,29 +56,8 @@ class FlightRepository:
 
         result: list[tuple[UUID, int]] = self.db_manager.retrieve(query, values)
 
-        if result:
-            return result
+        result_dict: dict[UUID, int] = {}
+        for row in result:
+            result_dict[row[0]] = row[1]
         
-        return []
-    
-    def retrieve_flights_prices(self, flights: list[Flight]) -> list[Decimal]:
-        if not flights:
-            return []
-        
-        placeholders = "".join(["%s" * len(flights)])
-
-        query = """
-                SELECT  base_price_usd
-                FROM    flights
-                WHERE   id
-                IN      ({})    
-                """.format(placeholders)
-        
-        values: list[UUID] = [flight.id for flight in flights]
-
-        result: list[Decimal] = self.db_manager.retrieve(query, values)
-
-        if result:
-            return result
-        
-        return []
+        return result_dict
