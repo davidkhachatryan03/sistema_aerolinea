@@ -3,7 +3,6 @@ from src.core.validators import FlightValidator, PassengerValidator
 from src.entities import Flight, Document, Passenger, Booking, Ticket
 from src.api.schemas import BookingRequest, BookingResponse, PassengerRequest
 from uuid import UUID
-from decimal import Decimal
 
 class PassengerProcessor:
     
@@ -60,7 +59,7 @@ class CreateBooking:
             flights_retrieved: list[Flight] = uow.flight_repository.retrieve_flights_by_id(booking_request.flights_id)
             self.flight_validator.check_flights_existence(booking_request.flights_id, flights_retrieved)
 
-            seats_available_per_flight: list[tuple[UUID, int]] = uow.flight_repository.retrieve_seats_available_per_flight(flights_retrieved)
+            seats_available_per_flight: dict[UUID, int] = uow.flight_repository.retrieve_seats_available_per_flight(flights_retrieved)
             self.flight_validator.check_seats_available_per_flight(seats_available_per_flight, len(booking_request.passengers))
 
             passengers_requested: list[PassengerRequest] = booking_request.passengers
