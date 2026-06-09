@@ -1,0 +1,23 @@
+USE airline;
+
+SELECT * FROM booking_statuses;
+SELECT * FROM documents;
+SELECT * FROM document_types;
+SELECT * FROM boarding_passes;
+SELECT * FROM bookings;
+SELECT * FROM tickets;
+SELECT * FROM ticket_statuses;
+SELECT * FROM passengers;
+SELECT * FROM roles;
+SELECT * FROM boarding_pass_statuses;
+SELECT * FROM flights;
+SELECT * FROM crew_assignments;
+SELECT * FROM routes;
+SELECT * FROM airplanes;
+SELECT * FROM flight_statuses;
+SELECT * FROM staff;
+SELECT * FROM staff_certifications;
+SELECT * FROM airplane_statuses;
+SELECT * FROM staff_statuses;
+SELECT * FROM positions;
+SELECT * FROM audit_logs;
