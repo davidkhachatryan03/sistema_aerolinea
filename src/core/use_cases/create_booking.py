@@ -74,7 +74,7 @@ class CreateBooking:
             if documents_not_in_db:
                 uow.document_repository.insert_documents(documents_not_in_db)
 
-            all_passengers: list[Passenger] = uow.passenger_repository.retrieve_passengers(all_passengers_id)
+            all_passengers: list[Passenger] = uow.passenger_repository.retrieve_passengers_by_id(all_passengers_id)
             self.passenger_validator.check_blacklisted(all_passengers)
 
             booking_created = Booking.new_booking(flights_retrieved, len(all_passengers))

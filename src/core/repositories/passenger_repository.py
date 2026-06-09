@@ -11,7 +11,7 @@ class PassengerRepository:
     def insert_passengers(self, passengers: list[Passenger]) -> None:
         self.db_manager.insert_rows("passengers", passengers)
 
-    def retrieve_passengers(self, passengers_id: list[UUID]) -> list[Passenger]:
+    def retrieve_passengers_by_id(self, passengers_id: list[UUID]) -> list[Passenger]:
         if not passengers_id:
             return []
         
