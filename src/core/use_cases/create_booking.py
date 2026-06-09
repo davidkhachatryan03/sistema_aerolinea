@@ -78,11 +78,11 @@ class CreateBooking:
             self.passenger_validator.check_blacklisted(all_passengers)
 
             booking_created = Booking.new_booking(flights_retrieved, len(all_passengers))
-            self.uow.booking_repository.insert_booking(booking_created)
+            uow.booking_repository.insert_booking(booking_created)
 
             tickets_created: list[Ticket] = booking_created.generate_tickets(all_passengers_id, flights_retrieved, booking_created.id)
 
-            self.uow.ticket_repository.insert_tickets(tickets_created)
+            uow.ticket_repository.insert_tickets(tickets_created)
 
             return BookingResponse(
                 booking_reference=booking_created.booking_reference,
