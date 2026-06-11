@@ -31,3 +31,24 @@ class PassengerRepository:
             return [Passenger(*row) for row in result]
         
         return []
+    
+    def retrieve_passengers_by_document(self, passengers_document: list[tuple]) -> list[Passenger]:
+        if not passengers_document:
+            return []
+        
+        placeholders = ",".join(["%s" * len(passengers_document)])
+
+        query = """
+                SELECT  *
+                FROM    passengers
+                WHERE   (national_document_number) IN ({})
+                """.format(placeholders)
+        
+        values = passengers_document
+
+        result: list[tuple] = self.db_manager.retrieve(query, values)
+
+        if result:
+            return [Passenger(*row) for row in result]
+        
+        return []
