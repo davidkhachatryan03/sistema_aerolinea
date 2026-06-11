@@ -117,6 +117,10 @@ class Document:
         
         self._document_type_id = value
 
+    @property
+    def identity_key(self) -> tuple:
+        return (self.document_number, self.valid_from, self.valid_until, self.issue_country, self.document_type_id)
+
     def to_dict(self) -> dict:
         return {
             "id": self.id,

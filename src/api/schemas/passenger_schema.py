@@ -12,6 +12,10 @@ class PassengerRequest(BaseModel):
     issue_country: str = Field(min_length=3, max_length=3)
     document_type_id: int = Field(gt=0)
 
+    @property
+    def identity_key(self) -> tuple:
+        return (self.document_number, self.valid_from, self.valid_until, self.issue_country, self.document_type_id)
+
 @model_validator(mode='after')
 def validate_document_dates(self) -> PassengerRequest:
     if self.valid_from >= self.valid_until:
