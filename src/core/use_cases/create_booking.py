@@ -6,14 +6,17 @@ from uuid import UUID
 
 class PassengerProcessor:
     
-    def process(self, passengers_requested: list[PassengerRequest], documents_retrieved: list[Document]) -> tuple[list[Passenger], list[Document], list[UUID]]:
+    def get_or_create_passengers(self, passengers_requested: list[PassengerRequest], documents_retrieved: list[Document]) -> tuple[list[Passenger], list[Document], list[UUID]]:
         passengers_not_in_db: list[Passenger] = []
         documents_not_in_db: list[Document] = []
         all_passengers_id: list[UUID] = []
         
-        dict_documents_retrieved: dict = {(document.document_number, document.valid_from, document.valid_until, document.issue_country, document.document_type_id): document.passenger_id for document in documents_retrieved}
+        dict_documents_retrieved: dict = {}
+        for document in documents_retrieved:
+            dict_documents_retrieved[document.identity_key] = document.passenger_id
+
         for passenger in passengers_requested:
-            if (passenger.document_number, passenger.valid_from, passenger.valid_until, passenger.issue_country, passenger.document_type_id) not in dict_documents_retrieved:
+            if passenger.identity_key not in dict_documents_retrieved:
 
                 passenger_not_in_db = Passenger.new_passenger(
                     full_name=passenger.full_name,
@@ -37,7 +40,7 @@ class PassengerProcessor:
             
             else:
 
-                all_passengers_id.append(dict_documents_retrieved[(passenger.document_number, passenger.valid_from, passenger.valid_until, passenger.issue_country, passenger.document_type_id)])
+                all_passengers_id.append(dict_documents_retrieved[passenger.identity_key])
 
         return passengers_not_in_db, documents_not_in_db, all_passengers_id
     
@@ -63,10 +66,10 @@ class CreateBooking:
             self.flight_validator.check_seats_available_per_flight(seats_available_per_flight, len(booking_request.passengers))
 
             passengers_requested: list[PassengerRequest] = booking_request.passengers
-            documents_requested: list[tuple] = [(passenger.document_number, passenger.valid_from, passenger.valid_until, passenger.issue_country, passenger.document_type_id) for passenger in passengers_requested]
+            documents_requested: list[tuple] = [passenger.identity_key for passenger in passengers_requested]
             documents_retrieved: list[Document] = uow.document_repository.retrieve_documents(documents_requested)
 
-            passengers_not_in_db, documents_not_in_db, all_passengers_id = self.passenger_processor.process(passengers_requested, documents_retrieved)
+            passengers_not_in_db, documents_not_in_db, all_passengers_id = self.passenger_processor.get_or_create_passengers(passengers_requested, documents_retrieved)
 
             if passengers_not_in_db:
                 uow.passenger_repository.insert_passengers(passengers_not_in_db)
