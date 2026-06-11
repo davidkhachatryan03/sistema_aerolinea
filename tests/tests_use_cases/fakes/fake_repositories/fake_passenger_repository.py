@@ -1,0 +1,13 @@
+from src.entities import Passenger
+from uuid import UUID
+
+class FakePassengerRepository:
+
+    def __init__(self) -> None:
+        self.passengers: list[Passenger] = []
+
+    def insert_passengers(self, passengers: list[Passenger]) -> None:
+        self.passengers.extend(passengers)
+
+    def retrieve_passengers_by_id(self, passengers_id: list[UUID]) -> list[Passenger]:
+        return self.passengers
