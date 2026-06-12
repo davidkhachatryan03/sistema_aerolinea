@@ -13,7 +13,8 @@ class InvalidFlight(InvalidData):
     pass
 
 class InexistentFlight(InvalidFlight):
-    pass
+    def __init__(self, message = "A flight is not available.") -> None:
+        super().__init__(message)
 
 class FullFlight(InvalidFlight):
     def __init__(self, message = "A flight is full.") -> None:
