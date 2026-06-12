@@ -3,9 +3,9 @@ from src.entities import Flight, Document, Passenger
 from src.core.use_cases import CreateBooking, PassengerProcessor
 from src.core.validators import FlightValidator, PassengerValidator
 from src.api.schemas import BookingRequest, BookingResponse, PassengerRequest
-from tests.tests_use_cases.fakes.fake_db_manager import FakeDBManager
-from tests.tests_use_cases.fakes.fake_repositories import FakeFlightRepository
-from tests.tests_use_cases.fakes.fake_uows.fake_create_booking_uow import FakeCreateBookingUoW
+from tests.fakes.fake_db_manager import FakeDBManager
+from tests.fakes.fake_repositories import FakeFlightRepository
+from tests.fakes.fake_uows.fake_create_booking_uow import FakeCreateBookingUoW
 from datetime import datetime
 from decimal import Decimal, ROUND_HALF_UP
 from src.common.exceptions import *
