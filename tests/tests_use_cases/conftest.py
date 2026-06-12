@@ -85,3 +85,11 @@ def fixed_booking_identifiers(mocker):
         "src.entities.Ticket._generate_ticket_number",
         return_value="1234567890123"
     )
+
+@pytest.fixture
+def expected_booking_reference() -> str:
+    return "ABC123"
+
+@pytest.fixture
+def expected_ticket_number() -> str:
+    return "1234567890123"
