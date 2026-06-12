@@ -4,9 +4,11 @@ from src.core.use_cases import CreateBooking, PassengerProcessor
 from src.core.validators import FlightValidator, PassengerValidator
 from src.api.schemas import BookingRequest, BookingResponse, PassengerRequest
 from tests.tests_use_cases.fakes.fake_db_manager import FakeDBManager
+from tests.tests_use_cases.fakes.fake_repositories import FakeFlightRepository
 from tests.tests_use_cases.fakes.fake_create_booking_uow import FakeCreateBookingUoW
 from datetime import datetime
 from decimal import Decimal, ROUND_HALF_UP
+from src.common.exceptions import *
 
 def assert_booking_response(
     booking_response: BookingResponse, 
@@ -41,6 +43,14 @@ def make_create_booking(fake_uow: FakeCreateBookingUoW) -> CreateBooking:
 def calculate_paid_amount_usd(flights_created: list[Flight], passengers_created: list[Passenger]) -> Decimal:
     return (sum((flight.base_price_usd for flight in flights_created), Decimal("0")) * len(passengers_created)).quantize(Decimal("0.01"), ROUND_HALF_UP)
 
+def generate_full_flight(flight: Flight, fake_flight_repository: FakeFlightRepository) -> None:
+    fake_flight_repository.flights[flight] = 0
+
+def generate_not_scheduled_flight(flight: Flight, fake_flight_repository: FakeFlightRepository) -> None:
+    value: int = fake_flight_repository.flights[flight]
+    flight.current_status_id = 4
+    fake_flight_repository.flights[flight] = value
+
 @pytest.mark.usefixtures("fixed_booking_identifiers")
 def test_create_booking_use_case_valid_input_passengers_registered(
     booking_request: BookingRequest, 
@@ -50,14 +60,12 @@ def test_create_booking_use_case_valid_input_passengers_registered(
     expected_ticket_number: str
     ) -> None:
 
-    assert len(booking_request.flights_id) > 0
-    assert len(booking_request.passengers) > 0
-
     fake_uow = FakeCreateBookingUoW(FakeDBManager())
 
     fake_uow.flight_repository.insert_flights(flights_generated)
     fake_uow.passenger_repository.insert_passengers(passengers_generated)
 
+    assert len(fake_uow.flight_repository.flights) > 0
     assert len(fake_uow.passenger_repository.passengers) == len(passengers_generated)
 
     create_booking: CreateBooking = make_create_booking(fake_uow)
@@ -75,13 +83,11 @@ def test_create_booking_use_case_valid_input_passengers_not_registered(
     expected_ticket_number: str
     ) -> None:
 
-    assert len(booking_request.flights_id) > 0
-    assert len(booking_request.passengers) > 0
-
     fake_uow = FakeCreateBookingUoW(FakeDBManager())
 
     fake_uow.flight_repository.insert_flights(flights_generated)
 
+    assert len(fake_uow.flight_repository.flights) > 0
     assert len(fake_uow.passenger_repository.passengers) == 0
 
     create_booking: CreateBooking = make_create_booking(fake_uow)
@@ -99,14 +105,12 @@ def test_create_booking_use_case_valid_input_passengers_registered_and_not_regis
     expected_ticket_number: str
     ) -> None:
 
-    assert len(booking_request.flights_id) > 0
-    assert len(booking_request.passengers) > 1
-
     fake_uow = FakeCreateBookingUoW(FakeDBManager())
 
     fake_uow.flight_repository.insert_flights(flights_generated)
     fake_uow.passenger_repository.insert_passengers([passengers_generated[0]])
     
+    assert len(fake_uow.flight_repository.flights) > 0
     assert len(fake_uow.passenger_repository.passengers) == 1
 
     create_booking: CreateBooking = make_create_booking(fake_uow)
@@ -114,3 +118,83 @@ def test_create_booking_use_case_valid_input_passengers_registered_and_not_regis
     booking_response: BookingResponse = create_booking.execute(booking_request)
 
     assert_booking_response(booking_response, passengers_generated, flights_generated, fake_uow, expected_booking_reference, expected_ticket_number)
+
+def test_create_booking_blacklisted_passenger(
+    booking_request: BookingRequest, 
+    flights_generated: list[Flight], 
+    passengers_generated: list[Passenger]
+    ) -> None: 
+    
+    fake_uow = FakeCreateBookingUoW(FakeDBManager())
+
+    passengers_generated[0].is_blacklisted = True
+
+    fake_uow.flight_repository.insert_flights(flights_generated)
+    fake_uow.passenger_repository.insert_passengers(passengers_generated)
+
+    create_booking: CreateBooking = make_create_booking(fake_uow)
+
+    with pytest.raises(BlacklistedPassenger):
+        create_booking.execute(booking_request)
+
+def test_create_booking_full_flight(
+    booking_request: BookingRequest, 
+    flights_generated: list[Flight], 
+    passengers_generated: list[Passenger]
+    ) -> None:
+
+    fake_uow = FakeCreateBookingUoW(FakeDBManager())
+
+    fake_uow.flight_repository.insert_flights(flights_generated)
+    fake_uow.passenger_repository.insert_passengers(passengers_generated)
+
+    assert len(fake_uow.flight_repository.flights) > 0
+    assert len(fake_uow.passenger_repository.passengers) == len(passengers_generated)
+
+    flights: list[Flight] = list(fake_uow.flight_repository.flights.keys())
+    generate_full_flight(flights[0], fake_uow.flight_repository)
+
+    create_booking: CreateBooking = make_create_booking(fake_uow)
+
+    with pytest.raises(FullFlight):
+        create_booking.execute(booking_request)
+
+def test_create_booking_inexistent_flight(
+    booking_request: BookingRequest, 
+    passengers_generated: list[Passenger]
+    ) -> None:
+
+    fake_uow = FakeCreateBookingUoW(FakeDBManager())
+
+    fake_uow.passenger_repository.insert_passengers(passengers_generated)
+
+    assert len(fake_uow.flight_repository.flights) == 0
+    assert len(fake_uow.passenger_repository.passengers) == len(passengers_generated)
+
+    create_booking: CreateBooking = make_create_booking(fake_uow)
+
+    with pytest.raises(InexistentFlight):
+        create_booking.execute(booking_request)
+
+def test_create_not_scheduled_flight(
+    booking_request: BookingRequest,
+    flights_generated: list[Flight], 
+    passengers_generated: list[Passenger]
+    ) -> None:
+
+    fake_uow = FakeCreateBookingUoW(FakeDBManager())
+
+    fake_uow.flight_repository.insert_flights(flights_generated)
+    fake_uow.passenger_repository.insert_passengers(passengers_generated)
+
+    assert len(fake_uow.flight_repository.flights) > 0
+    assert len(fake_uow.passenger_repository.passengers) == len(passengers_generated)
+
+    flights: list[Flight] = list(fake_uow.flight_repository.flights.keys())
+    generate_not_scheduled_flight(flights[0], fake_uow.flight_repository)
+
+    create_booking: CreateBooking = make_create_booking(fake_uow)
+
+    with pytest.raises(NotScheduledFlight):
+        create_booking.execute(booking_request)
+

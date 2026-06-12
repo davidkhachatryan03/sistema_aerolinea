@@ -15,4 +15,4 @@ class FakeCreateBookingUoW:
         return self
 
     def __exit__(self, exception_type, exception_value, exception_traceback):
-        return self
+        pass
