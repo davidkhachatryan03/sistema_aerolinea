@@ -8,7 +8,7 @@ def setup_exception_handlers(app: FastAPI) -> None:
     @app.exception_handler(InexistentFlight)
     async def inexistent_flight_handler(request: Request, exc: InexistentFlight):
         return JSONResponse(
-            status_code=404,
+            status_code=404, 
             content={
                 "error": exc.__class__.__name__,
                 "message": str(exc)
@@ -22,6 +22,26 @@ def setup_exception_handlers(app: FastAPI) -> None:
             content={
                 "error": exc.__class__.__name__,
                 "message": str(exc)
+            }
+        )
+
+    @app.exception_handler(FullFlight)
+    async def full_flight_handler(request: Request, exc: FullFlight):
+        return JSONResponse(
+            status_code=409, 
+            content={
+                "error": exc.__class__.__name__,
+                "message": str(exc)
+            }
+        )
+
+    @app.exception_handler(NotScheduledFlight)
+    async def not_scheduled_flight_handler(request: Request, exc: NotScheduledFlight):
+        return JSONResponse(
+            status_code=400,
+            content={
+                "error": exc.__class__.__name__,
+                "message": str(exc) 
             }
         )
 
